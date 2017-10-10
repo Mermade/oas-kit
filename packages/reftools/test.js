@@ -8,8 +8,8 @@ const decorate = require('./decorate.js').decorate;
 const clone = require('./clone.js').clone;
 
 //const apiName = '../openapi-directory/APIs/patientview.org/1.0/swagger.yaml';
-//const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
-const apiName = '../openapi-directory/APIs/bungie.net/2.0.0/swagger.yaml';
+const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
+//const apiName = '../openapi-directory/APIs/bungie.net/2.0.0/swagger.yaml';
 
 let apiStr = fs.readFileSync(apiName,'utf8');
 let api = yaml.safeLoad(apiStr,{json:true});
@@ -18,27 +18,52 @@ let clones = clone(api.definitions);
 
 for (let s in api.definitions) {
 
-    console.warn('# %s',s);
+    console.log('# %s',s);
 
-let schema = api.definitions[s];
-let backup = clones[s];
+    let schema = api.definitions[s];
+    let backup = clones[s];
 
-//console.log(JSON.stringify(schema,null,2));
+    let options = {verbose:true};
 
-let options = {verbose:true};
+    let deref = dereference(schema,api,options);
+    console.log('# original');
+    console.log(JSON.stringify(backup,null,2));
 
-let deref = dereference(schema,api,options);
-console.log(JSON.stringify(backup,null,2));
-deref = decorate(deref,backup,'x-widdershins-oldRef');
+    try {
+        console.log('# '+s+' dereffed version is non-cyclical\n'+
+            JSON.stringify(deref,null,2));
+    }
+    catch (ex) {
+        deref = decorate(deref,{},{
+            circular: function(obj,key,state,path) {
+                return '[Circular: '+path+']';
+            }
+        });
+        console.log('# '+s+' dereffed version is cyclical');
+        console.log(JSON.stringify(deref,null,2));
+    }
 
-try {
-    console.log(JSON.stringify(deref,null,2));
-}
-catch (ex) {
-    deref = uncircle(deref);
-    console.log(JSON.stringify(deref,null,2));
-}
+    deref = decorate(deref,backup,{
+        oldRef : function(obj,key,state,$ref){
+            obj['x-widdershins-oldRef'] = $ref;
+            return obj[key];
+        }
+    });
+    try {
+        console.log('# '+s+' decorated version is non-cyclical\n'+
+            JSON.stringify(deref,null,2));
+    }
+    catch (ex) {
+        deref = decorate(deref,{},{
+            circular: function(obj,key,state,path) {
+                return '[Circular: '+path+']';
+            }
+        });
+        console.log('# '+s+' decorated version is cyclical');
+        console.log(JSON.stringify(deref,null,2));
+    }
 
-//console.log(JSON.stringify(flatten(deref),null,2));
+    //console.log(JSON.stringify(flatten(deref),null,2));
+    //process.exit(1);
 
 }
