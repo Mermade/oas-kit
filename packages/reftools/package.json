@@ -1,0 +1,31 @@
+{
+  "name": "reftools",
+  "version": "1.0.0",
+  "description": "Utility functions to deal with JSON-References",
+  "main": "dereference.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikeRalphson/reftools.git"
+  },
+  "keywords": [
+    "json-reference",
+    "object",
+    "objects",
+    "circular",
+    "reference",
+    "dereference",
+    "clone",
+    "flatten",
+    "recurse",
+    "recursion"
+  ],
+  "author": "Mike Ralphson",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/MikeRalphson/reftools/issues"
+  },
+  "homepage": "https://github.com/MikeRalphson/reftools#readme"
+}
