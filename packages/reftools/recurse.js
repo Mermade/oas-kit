@@ -30,7 +30,8 @@ function recurse(object, state, callback) {
             let newState = {};
             newState.parent = object;
             newState.path = state.path;
-            newState.depth = (state.depth ? state.depth++ : state.depth = 1);
+            newState.depth = state.depth ? state.depth : 1;
+            newState.depth++;
             newState.pkey = key;
             newState.payload = state.payload;
             newState.seen = state.seen;
