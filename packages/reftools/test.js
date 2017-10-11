@@ -6,6 +6,7 @@ const dereference = require('./dereference.js').dereference;
 const uncircle = require('./uncircle.js').uncircle;
 const decorate = require('./decorate.js').decorate;
 const clone = require('./clone.js').clone;
+const flatten = require('./flatten.js').flatten;
 
 //const apiName = '../openapi-directory/APIs/patientview.org/1.0/swagger.yaml';
 const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
@@ -63,7 +64,16 @@ for (let s in api.definitions) {
         console.log(JSON.stringify(deref,null,2));
     }
 
-    //console.log(JSON.stringify(flatten(deref),null,2));
+    let f = flatten(deref,function(entry){
+        if (entry.pkey == 'properties') return entry;
+        return null;
+    });
+    console.log('# '+s+' flattened property names');
+    for (let e of f) {
+        console.log('.'.repeat(e.depth)+e.name);
+    }
+
+
     //process.exit(1);
 
 }
