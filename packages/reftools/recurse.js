@@ -2,18 +2,22 @@
 
 const jpescape = require('./jptr.js').jpescape;
 
+function getDefaultState() {
+    let state = {};
+    state.path = '#';
+    state.depth = 0;
+    state.pkey = '';
+    state.parent = {};
+    state.payload = {};
+    state.seen = [];
+    state.seenPaths = [];
+    state.circular = false;
+    return state;
+}
+
 function recurse(object, state, callback) {
-    if (!state || (Object.keys(state).length === 0)) {
-        state = {};
-        state.path = '#';
-        state.depth = 0;
-        state.pkey = '';
-        state.parent = {};
-        state.payload = {};
-        state.seen = [];
-        state.seenPaths = [];
-        state.circular = false;
-    }
+    if (!state) state = {};
+    state = Object.assign({},getDefaultState(),state);
     for (let key in object) {
         let escKey = '/' + jpescape(key);
         state.key = key;
