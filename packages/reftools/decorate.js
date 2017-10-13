@@ -10,7 +10,8 @@ const jptr = require('./jptr.js').jptr;
 * callbacks.circular - called on any circular objects
 */
 function decorate(obj,original,callbacks) {
-    recurse(obj,{},function(obj,key,state){
+    let state = {circularDetection:true};
+    recurse(obj,state,function(obj,key,state){
         if (callbacks.oldRef) {
             let equiv = jptr(original,state.path);
             if (equiv && equiv.$ref) {

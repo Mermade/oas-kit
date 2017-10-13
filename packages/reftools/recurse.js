@@ -12,6 +12,7 @@ function getDefaultState() {
     state.seen = [];
     state.seenPaths = [];
     state.circular = false;
+    state.circularDetection = false;
     return state;
 }
 
@@ -23,12 +24,12 @@ function recurse(object, state, callback) {
         state.key = key;
         let oPath = state.path;
         state.path = (state.path ? state.path : '#') + escKey;
-        let seenIndex = state.seen.indexOf(object[key]);
+        let seenIndex = state.circularDetection ? state.seen.indexOf(object[key]) : -1;
         state.circular = (seenIndex >= 0);
         state.circularPath = (state.circular ? state.seenPaths[seenIndex] : undefined);
         callback(object, key, state);
         if ((typeof object[key] === 'object') && (!state.circular)) {
-            if (!Array.isArray(object[key])) {
+            if (state.circularDetection && !Array.isArray(object[key])) {
                 state.seen.push(object[key]);
                 state.seenPaths.push(state.path);
             }
@@ -42,6 +43,7 @@ function recurse(object, state, callback) {
             newState.seen = state.seen;
             newState.seenPaths = state.seenPaths;
             newState.circular = false;
+            newState.circularDetection = state.circularDetection;
             recurse(object[key], newState, callback);
         }
         state.path = oPath;
