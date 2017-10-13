@@ -1,6 +1,7 @@
 'use strict';
+
 const recurse = require('./recurse.js').recurse;
-const jptr = require('jgexml/jpath.js').jptr;
+const jptr = require('./jptr.js').jptr;
 
 /**
 * Given an expanded object and its original $ref'd form, will call

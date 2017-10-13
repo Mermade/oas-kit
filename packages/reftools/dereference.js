@@ -4,7 +4,7 @@ const util = require('util');
 
 const recurse = require('./recurse.js').recurse;
 const clone = require('./clone.js').shallowClone;
-const jptr = require('jgexml/jpath.js');
+const jptr = require('./jptr.js').jptr;
 
 var getLogger = function (options) {
     if (options && options.verbose) {
@@ -49,13 +49,13 @@ function dereference(o,definitions,options) {
                 entry.key = obj[key];
                 logger.warn('Dereffing %s at %s',obj[key],entry.path);
                 entry.source = defs;
-                entry.data = jptr.jptr(entry.source,entry.key);
+                entry.data = jptr(entry.source,entry.key);
                 if (entry.data === false) {
-                    entry.data = jptr.jptr(options.master,entry.key);
+                    entry.data = jptr(options.master,entry.key);
                     entry.source = options.master;
                 }
                 options.cache[obj[key]] = entry;
-                entry.data = state.parent[state.pkey] = dereference(jptr.jptr(entry.source,entry.key),entry.source,options);
+                entry.data = state.parent[state.pkey] = dereference(jptr(entry.source,entry.key),entry.source,options);
                 entry.resolved = true;
             }
             else {
@@ -73,9 +73,9 @@ function dereference(o,definitions,options) {
                     // we're dealing with a circular reference here
                     logger.warn('Unresolved ref');
                     logger.warn(util.inspect(entry));
-                    state.parent[state.pkey] = jptr.jptr(defs,entry.path);
+                    state.parent[state.pkey] = jptr(defs,entry.path);
                     if (state.parent[state.pkey] === false) {
-                        state.parent[state.pkey] = jptr.jptr(defs,entry.key);
+                        state.parent[state.pkey] = jptr(defs,entry.key);
                     }
                 }
             }

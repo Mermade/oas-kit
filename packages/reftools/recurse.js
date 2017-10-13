@@ -1,5 +1,6 @@
 'use strict';
-const jpescape = require('jgexml/jpath.js').jpescape;
+
+const jpescape = require('./jptr.js').jpescape;
 
 function recurse(object, state, callback) {
     if (!state || (Object.keys(state).length === 0)) {
