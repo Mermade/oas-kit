@@ -19,9 +19,9 @@ function shallowClone(obj) {
 }
 
 function deepClone(obj) {
-    let result = {};
+    let result = Array.isArray(obj) ? [] : {};
     for (let p in obj) {
-        if (obj.hasOwnProperty(p)) {
+        if (obj.hasOwnProperty(p) || Array.isArray(obj)) {
             result[p] = (typeof obj[p] === 'object') ? deepClone(obj[p]) : obj[p];
         }
     }

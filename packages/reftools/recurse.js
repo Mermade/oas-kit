@@ -1,24 +1,23 @@
 'use strict';
 
 const jpescape = require('./jptr.js').jpescape;
+const deepClone = require('./clone.js').deepClone;
 
-function getDefaultState() {
-    let state = {};
-    state.path = '#';
-    state.depth = 0;
-    state.pkey = '';
-    state.parent = {};
-    state.payload = {};
-    state.seen = [];
-    state.seenPaths = [];
-    state.circular = false;
-    state.circularDetection = false;
-    return state;
-}
+const defaultState = {
+    path: '#',
+    depth: 0,
+    pkey: '',
+    parent: {},
+    payload: {},
+    seen: [],
+    seenPaths: [],
+    circular: false,
+    circularDetection: false
+};
 
 function recurse(object, state, callback) {
     if (!state) state = {};
-    state = Object.assign({},getDefaultState(),state);
+    state = Object.assign({},deepClone(defaultState),state);
     for (let key in object) {
         let escKey = '/' + jpescape(key);
         state.key = key;
