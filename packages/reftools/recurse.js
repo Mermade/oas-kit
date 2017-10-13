@@ -14,7 +14,7 @@ function defaultState() {
         seenPaths: [],
         circular: false,
         circularDetection: false
-    }
+    };
 }
 
 function recurse(object, state, callback) {
@@ -22,10 +22,10 @@ function recurse(object, state, callback) {
     if (!state.depth) {
         state = Object.assign({},defaultState(),state);
     }
+    let oPath = state.path;
     for (let key in object) {
         let escKey = '/' + jpescape(key);
         state.key = key;
-        let oPath = state.path;
         state.path = (state.path ? state.path : '#') + escKey;
         let seenIndex = state.circularDetection ? state.seen.indexOf(object[key]) : -1;
         state.circular = (seenIndex >= 0);
