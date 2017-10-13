@@ -73,7 +73,6 @@ for (let s in api.definitions) {
         console.log('.'.repeat(e.depth)+e.name);
     }
 
-
     //process.exit(1);
 
 }

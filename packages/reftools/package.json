@@ -1,7 +1,7 @@
 {
   "name": "reftools",
   "version": "1.0.0",
-  "description": "Utility functions to deal with JSON-References",
+  "description": "Utility functions to deal with references in objects",
   "main": "dereference.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,7 @@
   },
   "keywords": [
     "json-reference",
+    "json-pointer",
     "object",
     "objects",
     "circular",
