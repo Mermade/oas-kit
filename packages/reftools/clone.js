@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+* a collection of cloning functions
+*/
+
 function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }

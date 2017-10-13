@@ -27,5 +27,9 @@
   "bugs": {
     "url": "https://github.com/MikeRalphson/reftools/issues"
   },
-  "homepage": "https://github.com/MikeRalphson/reftools#readme"
+  "homepage": "https://github.com/MikeRalphson/reftools#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "js-yaml": "^3.10.0"
+  }
 }

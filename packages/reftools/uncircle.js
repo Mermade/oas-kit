@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+* Simply creates an object without circular references by replacing them
+* with [Circular]
+*/
+
 function uncircle(obj) {
     let seen = [];
     return JSON.parse(JSON.stringify(obj,function(k,v){

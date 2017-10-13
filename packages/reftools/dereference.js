@@ -28,9 +28,11 @@ function dereference(o,definitions,options) {
     if (!options) options = {};
     if (!options.cache) options.cache = {};
     if (!options.state) options.state = {};
+    // options.depth allows us to limit cloning to the first invocation
     options.depth = (options.depth ? options.depth+1 : 1);
     let obj = (options.depth > 1 ? o : clone(o));
     let defs = (options.depth > 1 ? definitions : clone(definitions));
+    // options.master is the top level object, regardless of depth
     if (!options.master) options.master = obj;
 
     let logger = getLogger(options);
@@ -45,7 +47,6 @@ function dereference(o,definitions,options) {
                 let entry = {};
                 entry.path = state.path.split('/$ref')[0];
                 entry.key = obj[key];
-                entry.org = obj[key];
                 logger.warn('Dereffing %s at %s',obj[key],entry.path);
                 entry.source = defs;
                 entry.data = jptr.jptr(entry.source,entry.key);
@@ -60,15 +61,16 @@ function dereference(o,definitions,options) {
             else {
                 let entry = options.cache[obj[key]];
                 if (entry.resolved) {
+                    // we have already seen and resolved this reference
                     logger.warn('Patching %s for %s',obj[key],entry.path);
                     state.parent[state.pkey] = entry.data;
                 }
                 else if (obj[key] === entry.path) {
-                    logger.warn('Tight circle at %s',entry.path);
-                    logger.warn(util.inspect(options.cache));
-                    process.exit(1);
+                    // reference to itself, throw
+                    throw new Error(`Tight circle at ${entry.path}`);
                 }
                 else {
+                    // we're dealing with a circular reference here
                     logger.warn('Unresolved ref');
                     logger.warn(util.inspect(entry));
                     state.parent[state.pkey] = jptr.jptr(defs,entry.path);
