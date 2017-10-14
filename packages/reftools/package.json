@@ -29,7 +29,9 @@
     "url": "https://github.com/MikeRalphson/reftools/issues"
   },
   "homepage": "https://github.com/MikeRalphson/reftools#readme",
-  "dependencies": {},
+  "dependencies": {
+    "should": "^13.1.2"
+  },
   "devDependencies": {
     "js-yaml": "^3.10.0"
   }
