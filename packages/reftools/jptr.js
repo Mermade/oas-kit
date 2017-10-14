@@ -35,7 +35,7 @@ function jptr(obj, prop, newValue) {
 
         let index = parseInt(components[i],10);
         if (!Array.isArray(obj) || isNaN(index) || (index.toString() !== components[i])) {
-            index = (components[i] === '-') ? -2 : -1;
+            index = (Array.isArray(obj) && components[i] === '-') ? -2 : -1;
         }
         else {
             components[i] = (i > 0) ? components[i-1] : ''; // backtrack to indexed property name
@@ -50,7 +50,9 @@ function jptr(obj, prop, newValue) {
             }
             else if (index === -2) {
                 if (setAndLast) {
-                    obj.push(newValue);
+                    if (Array.isArray(obj)) {
+                        obj.push(newValue);
+                    }
                     return newValue;
                 }
                 else return undefined;

@@ -34,7 +34,13 @@ const obj = {
 };
 obj.self = obj;
 
+should(jptr(obj,'#/self')).be.equal(obj);
+should(jptr(obj,'#/self/name')).be.equal('obj');
 should(jptr(obj,'#/name')).be.equal('obj');
+should(jptr(obj,'#/name/-')).be.equal(false); // it's not an array
+should(jptr(obj,'#/name/0')).be.equal('o'); // undefined by the spec?
+should(jptr(obj,'#/name/-','*')).be.equal(false);
+should(jptr(obj,'#/name')).be.equal('obj'); // strings are immutable
 should(jptr(obj,'#/age')).be.equal(false);
 should(jptr(obj,'#/x/y')).be.equal(false);
 should(jptr(obj,'#/x~1y')).be.equal('x');
@@ -48,7 +54,7 @@ should(jptr(obj,'#/children/-')).be.equal(undefined);
 should(jptr(obj,'#/children/-','baby')).be.equal('baby');
 should(jptr(obj,'#/children/2')).be.equal('baby');
 should(jptr(obj,'#/400WithDocument')).be.equal(true);
-should(jptr(obj,'#/definitions/-/value')).be.equal(undefined);
+should(jptr(obj,'#/definitions/-/value')).be.equal(true);
 
 const rfc6901 = {
     "foo": ["bar", "baz"],
