@@ -12,6 +12,7 @@ const obj = {
     '#': {
       '': true
     },
+    '400WithDocument': true,
     children : [
         {
             $ref: '#/definitions/Child'
@@ -43,6 +44,7 @@ should(jptr(obj,'#/children/2')).be.equal(undefined);
 should(jptr(obj,'#/children/-')).be.equal(undefined);
 should(jptr(obj,'#/children/-','baby')).be.equal('baby');
 should(jptr(obj,'#/children/2')).be.equal('baby');
+should(jptr(obj,'#/400WithDocument')).be.equal(true);
 
 const rfc6901 = {
     "foo": ["bar", "baz"],
