@@ -28,7 +28,7 @@ function dereference(o,definitions,options) {
     if (!options) options = {};
     if (!options.cache) options.cache = {};
     if (!options.state) options.state = {};
-    options.state.circularDetection = true;
+    options.state.identityDetection = true;
     // options.depth allows us to limit cloning to the first invocation
     options.depth = (options.depth ? options.depth+1 : 1);
     let obj = (options.depth > 1 ? o : clone(o));

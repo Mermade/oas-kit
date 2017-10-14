@@ -3,10 +3,11 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 
 const dereference = require('./dereference.js').dereference;
-const uncircle = require('./uncircle.js').uncircle;
+const reref = require('./reref.js').reref;
 const decorate = require('./decorate.js').decorate;
 const clone = require('./clone.js').clone;
 const flatten = require('./flatten.js').flatten;
+const toposort = require('./toposort.js');
 
 //const apiName = '../openapi-directory/APIs/patientview.org/1.0/swagger.yaml';
 const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
@@ -30,14 +31,18 @@ for (let s in api.definitions) {
     console.log('# original');
     console.log(JSON.stringify(backup,null,2));
 
+    let loops = toposort.toposort(toposort.objToGraph(backup,'definitions')).nodesWithEdges;
+    console.log('# '+s+' loops');
+    console.log(JSON.stringify(loops,null,2));
+
     try {
         console.log('# '+s+' dereffed version is non-cyclical\n'+
             JSON.stringify(deref,null,2));
     }
     catch (ex) {
         deref = decorate(deref,{},{
-            circular: function(obj,key,state,path) {
-                return '[Circular: '+path+']';
+            identical: function(obj,key,state,path) {
+                return '[$ref: '+path+']';
             }
         });
         console.log('# '+s+' dereffed version is cyclical');
@@ -56,8 +61,8 @@ for (let s in api.definitions) {
     }
     catch (ex) {
         deref = decorate(deref,{},{
-            circular: function(obj,key,state,path) {
-                return '[Circular: '+path+']';
+            identical: function(obj,key,state,path) {
+                return '[$ref: '+path+']';
             }
         });
         console.log('# '+s+' decorated version is cyclical');

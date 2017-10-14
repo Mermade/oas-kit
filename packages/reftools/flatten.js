@@ -9,7 +9,7 @@ const recurse = require('./recurse.js').recurse;
 function flatten(obj,callback) {
     let arr = [];
     let iDepth, oDepth = 0;
-    let state = {circularDetection:true};
+    let state = {identityDetection:true};
     recurse(obj,state,function(obj,key,state){
         let entry = {};
         entry.name = key;

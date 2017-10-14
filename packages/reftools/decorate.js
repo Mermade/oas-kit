@@ -7,11 +7,11 @@ const jptr = require('./jptr.js').jptr;
 * Given an expanded object and its original $ref'd form, will call
 * decorator functions:
 * callbacks.oldRef - allowing the old $ref to be accessed
-* callbacks.circular - called on any circular objects
+* callbacks.identical - called on any identical objects
 * callbacks.filter - called for all properties, can mutate/remove (by setting to undefined)
 */
 function decorate(obj,original,callbacks) {
-    let state = {circularDetection:true};
+    let state = {identityDetection:true};
     recurse(obj,state,function(obj,key,state){
         if (callbacks.oldRef) {
             let equiv = jptr(original,state.path);
@@ -19,8 +19,8 @@ function decorate(obj,original,callbacks) {
                 obj[key] = callbacks.oldRef(obj,key,state,equiv.$ref);
             }
         }
-        if (state.circular && callbacks.circular) {
-            obj[key] = callbacks.circular(obj,key,state,state.circularPath);
+        if (state.identical && callbacks.identical) {
+            obj[key] = callbacks.identical(obj,key,state,state.identicalPath);
         }
         if (callbacks.filter) {
             obj[key] = callbacks.filter(obj,key,state);

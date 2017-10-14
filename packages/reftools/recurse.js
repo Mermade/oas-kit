@@ -12,8 +12,8 @@ function defaultState() {
         payload: {},
         seen: [],
         seenPaths: [],
-        circular: false,
-        circularDetection: false
+        identical: false,
+        identityDetection: false
     };
 }
 
@@ -27,12 +27,12 @@ function recurse(object, state, callback) {
         let escKey = '/' + jpescape(key);
         state.key = key;
         state.path = (state.path ? state.path : '#') + escKey;
-        let seenIndex = state.circularDetection ? state.seen.indexOf(object[key]) : -1;
-        state.circular = (seenIndex >= 0);
-        state.circularPath = (state.circular ? state.seenPaths[seenIndex] : undefined);
+        let seenIndex = state.identityDetection ? state.seen.indexOf(object[key]) : -1;
+        state.identical = (seenIndex >= 0);
+        state.identicalPath = (state.identical ? state.seenPaths[seenIndex] : undefined);
         callback(object, key, state);
-        if ((typeof object[key] === 'object') && (!state.circular)) {
-            if (state.circularDetection && !Array.isArray(object[key])) {
+        if ((typeof object[key] === 'object') && (!state.identical)) {
+            if (state.identityDetection && !Array.isArray(object[key])) {
                 state.seen.push(object[key]);
                 state.seenPaths.push(state.path);
             }
@@ -45,8 +45,8 @@ function recurse(object, state, callback) {
             newState.payload = state.payload;
             newState.seen = state.seen;
             newState.seenPaths = state.seenPaths;
-            newState.circular = false;
-            newState.circularDetection = state.circularDetection;
+            newState.identical = false;
+            newState.identityDetection = state.identityDetection;
             recurse(object[key], newState, callback);
         }
         state.path = oPath;
