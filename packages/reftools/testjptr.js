@@ -26,6 +26,9 @@ const obj = {
         Child: {
             name: 'FirstChild',
             age: 6
+        },
+        '-': {
+            value: true
         }
     }
 };
@@ -45,6 +48,7 @@ should(jptr(obj,'#/children/-')).be.equal(undefined);
 should(jptr(obj,'#/children/-','baby')).be.equal('baby');
 should(jptr(obj,'#/children/2')).be.equal('baby');
 should(jptr(obj,'#/400WithDocument')).be.equal(true);
+should(jptr(obj,'#/definitions/-/value')).be.equal(undefined);
 
 const rfc6901 = {
     "foo": ["bar", "baz"],

@@ -34,7 +34,7 @@ function jptr(obj, prop, newValue) {
         let setAndLast = (typeof newValue !== 'undefined') && (i == components.length-1);
 
         let index = parseInt(components[i],10);
-        if (isNaN(index) || (index.toString() !== components[i])) {
+        if (!Array.isArray(obj) || isNaN(index) || (index.toString() !== components[i])) {
             index = (components[i] === '-') ? -2 : -1;
         }
         else {
