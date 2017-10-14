@@ -8,6 +8,7 @@ const jptr = require('./jptr.js').jptr;
 * decorator functions:
 * callbacks.oldRef - allowing the old $ref to be accessed
 * callbacks.circular - called on any circular objects
+* callbacks.filter - called for all properties, can mutate/remove (by setting to undefined)
 */
 function decorate(obj,original,callbacks) {
     let state = {circularDetection:true};
@@ -20,6 +21,9 @@ function decorate(obj,original,callbacks) {
         }
         if (state.circular && callbacks.circular) {
             obj[key] = callbacks.circular(obj,key,state,state.circularPath);
+        }
+        if (callbacks.filter) {
+            obj[key] = callbacks.filter(obj,key,state);
         }
     });
     return obj;
