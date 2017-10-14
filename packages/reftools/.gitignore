@@ -1,3 +1,4 @@
 *.out
+t.*
 wip/
 node_modules/

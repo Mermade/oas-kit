@@ -1,6 +1,6 @@
 {
   "name": "reftools",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Utility functions to deal with references in objects",
   "main": "dereference.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MikeRalphson/reftools.git"
+    "url": "git+https://github.com/mermade/reftools.git"
   },
   "keywords": [
     "json-reference",
@@ -26,9 +26,9 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/MikeRalphson/reftools/issues"
+    "url": "https://github.com/mermade/reftools/issues"
   },
-  "homepage": "https://github.com/MikeRalphson/reftools#readme",
+  "homepage": "https://github.com/mermade/reftools#readme",
   "dependencies": {},
   "devDependencies": {
     "js-yaml": "^3.10.0",
