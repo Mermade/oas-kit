@@ -30,23 +30,25 @@ function jptr(obj, prop, newValue) {
         components[i] = jpunescape(components[i]);
 
         let index = -1;
-        let arrComponents = components[i].split('[');
-        let setLast = (typeof newValue !== 'undefined') && (i == components.length);
+        let setAndLast = (typeof newValue !== 'undefined') && (i == components.length);
 
-        if (arrComponents.length > 1) {
-            index = parseInt(arrComponents[1],10);
-            if (isNaN(index)) index = -1;
+        index = parseInt(components[i],10);
+        if (isNaN(index)) {
+            index = -1;
+        }
+        else {
+            components[i] = (i > 0) ? components[i-1] : ''; // backtrack to indexed property name
         }
 
         if (obj.hasOwnProperty(components[i])) {
             if (index >= 0) {
-                if (setLast) {
+                if (setAndLast) {
                     components[i][index] = newValue;
                 }
                 obj = obj[components[i][index]];
             }
             else {
-                if (setLast) {
+                if (setAndLast) {
                     obj[components][i] = newValue;
                 }
                 obj = obj[components[i]];
