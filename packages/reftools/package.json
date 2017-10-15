@@ -1,6 +1,6 @@
 {
   "name": "reftools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility functions to deal with references in objects",
   "main": "dereference.js",
   "scripts": {
