@@ -64,7 +64,14 @@ function jptr(obj, prop, newValue) {
                 obj = obj[components[i]];
             }
         }
-        else return false;
+        else {
+            if ((typeof newValue !== 'undefined') && (typeof obj === 'object') &&
+                (!Array.isArray(obj))) {
+                obj[components[i]] = (setAndLast ? newValue : {});
+                obj = obj[components[i]];
+            }
+            else return false;
+        }
     }
     return obj;
 }
