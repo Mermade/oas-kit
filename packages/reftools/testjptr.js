@@ -40,7 +40,9 @@ should(jptr(obj,'#/name')).be.equal('obj');
 should(jptr(obj,'#/name/-')).be.equal(false); // it's not an array
 should(jptr(obj,'#/name/0')).be.equal('o'); // undefined by the spec?
 should(jptr(obj,'#/name/-','*')).be.equal(false);
-should(jptr(obj,'#/name')).be.equal('obj'); // strings are immutable
+should(jptr(obj,'#/name')).be.equal('obj'); // strings are immutable as arrays
+should(jptr(obj,'#/name','obj*')).be.equal('obj*'); // string properties are mutable
+should(jptr(obj,'#/name')).be.equal('obj*');
 should(jptr(obj,'#/age')).be.equal(false);
 should(jptr(obj,'#/x/y')).be.equal(false);
 should(jptr(obj,'#/x~1y')).be.equal('x');

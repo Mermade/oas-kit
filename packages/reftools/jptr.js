@@ -59,7 +59,7 @@ function jptr(obj, prop, newValue) {
             }
             else {
                 if (setAndLast) {
-                    obj[components][i] = newValue;
+                    obj[components[i]] = newValue;
                 }
                 obj = obj[components[i]];
             }
