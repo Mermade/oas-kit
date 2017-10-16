@@ -100,6 +100,7 @@ should(jptr(rfc6901,'#/k%22l')).equal(6);
 should(jptr(rfc6901,'#/%20')).equal(7);
 should(jptr(rfc6901,'#/m~0n')).equal(8);
 
-// devjack - see endpointer
+// devjack tests - see endpointer
 
-should(jptr(obj,'/#/')).equal(true);
+should(jptr(obj,'/#/')).equal(false); // this is an external reference to the uri /
+should(jptr(obj,'#/%23/')).equal(true); // %encode the # in the fragment

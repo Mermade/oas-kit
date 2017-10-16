@@ -22,7 +22,11 @@ function jptr(obj, prop, newValue) {
     if (typeof obj === 'undefined') return false;
     if (!prop || (prop === '#')) return obj; // doesn't return newValue
 
-    if (prop.startsWith('#')) {
+    if (prop.indexOf('#')>=0) {
+        let parts = prop.split('#');
+        let uri = parts[0];
+        if (uri) return false; // we do internal resolution only
+        prop = parts[1];
         prop = decodeURIComponent(prop.slice(1));
     }
     if (prop.startsWith('/')) prop = prop.slice(1);
