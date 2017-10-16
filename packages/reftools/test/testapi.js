@@ -2,16 +2,16 @@ const util = require('util');
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const dereference = require('./dereference.js').dereference;
-const reref = require('./reref.js').reref;
-const decorate = require('./decorate.js').decorate;
-const clone = require('./clone.js').clone;
-const flatten = require('./flatten.js').flatten;
-const toposort = require('./toposort.js');
+const dereference = require('../lib/dereference.js').dereference;
+const reref = require('../lib/reref.js').reref;
+const decorate = require('../lib/decorate.js').decorate;
+const clone = require('../lib/clone.js').clone;
+const flatten = require('../lib/flatten.js').flatten;
+const toposort = require('../lib/toposort.js');
 
-//const apiName = '../openapi-directory/APIs/patientview.org/1.0/swagger.yaml';
+//const apiName = '../../openapi-directory/APIs/patientview.org/1.0/swagger.yaml';
 const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
-//const apiName = '../openapi-directory/APIs/bungie.net/2.0.0/swagger.yaml';
+//const apiName = '../../openapi-directory/APIs/bungie.net/2.0.0/swagger.yaml';
 
 let apiStr = fs.readFileSync(apiName,'utf8');
 let api = yaml.safeLoad(apiStr,{json:true});

@@ -2,7 +2,7 @@
 
 const should = require('should');
 
-const jptr = require('./jptr.js').jptr;
+const jptr = require('../lib/jptr.js').jptr;
 
 const obj = {
     self : null,

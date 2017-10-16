@@ -1,4 +1,4 @@
-const toposort = require('./toposort.js').toposort;
+const toposort = require('../lib/toposort.js').toposort;
 
 var nodes = [
   {  _id: "3",  links: ["8", "10"]      },
