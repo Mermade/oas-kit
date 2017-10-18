@@ -14,10 +14,9 @@ function flatten(obj,callback) {
         let entry = {};
         entry.name = key;
         entry.value = obj[key];
-        entry.depth = oDepth;
         entry.path = state.path;
-        entry.parent = state.parent;
-        entry.pkey = state.pkey;
+        entry.parent = obj;
+        entry.key = key;
         if (callback) entry = callback(entry);
         if (entry) {
             if (state.depth > iDepth) {
@@ -26,6 +25,7 @@ function flatten(obj,callback) {
             else if (state.depth < iDepth) {
                 oDepth--;
             }
+            entry.depth = oDepth;
             iDepth = state.depth;
             arr.push(entry);
         }
