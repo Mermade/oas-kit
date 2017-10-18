@@ -1,26 +1,28 @@
+const should = require('should');
 const toposort = require('../lib/toposort.js').toposort;
 
-var nodes = [
-  {  _id: "3",  links: ["8", "10"]      },
-  {  _id: "5",  links: ["11"]           },
-  {  _id: "7",  links: ["11", "8"]      },
-  {  _id: "8",  links: ["9"]            },
-  {  _id: "11", links: ["2", "9", "10"] },
-  {  _id: "10", links: []               },
-  {  _id: "9",  links: []               },
-  {  _id: "2",  links: []               }
-];
+describe('Topological sorting', function() {
+  describe('Acyclic Graph Test',function(){
+  it('should find a topological sort',function(){
+  let nodes = [
+    {  _id: "3",  links: ["8", "10"]      },
+    {  _id: "5",  links: ["11"]           },
+    {  _id: "7",  links: ["11", "8"]      },
+    {  _id: "8",  links: ["9"]            },
+    {  _id: "11", links: ["2", "9", "10"] },
+    {  _id: "10", links: []               },
+    {  _id: "9",  links: []               },
+    {  _id: "2",  links: []               }
+  ];
 
-var result = toposort(nodes);
+  let result = toposort(nodes);
+  result.should.deepEqual({"sort":[{"_id":"7","links":[]},{"_id":"5","links":[]},{"_id":"11","links":[]},{"_id":"2","links":[]},{"_id":"3","links":[]},{"_id":"8","links":[]},{"_id":"9","links":[]},{"_id":"10","links":[]}],"nodesWithEdges":[]});
+  });
+});
 
-if (result === null) {
-  console.error('Graph got cycle somehwere');
-} else {
-  console.log('topological sorting:');
-  console.log(result);
-}
-
-nodes = [
+describe('Cyclic graph test',function(){
+  it('should not find a topological sort',function(){
+let nodes = [
   {  _id: "3",  links: ["8", "10"]      },
   {  _id: "5",  links: ["11"]           },
   {  _id: "7",  links: ["11", "8"]      },
@@ -30,11 +32,11 @@ nodes = [
   {  _id: "9",  links: []               },
   {  _id: "2",  links: []               }
 ];
-result = toposort(nodes);
+let result = toposort(nodes);
+result.should.deepEqual({"sort":null,"nodesWithEdges":[{"_id":"7","links":["11","8"]},{"_id":"8","links":["9"]},{"_id":"11","links":["2","9","10"]},{"_id":"10","links":["7"]}]});
 
-if (result === null) {
-  console.error('Graph got cycle somehwere');
-} else {
-  console.log('topological sorting:');
-  console.log(result);
-}
+});
+});
+
+});
+

@@ -34,6 +34,10 @@ const obj = {
 };
 obj.self = obj;
 
+describe('JSON Pointer tests',function(){
+
+describe('Custom and negative tests',function(){
+    it('should pass',function(){
 should(jptr(obj,'#/self')).be.equal(obj);
 should(jptr(obj,'#/self/name')).be.equal('obj');
 should(jptr(obj,'#/name')).be.equal('obj');
@@ -60,6 +64,8 @@ should(jptr(obj,'#/definitions/-/value')).be.equal(true);
 
 should(jptr(obj,'#/not/there/yet','hello')).be.equal('hello');
 should(jptr(obj,'#/not/there/yet')).be.equal('hello');
+});
+});
 
 const rfc6901 = {
     "foo": ["bar", "baz"],
@@ -74,19 +80,25 @@ const rfc6901 = {
     "m~n": 8
 };
 
-should(jptr(rfc6901,'')).equal(rfc6901);
-should(jptr(rfc6901,'/foo')).equal(rfc6901.foo)
-should(jptr(rfc6901,'/foo/0')).equal('bar');
-should(jptr(rfc6901,'/')).equal(0);
-should(jptr(rfc6901,'/a~1b')).equal(1);
-should(jptr(rfc6901,'/c%d')).equal(2);
-should(jptr(rfc6901,'/e^f')).equal(3);
-should(jptr(rfc6901,'/g|h')).equal(4);
-should(jptr(rfc6901,'/i\\j')).equal(5);
-should(jptr(rfc6901,'/k\"l')).equal(6);
-should(jptr(rfc6901,'/ ')).equal(7);
-should(jptr(rfc6901,'/m~0n')).equal(8);
+describe('JSON Pointer tests from RFC6901',function(){
+    it('should pass',function(){
+        should(jptr(rfc6901,'')).equal(rfc6901);
+        should(jptr(rfc6901,'/foo')).equal(rfc6901.foo)
+        should(jptr(rfc6901,'/foo/0')).equal('bar');
+        should(jptr(rfc6901,'/')).equal(0);
+        should(jptr(rfc6901,'/a~1b')).equal(1);
+        should(jptr(rfc6901,'/c%d')).equal(2);
+        should(jptr(rfc6901,'/e^f')).equal(3);
+        should(jptr(rfc6901,'/g|h')).equal(4);
+        should(jptr(rfc6901,'/i\\j')).equal(5);
+        should(jptr(rfc6901,'/k\"l')).equal(6);
+        should(jptr(rfc6901,'/ ')).equal(7);
+        should(jptr(rfc6901,'/m~0n')).equal(8);
+    });
+});
 
+describe('JSON Reference tests from RFC6901',function(){
+    it('should pass',function(){
 should(jptr(rfc6901,'#')).equal(rfc6901);
 should(jptr(rfc6901,'#/foo')).equal(rfc6901.foo);
 should(jptr(rfc6901,'#/foo/0')).equal('bar');
@@ -99,8 +111,14 @@ should(jptr(rfc6901,'#/i%5Cj')).equal(5);
 should(jptr(rfc6901,'#/k%22l')).equal(6);
 should(jptr(rfc6901,'#/%20')).equal(7);
 should(jptr(rfc6901,'#/m~0n')).equal(8);
+    });
+});
 
-// devjack tests - see endpointer
+describe('endpointer related tests',function(){
+    it('should handle /#/',function(){
+        should(jptr(obj,'/#/')).equal(false); // this is an external reference to the uri /
+        should(jptr(obj,'#/%23/')).equal(true); // %encode the # in the fragment
+    });
+});
 
-should(jptr(obj,'/#/')).equal(false); // this is an external reference to the uri /
-should(jptr(obj,'#/%23/')).equal(true); // %encode the # in the fragment
+});
