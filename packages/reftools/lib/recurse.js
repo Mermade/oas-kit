@@ -1,7 +1,6 @@
 'use strict';
 
 const jpescape = require('./jptr.js').jpescape;
-//const deepClone = require('./clone.js').deepClone;
 
 function defaultState() {
     return {
@@ -12,11 +11,15 @@ function defaultState() {
         payload: {},
         seen: [],
         seenPaths: [],
-        identical: false,
+        identity: false,
         identityDetection: false
     };
 }
 
+/**
+* recurses through the properties of an object, given an optional starting state
+* anything you pass in state.payload is passed to the callback each time
+*/
 function recurse(object, state, callback) {
     if (!state) state = {depth:0};
     if (!state.depth) {
@@ -28,10 +31,10 @@ function recurse(object, state, callback) {
         state.key = key;
         state.path = (state.path ? state.path : '#') + escKey;
         let seenIndex = state.identityDetection ? state.seen.indexOf(object[key]) : -1;
-        state.identical = (seenIndex >= 0);
-        state.identicalPath = (state.identical ? state.seenPaths[seenIndex] : undefined);
+        state.identity = (seenIndex >= 0);
+        state.identityPath = (state.identity ? state.seenPaths[seenIndex] : undefined);
         callback(object, key, state);
-        if ((typeof object[key] === 'object') && (!state.identical)) {
+        if ((typeof object[key] === 'object') && (!state.identity)) {
             if (state.identityDetection && !Array.isArray(object[key])) {
                 state.seen.push(object[key]);
                 state.seenPaths.push(state.path);
@@ -44,7 +47,7 @@ function recurse(object, state, callback) {
             newState.payload = state.payload;
             newState.seen = state.seen;
             newState.seenPaths = state.seenPaths;
-            newState.identical = false;
+            newState.identity = false;
             newState.identityDetection = state.identityDetection;
             recurse(object[key], newState, callback);
         }

@@ -9,8 +9,8 @@ const recurse = require('./recurse.js').recurse;
 
 function reref(obj) {
     recurse(obj,{identityDetection:true},function(obj,key,state){
-        if (state.identical) {
-            obj[key] = { $ref: state.identicalPath };
+        if (state.identity) {
+            obj[key] = { $ref: state.identityPath };
         }
     });
     return obj;
