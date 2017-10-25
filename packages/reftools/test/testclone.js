@@ -5,7 +5,7 @@ const input = { container: { child: { value: true } } };
 
 describe('clone',function(){
     describe('simple',function(){
-        it('should produce a clone of a given object',function(){
+        it('should produce a deep clone of a given object',function(){
             let output = clone.clone(input);
             output.should.have.type('object');
             output.should.not.equal(input);
@@ -15,7 +15,7 @@ describe('clone',function(){
         });
     });
     describe('fast',function(){
-        it('should produce a clone of a given object',function(){
+        it('should produce a shallow clone of a given object',function(){
             let output = clone.fastClone(input);
             output.should.have.type('object');
             output.should.not.equal(input);
@@ -25,7 +25,7 @@ describe('clone',function(){
         });
     });
     describe('shallow',function(){
-        it('should produce a clone of a given object',function(){
+        it('should produce a shallow clone of a given object',function(){
             let output = clone.shallowClone(input);
             output.should.have.type('object');
             output.should.not.equal(input);
@@ -35,7 +35,7 @@ describe('clone',function(){
         });
     });
     describe('deep',function(){
-        it('should produce a clone of a given object',function(){
+        it('should produce a deep clone of a given object',function(){
             let output = clone.deepClone(input);
             output.should.have.type('object');
             output.should.not.equal(input);

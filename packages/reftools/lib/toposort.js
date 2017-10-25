@@ -47,7 +47,6 @@ function toposort (nodes) {
       }),
       n = null;
 
-  //console.warn(util.inspect(S));
   while(S.length) {
     // Remove a node n from S
     n = S.pop();
@@ -124,8 +123,6 @@ function objToGraph(obj, containerName) {
             }
         }
     });
-
-    // console.warn(util.inspect(graph));
 
     return graph;
 }
