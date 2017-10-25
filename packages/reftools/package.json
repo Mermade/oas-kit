@@ -21,7 +21,12 @@
     "clone",
     "flatten",
     "recurse",
-    "recursion"
+    "recursion",
+    "iterate",
+    "iteration",
+    "traverse",
+    "traversal",
+    "visitor"
   ],
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
