@@ -2,7 +2,7 @@
   "name": "reftools",
   "version": "0.0.9",
   "description": "Utility functions to deal with references in objects",
-  "main": "dereference.js",
+  "main": "lib/recurse.js",
   "scripts": {
     "test": "npx mocha"
   },
