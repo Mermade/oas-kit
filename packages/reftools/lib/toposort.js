@@ -1,3 +1,4 @@
+'use strict';
 /**
 * LICENSE: MIT
 *  Source: https://simplapi.wordpress.com/2015/08/19/detect-graph-cycle-in-javascript/
