@@ -1,6 +1,9 @@
 'use strict';
 /**
-* LICENSE: MIT
+* TopoSort function is LICENSE: MIT, everything else is BSD-3-Clause
+*/
+
+/*
 *  Source: https://simplapi.wordpress.com/2015/08/19/detect-graph-cycle-in-javascript/
 * removed dependency on underscore, MER
 */
@@ -27,8 +30,11 @@ var nodes = [
 /**
  * Try to get a topological sorting out of directed graph.
  *
+ * @typedef {Object} Result
+ * @property {array} sort the sort, empty if not found
+ * @property {array} nodesWithEdges, will be empty unless a cycle is found
  * @param nodes {Object} A list of nodes, including edges (see below).
- * @return {Array | Null} An array if the topological sort could succeed, null if there is any cycle somewhere.
+ * @return {Result}
 */
 function toposort (nodes) {
   // Test if a node has got any incoming edges
@@ -83,7 +89,14 @@ function toposort (nodes) {
   };
 }
 
+/**
+* Takes an object and creates a graph of JSON Pointer / References
+* @param obj the object to convert
+* @param containerName the property containing definitions. Default: definitions
+* @return the graph suitable for passing to toposort()
+*/
 function objToGraph(obj, containerName) {
+    if (!containerName) containerName = 'definitions';
     let graph = [];
 
     for (let p in obj[containerName]) {

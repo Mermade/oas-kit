@@ -19,6 +19,9 @@ function defaultState() {
 /**
 * recurses through the properties of an object, given an optional starting state
 * anything you pass in state.payload is passed to the callback each time
+* @param object the object to recurse through
+* @param state optional starting state, can be set to null or {}
+* @param callback the function which receives object,key,state on each property
 */
 function recurse(object, state, callback) {
     if (!state) state = {depth:0};

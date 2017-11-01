@@ -24,6 +24,13 @@ var getLogger = function (options) {
     }
 }
 
+/**
+* dereferences the given object
+* @param o the object to dereference
+* @definitions a source of definitions to reference
+* @options optional settings (used recursively)
+* @return the dereferenced object
+*/
 function dereference(o,definitions,options) {
     if (!options) options = {};
     if (!options.cache) options.cache = {};

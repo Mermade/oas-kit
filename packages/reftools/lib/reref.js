@@ -5,6 +5,8 @@ const recurse = require('./recurse.js').recurse;
 /**
 * Simply creates an object without self-references by replacing them
 * with $ref pointers
+* @param obj the object to re-reference
+* @return the re-referenced object (mutated)
 */
 
 function reref(obj) {

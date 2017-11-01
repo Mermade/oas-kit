@@ -1,11 +1,21 @@
 'use strict';
 
+/**
+* escapes JSON Pointer using ~0 for ~ and ~1 for /
+* @param s the string to escape
+* @return the escaped string
+*/
 function jpescape(s) {
     s = s.split('~').join('~0');
     s = s.split('/').join('~1');
     return s;
 }
 
+/**
+* unescapes JSON Pointer using ~0 for ~ and ~1 for /
+* @param s the string to unescape
+* @return the unescaped string
+*/
 function jpunescape(s) {
     s = s.split('~1').join('/');
     s = s.split('~0').join('~');
@@ -17,6 +27,10 @@ function jpunescape(s) {
 /**
 * from obj, return the property with a JSON Pointer prop, optionally setting it
 * to newValue
+* @param obj the object to point into
+* @param prop the JSON Pointer or JSON Reference
+* @param newValue optional value to set the property to
+* @return the found property, or false
 */
 function jptr(obj, prop, newValue) {
     if (typeof obj === 'undefined') return false;

@@ -3,8 +3,10 @@
 const recurse = require('./recurse.js').recurse;
 
 /**
-* flattens an object into an array of properties, takes a callback
-* which can mutate or filter the entries (by returning null)
+* flattens an object into an array of properties
+* @param obj the object to flatten
+* @param callback a function which can mutate or filter the entries (by returning null)
+* @return the flattened object as an array of properties
 */
 function flatten(obj,callback) {
     let arr = [];
