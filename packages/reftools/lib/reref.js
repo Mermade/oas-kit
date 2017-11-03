@@ -21,7 +21,7 @@ function reref(obj,options) {
             if (state.identityPath !== state.path) {
                 if (options && options.prefix) newRef = newRef.replace('#/',options.prefix);
                 if (replacement !== false) obj[key] = { $ref: newRef }
-                else console.warn(state.identityPath,'gone away at',state.path);
+                else if (options && options.verbose) console.warn(state.identityPath,'gone away at',state.path);
             }
         }
     });
