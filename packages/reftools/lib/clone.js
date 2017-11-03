@@ -67,7 +67,8 @@ function fastClone(obj) {
 * Source: stackoverflow http://bit.ly/2A1Kha6
 */
 
-function circularClone(obj, hash = new WeakMap()) {
+function circularClone(obj, hash) {
+    if (!hash) hash = new WeakMap();
     // Do not try to clone primitives or functions
     if (Object(obj) !== obj || obj instanceof Function) return obj;
     if (hash.has(obj)) return hash.get(obj); // Cyclic reference
