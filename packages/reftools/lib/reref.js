@@ -1,18 +1,28 @@
 'use strict';
 
 const recurse = require('./recurse.js').recurse;
+const jptr = require('./jptr.js').jptr;
 
 /**
-* Simply creates an object without self-references by replacing them
+* Simply modifies an object to have no self-references by replacing them
 * with $ref pointers
 * @param obj the object to re-reference
+* @param options may contain a prefix property for the generated refs
 * @return the re-referenced object (mutated)
 */
 
-function reref(obj) {
+function reref(obj,options) {
+    let master = obj;
     recurse(obj,{identityDetection:true},function(obj,key,state){
         if (state.identity) {
-            obj[key] = { $ref: state.identityPath };
+            let replacement = jptr(master,state.identityPath);
+            // ensure it's still there and we've not reffed it away
+            let newRef = state.identityPath;
+            if (state.identityPath !== state.path) {
+                if (options && options.prefix) newRef = newRef.replace('#/',options.prefix);
+                if (replacement !== false) obj[key] = { $ref: newRef }
+                else console.warn(state.identityPath,'gone away at',state.path);
+            }
         }
     });
     return obj;

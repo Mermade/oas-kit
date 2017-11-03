@@ -21,13 +21,13 @@ const original = JSON.parse(`
   }
 }
 `);
-let input = clone(original);
 
 // TODO mutating
 
 describe('visit',function(){
     describe('simple',function(){
         it('should traverse a simple object',function(){
+            let input = clone(original);
             let calls = [];
 
             visit(input,{},{
@@ -42,6 +42,7 @@ describe('visit',function(){
 
         });
         it('should filter a simple object',function(){
+            let input = clone(original);
             let calls = [];
 
             visit(input,{},{
@@ -70,6 +71,7 @@ describe('visit',function(){
         });
         it('should detect object identity',function(){
 
+            let input = clone(original);
             input.usage = {};
             input.usage.one = { hello: 'exactly' };
             input.usage.two = input.usage.one;

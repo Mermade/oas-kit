@@ -1,7 +1,7 @@
 const should = require('should');
 const recurse = require('../lib/recurse.js').recurse;
 
-const input = { container: { child: { value: true } } };
+const input = { container: { child: { value: true, string: '1234' } } };
 
 describe('recurse',function(){
     describe('simple',function(){
@@ -17,7 +17,7 @@ describe('recurse',function(){
             });
 
             output.should.be.an.Array();
-            should(output.length).equal(3);
+            should(output.length).equal(4);
             output[0].key.should.equal('container');
             output[0].obj.should.equal(input);
             output[0].state.depth.should.equal(0);
@@ -35,6 +35,40 @@ describe('recurse',function(){
             output[2].state.depth.should.equal(2);
             output[2].state.path.should.equal('#/container/child');
             output[2].state.parent.should.equal(input.container);
+
+            output[3].key.should.equal('string');
+            output[3].obj.should.equal(input.container.child);
+            output[3].state.depth.should.equal(2);
+            output[3].state.path.should.equal('#/container/child');
+            output[3].state.parent.should.equal(input.container);
         });
+    });
+    it('should not traverse a string',function(){
+        let calls = 0;
+        recurse('hello',{},function(obj,key,state){
+            calls++;
+        });
+        calls.should.be.exactly(0);
+    });
+    it('should not traverse a boolean',function(){
+        let calls = 0;
+        recurse(true,{},function(obj,key,state){
+            calls++;
+        });
+        calls.should.be.exactly(0);
+    });
+    it('should not traverse a null',function(){
+        let calls = 0;
+        recurse(null,{},function(obj,key,state){
+            calls++;
+        });
+        calls.should.be.exactly(0);
+    });
+    it('should traverse an array',function(){
+        let calls = 0;
+        recurse([0,1,2],{},function(obj,key,state){
+            calls++;
+        });
+        calls.should.be.exactly(3);
     });
 });

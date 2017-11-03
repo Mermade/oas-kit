@@ -31,6 +31,9 @@ function visit(obj,comparison,callbacks) {
         if (selected) {
             if (callbacks.filter) {
                 obj[key] = callbacks.filter(obj,key,state);
+                if (typeof obj[key] === 'undefined') {
+                    delete obj[key]; // to be doubly sure
+                }
             }
             if (typeof obj[key] !== 'undefined') {
                 if (callbacks.compare && comparison) {

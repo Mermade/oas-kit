@@ -9,6 +9,11 @@
 ## Functions
 
 <dl>
+<dt><a href="#nop">nop(obj)</a> ⇒</dt>
+<dd><p>a no-op placeholder which returns the given object unchanged
+useful for when a clone function needs to be passed but cloning is not
+required</p>
+</dd>
 <dt><a href="#clone">clone(obj)</a> ⇒</dt>
 <dd><p>clones the given object using JSON.parse and JSON.stringify</p>
 </dd>
@@ -20,6 +25,9 @@
 </dd>
 <dt><a href="#fastClone">fastClone(obj)</a> ⇒</dt>
 <dd><p>clones the given object&#39;s properties shallowly, using Object.assign</p>
+</dd>
+<dt><a href="#circularClone">circularClone()</a></dt>
+<dd><p>Source: stackoverflow <a href="http://bit.ly/2A1Kha6">http://bit.ly/2A1Kha6</a></p>
 </dd>
 <dt><a href="#dereference">dereference(o)</a> ⇒</dt>
 <dd><p>dereferences the given object</p>
@@ -41,8 +49,8 @@ to newValue</p>
 <dd><p>recurses through the properties of an object, given an optional starting state
 anything you pass in state.payload is passed to the callback each time</p>
 </dd>
-<dt><a href="#reref">reref(obj)</a> ⇒</dt>
-<dd><p>Simply creates an object without self-references by replacing them
+<dt><a href="#reref">reref(obj, options)</a> ⇒</dt>
+<dd><p>Simply modifies an object to have no self-references by replacing them
 with $ref pointers</p>
 </dd>
 <dt><a href="#objToGraph">objToGraph(obj, containerName)</a> ⇒</dt>
@@ -78,6 +86,20 @@ the following functions:</p>
 TopoSort function is LICENSE: MIT, everything else is BSD-3-Clause
 
 **Kind**: global constant
+<a name="nop"></a>
+
+## nop(obj) ⇒
+a no-op placeholder which returns the given object unchanged
+useful for when a clone function needs to be passed but cloning is not
+required
+
+**Kind**: global function
+**Returns**: the input object, unchanged
+
+| Param | Description |
+| --- | --- |
+| obj | the input object |
+
 <a name="clone"></a>
 
 ## clone(obj) ⇒
@@ -126,6 +148,12 @@ clones the given object's properties shallowly, using Object.assign
 | --- | --- |
 | obj | the object to clone |
 
+<a name="circularClone"></a>
+
+## circularClone()
+Source: stackoverflow http://bit.ly/2A1Kha6
+
+**Kind**: global function
 <a name="dereference"></a>
 
 ## dereference(o) ⇒
@@ -208,8 +236,8 @@ anything you pass in state.payload is passed to the callback each time
 
 <a name="reref"></a>
 
-## reref(obj) ⇒
-Simply creates an object without self-references by replacing them
+## reref(obj, options) ⇒
+Simply modifies an object to have no self-references by replacing them
 with $ref pointers
 
 **Kind**: global function
@@ -218,6 +246,7 @@ with $ref pointers
 | Param | Description |
 | --- | --- |
 | obj | the object to re-reference |
+| options | may contain a prefix property for the generated refs |
 
 <a name="objToGraph"></a>
 

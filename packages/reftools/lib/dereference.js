@@ -46,34 +46,41 @@ function dereference(o,definitions,options) {
     let logger = getLogger(options);
 
     let changes = 1;
+    let iterations = 0;
     while (changes > 0) {
         changes = 0;
+        iterations++;
     recurse(obj,options.state,function(obj,key,state){
         if ((key === '$ref') && (typeof obj[key] === 'string')) {
+            let $ref = obj[key]; // immutable
             changes++;
-            if (!options.cache[obj[key]]) {
+            if (!options.cache[$ref]) {
                 let entry = {};
                 entry.path = state.path.split('/$ref')[0];
-                entry.key = obj[key];
-                logger.warn('Dereffing %s at %s',obj[key],entry.path);
+                entry.key = $ref;
+                logger.warn('Dereffing %s at %s',$ref,entry.path);
                 entry.source = defs;
                 entry.data = jptr(entry.source,entry.key);
                 if (entry.data === false) {
                     entry.data = jptr(options.master,entry.key);
                     entry.source = options.master;
                 }
-                options.cache[obj[key]] = entry;
+                options.cache[$ref] = entry;
                 entry.data = state.parent[state.pkey] = dereference(jptr(entry.source,entry.key),entry.source,options);
+                if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
+                logger.warn(util.inspect(state.parent[state.pkey]));
                 entry.resolved = true;
             }
             else {
-                let entry = options.cache[obj[key]];
-                if (entry.resolved) {
+                let entry = options.cache[$ref];
+                if (entry.resolved && entry.path !== '#') {
                     // we have already seen and resolved this reference
-                    logger.warn('Patching %s for %s',obj[key],entry.path);
+                    logger.warn('Patching %s for %s',$ref,entry.path);
                     state.parent[state.pkey] = entry.data;
+                    if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
+                    if (options.bail && iterations > 2) changes--;
                 }
-                else if (obj[key] === entry.path) {
+                else if ($ref === entry.path) {
                     // reference to itself, throw
                     throw new Error(`Tight circle at ${entry.path}`);
                 }
@@ -85,6 +92,8 @@ function dereference(o,definitions,options) {
                     if (state.parent[state.pkey] === false) {
                         state.parent[state.pkey] = jptr(defs,entry.key);
                     }
+                    if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[options.$ref] = $ref;
+                    if (options.bail && iterations > 2) changes--;
                 }
             }
         }

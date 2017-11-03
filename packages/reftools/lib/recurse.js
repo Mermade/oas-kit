@@ -28,6 +28,7 @@ function recurse(object, state, callback) {
     if (!state.depth) {
         state = Object.assign({},defaultState(),state);
     }
+    if (typeof object !== 'object') return;
     let oPath = state.path;
     for (let key in object) {
         let escKey = '/' + jpescape(key);
