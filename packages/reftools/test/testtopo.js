@@ -1,5 +1,7 @@
+'use strict';
 const should = require('should');
 const toposort = require('../lib/toposort.js').toposort;
+const objToGraph = require('../lib/toposort.js').objToGraph;
 
 describe('Topological sorting', function() {
   describe('Acyclic Graph Test',function(){
@@ -37,6 +39,19 @@ result.should.deepEqual({"sort":null,"nodesWithEdges":[{"_id":"7","links":["11",
 
 });
 });
+
+    describe('JSON object toposort',function(){
+        it('should find a topological sort of an object without $refs',function(){
+            const input = { data: { value: 123 }};
+            let graph = objToGraph(input);
+            let result = toposort(graph);
+            should(result.sort).not.be.equal(null);
+            result.sort.should.be.an.Array();
+            result.sort.should.be.empty();
+            result.nodesWithEdges.should.be.an.Array();
+            result.nodesWithEdges.should.be.empty();
+        });
+    });
 
 });
 

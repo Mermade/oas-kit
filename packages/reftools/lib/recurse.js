@@ -9,8 +9,7 @@ function defaultState() {
         pkey: '',
         parent: {},
         payload: {},
-        seen: [],
-        seenPaths: [],
+        seen: new WeakMap(),
         identity: false,
         identityDetection: false
     };
@@ -31,17 +30,14 @@ function recurse(object, state, callback) {
     if (typeof object !== 'object') return;
     let oPath = state.path;
     for (let key in object) {
-        let escKey = '/' + jpescape(key);
         state.key = key;
-        state.path = (state.path ? state.path : '#') + escKey;
-        let seenIndex = state.identityDetection ? state.seen.indexOf(object[key]) : -1;
-        state.identity = (seenIndex >= 0);
-        state.identityPath = (state.identity ? state.seenPaths[seenIndex] : undefined);
+        state.path = state.path + '/' + jpescape(key);
+        state.identityPath = state.seen.get(object[key]);
+        state.identity = (typeof state.identityPath !== 'undefined');
         callback(object, key, state);
         if ((typeof object[key] === 'object') && (!state.identity)) {
-            if (state.identityDetection && !Array.isArray(object[key])) {
-                state.seen.push(object[key]);
-                state.seenPaths.push(state.path);
+            if (state.identityDetection && !Array.isArray(object[key]) && object[key] !== null) {
+                state.seen.set(object[key],state.path);
             }
             let newState = {};
             newState.parent = object;
@@ -50,7 +46,6 @@ function recurse(object, state, callback) {
             newState.pkey = key;
             newState.payload = state.payload;
             newState.seen = state.seen;
-            newState.seenPaths = state.seenPaths;
             newState.identity = false;
             newState.identityDetection = state.identityDetection;
             recurse(object[key], newState, callback);

@@ -78,11 +78,12 @@ function circularClone(obj, hash) {
         result = Object.create(Object.getPrototypeOf(obj));
     }
     // Optional: support for some standard constructors (extend as desired)
-    if (obj instanceof Map)
+    /*if (obj instanceof Map)
         Array.from(obj, ([key, val]) => result.set(circularClone(key, hash),
                                                    circularClone(val, hash)) );
     else if (obj instanceof Set)
         Array.from(obj, (key) => result.add(circularClone(key, hash)) );
+    */
     // Register in hash
     hash.set(obj, result);
     // Clone and assign enumerable own properties recursively

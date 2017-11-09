@@ -34,7 +34,7 @@ function jpunescape(s) {
 */
 function jptr(obj, prop, newValue) {
     if (typeof obj === 'undefined') return false;
-    if (!prop || (prop === '#')) return obj; // doesn't return newValue
+    if (!prop || (prop === '#')) return (typeof newValue !== 'undefined' ? newValue : obj);
 
     if (prop.indexOf('#')>=0) {
         let parts = prop.split('#');
@@ -62,7 +62,7 @@ function jptr(obj, prop, newValue) {
         if ((index != -1) || obj.hasOwnProperty(components[i])) {
             if (index >= 0) {
                 if (setAndLast) {
-                    components[i][index] = newValue;
+                    obj[index] = newValue;
                 }
                 obj = obj[index];
             }

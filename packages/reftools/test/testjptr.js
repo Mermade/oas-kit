@@ -13,6 +13,7 @@ const obj = {
       '': true
     },
     '400WithDocument': true,
+    array: [ 'b' ],
     children : [
         {
             $ref: '#/definitions/Child'
@@ -64,6 +65,15 @@ should(jptr(obj,'#/definitions/-/value')).be.equal(true);
 
 should(jptr(obj,'#/not/there/yet','hello')).be.equal('hello');
 should(jptr(obj,'#/not/there/yet')).be.equal('hello');
+
+should(jptr(obj,'#/array/0')).be.equal('b');
+should(jptr(obj,'#/array/0','c')).be.equal('c');
+should(jptr(obj,'#/array/0')).be.equal('c');
+should(jptr(obj,'#/array/1')).be.equal(undefined);
+should(jptr(obj,'#/array/-','d')).be.equal('d');
+should(jptr(obj,'#/array/1')).be.equal('d');
+
+should(jptr(undefined,'#/anything')).be.equal(false);
 });
 });
 
@@ -118,6 +128,15 @@ describe('endpointer related tests',function(){
     it('should handle /#/',function(){
         should(jptr(obj,'/#/')).equal(false); // this is an external reference to the uri /
         should(jptr(obj,'#/%23/')).equal(true); // %encode the # in the fragment
+    });
+});
+
+describe('top level tests',function(){
+    it('should be able to mutate the top level object',function(){
+        let o = { hello: "sailor" };
+        let n = { hello: "dolly" };
+        should(jptr(o,'',n)).equal(n);
+        should(jptr(o,'#',n)).equal(n);
     });
 });
 

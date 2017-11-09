@@ -1,3 +1,4 @@
+'use strict';
 const util = require('util');
 
 const should = require('should');
@@ -69,6 +70,16 @@ describe('visit',function(){
             });
 
         });
+        it('should compare dissimilar objects',function(){
+            visit(original,{dummy:'value'},{
+                compare: function(obj,key,state,comp) {
+                    comp.should.be.exactly(false);
+                },
+                count: function(obj,key,state,count) {
+                    count.should.be.equal(8);
+                }
+            });
+        });
         it('should detect object identity',function(){
 
             let input = clone(original);
@@ -107,6 +118,21 @@ describe('visit',function(){
             called.should.be.exactly(true);
             selectedCalled.should.be.exactly(true);
             selectedCalledFirst.should.be.exactly(false);
+        });
+        it('should honour the where callback',function(){
+            let called = false;
+            visit(original,{},{
+                where: function(obj,key,state) {
+                    return key === 'container';
+                },
+                selected: function(obj,key,state){
+                    called = true;
+                    key.should.equal('container');
+                },
+                count: function(obj,key,state,count) {
+                    count.should.equal(1);
+                }
+            });
         });
         it('should call finally at the end',function(){
             let called = false;

@@ -2,3 +2,4 @@
 t.*
 wip/
 node_modules/
+.nyc_output

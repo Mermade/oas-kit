@@ -1,3 +1,4 @@
+'use strict';
 const util = require('util');
 
 const should = require('should');
@@ -22,7 +23,7 @@ input.usage.two = input.definitions.shared;
 describe('reref',function(){
     describe('simple',function(){
         it('should re-reference an object with identities',function(){
-            let output = reref(input);
+            let output = reref(input,{verbose:true});
             output.usage.one.container.should.equal('value');
             output.usage.two.should.have.property('$ref');
             output.usage.two.$ref.should.equal('#/usage/one');

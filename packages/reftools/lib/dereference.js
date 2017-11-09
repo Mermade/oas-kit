@@ -39,6 +39,7 @@ function dereference(o,definitions,options) {
     // options.depth allows us to limit cloning to the first invocation
     options.depth = (options.depth ? options.depth+1 : 1);
     let obj = (options.depth > 1 ? o : clone(o));
+    let container = { data: obj };
     let defs = (options.depth > 1 ? definitions : clone(definitions));
     // options.master is the top level object, regardless of depth
     if (!options.master) options.master = obj;
@@ -46,11 +47,9 @@ function dereference(o,definitions,options) {
     let logger = getLogger(options);
 
     let changes = 1;
-    let iterations = 0;
     while (changes > 0) {
         changes = 0;
-        iterations++;
-    recurse(obj,options.state,function(obj,key,state){
+    recurse(container,options.state,function(obj,key,state){
         if ((key === '$ref') && (typeof obj[key] === 'string')) {
             let $ref = obj[key]; // immutable
             changes++;
@@ -73,12 +72,11 @@ function dereference(o,definitions,options) {
             }
             else {
                 let entry = options.cache[$ref];
-                if (entry.resolved && entry.path !== '#') {
+                if (entry.resolved) {
                     // we have already seen and resolved this reference
                     logger.warn('Patching %s for %s',$ref,entry.path);
                     state.parent[state.pkey] = entry.data;
                     if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
-                    if (options.bail && iterations > 2) changes--;
                 }
                 else if ($ref === entry.path) {
                     // reference to itself, throw
@@ -88,18 +86,17 @@ function dereference(o,definitions,options) {
                     // we're dealing with a circular reference here
                     logger.warn('Unresolved ref');
                     logger.warn(util.inspect(entry));
-                    state.parent[state.pkey] = jptr(defs,entry.path);
+                    state.parent[state.pkey] = jptr(entry.source,entry.path);
                     if (state.parent[state.pkey] === false) {
-                        state.parent[state.pkey] = jptr(defs,entry.key);
+                        state.parent[state.pkey] = jptr(entry.source,entry.key);
                     }
                     if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[options.$ref] = $ref;
-                    if (options.bail && iterations > 2) changes--;
                 }
             }
         }
     });
     }
-    return obj;
+    return container.data;
 }
 
 module.exports = {
