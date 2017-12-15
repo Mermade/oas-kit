@@ -31,7 +31,7 @@ function recurse(object, state, callback) {
     let oPath = state.path;
     for (let key in object) {
         state.key = key;
-        state.path = state.path + '/' + jpescape(key);
+        state.path = state.path + '/' + encodeURIComponent(jpescape(key));
         state.identityPath = state.seen.get(object[key]);
         state.identity = (typeof state.identityPath !== 'undefined');
         callback(object, key, state);

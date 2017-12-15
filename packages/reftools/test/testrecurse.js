@@ -6,7 +6,7 @@ describe('recurse',function(){
     describe('simple',function(){
         it('should traverse a simple nested object',function(){
 
-            const input = { container: { child: { value: true, string: '1234' } } };
+            const input = { container: { child: { value: true, string: '1234' }, child2: { value: false, '{id}': { test: 'abc' } } } };
             let output = [];
             recurse(input,{},function(obj,key,state){
                 let entry = {};
@@ -17,7 +17,7 @@ describe('recurse',function(){
             });
 
             output.should.be.an.Array();
-            should(output.length).equal(4);
+            should(output.length).equal(8);
             output[0].key.should.equal('container');
             output[0].obj.should.equal(input);
             output[0].state.depth.should.equal(0);
@@ -41,6 +41,30 @@ describe('recurse',function(){
             output[3].state.depth.should.equal(2);
             output[3].state.path.should.equal('#/container/child');
             output[3].state.parent.should.equal(input.container);
+
+            output[4].key.should.equal('child2');
+            output[4].obj.should.equal(input.container);
+            output[4].state.depth.should.equal(1);
+            output[4].state.path.should.equal('#/container');
+            output[4].state.parent.should.equal(input);
+
+            output[5].key.should.equal('value');
+            output[5].obj.should.equal(input.container.child2);
+            output[5].state.depth.should.equal(2);
+            output[5].state.path.should.equal('#/container/child2');
+            output[5].state.parent.should.equal(input.container);
+
+            output[6].key.should.equal('{id}');
+            output[6].obj.should.equal(input.container.child2);
+            output[6].state.depth.should.equal(2);
+            output[6].state.path.should.equal('#/container/child2');
+            output[6].state.parent.should.equal(input.container);
+
+            output[7].key.should.equal('test');
+            output[7].obj.should.equal(input.container.child2["{id}"]);
+            output[7].state.depth.should.equal(3);
+            output[7].state.path.should.equal('#/container/child2/%7Bid%7D');
+            output[7].state.parent.should.equal(input.container.child2);
         });
     });
     it('should not traverse a string',function(){
