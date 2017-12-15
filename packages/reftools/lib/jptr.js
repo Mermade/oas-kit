@@ -85,7 +85,7 @@ function jptr(obj, prop, newValue) {
         else {
             if ((typeof newValue !== 'undefined') && (typeof obj === 'object') &&
                 (!Array.isArray(obj))) {
-                obj[components[i]] = (setAndLast ? newValue : {});
+                obj[components[i]] = (setAndLast ? newValue : ((components[i+1] === '0' || components[i+1] === '-') ? [] : {}));
                 obj = obj[components[i]];
             }
             else return false;

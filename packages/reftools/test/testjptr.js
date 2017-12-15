@@ -65,6 +65,10 @@ should(jptr(obj,'#/definitions/-/value')).be.equal(true);
 
 should(jptr(obj,'#/not/there/yet','hello')).be.equal('hello');
 should(jptr(obj,'#/not/there/yet')).be.equal('hello');
+should(jptr(obj,'#/newly/created/0','goodbye')).be.equal('goodbye');
+should(jptr(obj,'#/newly/created')).be.an.Array();
+should(jptr(obj,'#/newly/made/-','sailor')).be.equal('sailor');
+should(jptr(obj,'#/newly/made')).be.an.Array();
 
 should(jptr(obj,'#/array/0')).be.equal('b');
 should(jptr(obj,'#/array/0','c')).be.equal('c');
