@@ -25,7 +25,7 @@
   "author": "Mike Ralphson <mike.ralphson@gmail.com>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "^5.0.1",
+    "ajv": "^6.0.0",
     "call-me-maybe": "^1.0.1",
     "co": "^4.6.0",
     "js-yaml": "^3.6.1",
