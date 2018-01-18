@@ -1,3 +1,5 @@
+# reftools
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/reftools.svg)](https://greenkeeper.io/)
 ## Constants
 
 <dl>
@@ -85,7 +87,7 @@ the following functions:</p>
 ## util
 TopoSort function is LICENSE: MIT, everything else is BSD-3-Clause
 
-**Kind**: global constant
+**Kind**: global constant  
 <a name="nop"></a>
 
 ## nop(obj) ⇒
@@ -93,8 +95,8 @@ a no-op placeholder which returns the given object unchanged
 useful for when a clone function needs to be passed but cloning is not
 required
 
-**Kind**: global function
-**Returns**: the input object, unchanged
+**Kind**: global function  
+**Returns**: the input object, unchanged  
 
 | Param | Description |
 | --- | --- |
@@ -105,8 +107,8 @@ required
 ## clone(obj) ⇒
 clones the given object using JSON.parse and JSON.stringify
 
-**Kind**: global function
-**Returns**: the cloned object
+**Kind**: global function  
+**Returns**: the cloned object  
 
 | Param | Description |
 | --- | --- |
@@ -117,8 +119,8 @@ clones the given object using JSON.parse and JSON.stringify
 ## shallowClone(obj) ⇒
 clones the given object's properties shallowly, ignores properties from prototype
 
-**Kind**: global function
-**Returns**: the cloned object
+**Kind**: global function  
+**Returns**: the cloned object  
 
 | Param | Description |
 | --- | --- |
@@ -129,8 +131,8 @@ clones the given object's properties shallowly, ignores properties from prototyp
 ## deepClone(obj) ⇒
 clones the given object's properties deeply, ignores properties from prototype
 
-**Kind**: global function
-**Returns**: the cloned object
+**Kind**: global function  
+**Returns**: the cloned object  
 
 | Param | Description |
 | --- | --- |
@@ -141,8 +143,8 @@ clones the given object's properties deeply, ignores properties from prototype
 ## fastClone(obj) ⇒
 clones the given object's properties shallowly, using Object.assign
 
-**Kind**: global function
-**Returns**: the cloned object
+**Kind**: global function  
+**Returns**: the cloned object  
 
 | Param | Description |
 | --- | --- |
@@ -153,16 +155,16 @@ clones the given object's properties shallowly, using Object.assign
 ## circularClone()
 Source: stackoverflow http://bit.ly/2A1Kha6
 
-**Kind**: global function
+**Kind**: global function  
 <a name="dereference"></a>
 
 ## dereference(o) ⇒
 dereferences the given object
 
-**Kind**: global function
-**Returns**: the dereferenced object
-**Definitions**: a source of definitions to reference
-**Options**: optional settings (used recursively)
+**Kind**: global function  
+**Returns**: the dereferenced object  
+**Definitions**: a source of definitions to reference  
+**Options**: optional settings (used recursively)  
 
 | Param | Description |
 | --- | --- |
@@ -173,8 +175,8 @@ dereferences the given object
 ## flatten(obj, callback) ⇒
 flattens an object into an array of properties
 
-**Kind**: global function
-**Returns**: the flattened object as an array of properties
+**Kind**: global function  
+**Returns**: the flattened object as an array of properties  
 
 | Param | Description |
 | --- | --- |
@@ -186,8 +188,8 @@ flattens an object into an array of properties
 ## jpescape(s) ⇒
 escapes JSON Pointer using ~0 for ~ and ~1 for /
 
-**Kind**: global function
-**Returns**: the escaped string
+**Kind**: global function  
+**Returns**: the escaped string  
 
 | Param | Description |
 | --- | --- |
@@ -198,8 +200,8 @@ escapes JSON Pointer using ~0 for ~ and ~1 for /
 ## jpunescape(s) ⇒
 unescapes JSON Pointer using ~0 for ~ and ~1 for /
 
-**Kind**: global function
-**Returns**: the unescaped string
+**Kind**: global function  
+**Returns**: the unescaped string  
 
 | Param | Description |
 | --- | --- |
@@ -211,8 +213,8 @@ unescapes JSON Pointer using ~0 for ~ and ~1 for /
 from obj, return the property with a JSON Pointer prop, optionally setting it
 to newValue
 
-**Kind**: global function
-**Returns**: the found property, or false
+**Kind**: global function  
+**Returns**: the found property, or false  
 
 | Param | Description |
 | --- | --- |
@@ -226,7 +228,7 @@ to newValue
 recurses through the properties of an object, given an optional starting state
 anything you pass in state.payload is passed to the callback each time
 
-**Kind**: global function
+**Kind**: global function  
 
 | Param | Description |
 | --- | --- |
@@ -240,8 +242,8 @@ anything you pass in state.payload is passed to the callback each time
 Simply modifies an object to have no self-references by replacing them
 with $ref pointers
 
-**Kind**: global function
-**Returns**: the re-referenced object (mutated)
+**Kind**: global function  
+**Returns**: the re-referenced object (mutated)  
 
 | Param | Description |
 | --- | --- |
@@ -253,8 +255,8 @@ with $ref pointers
 ## objToGraph(obj, containerName) ⇒
 Takes an object and creates a graph of JSON Pointer / References
 
-**Kind**: global function
-**Returns**: the graph suitable for passing to toposort()
+**Kind**: global function  
+**Returns**: the graph suitable for passing to toposort()  
 
 | Param | Description |
 | --- | --- |
@@ -275,8 +277,8 @@ the following functions:
 * callbacks.count - called at the end with the number of selected properties
 * callbacks.finally - called at the end of the traversal
 
-**Kind**: global function
-**Returns**: the possibly mutated object
+**Kind**: global function  
+**Returns**: the possibly mutated object  
 
 | Param | Description |
 | --- | --- |
@@ -289,7 +291,7 @@ the following functions:
 ## Result ⇒ [<code>Result</code>](#Result)
 Try to get a topological sorting out of directed graph.
 
-**Kind**: global typedef
+**Kind**: global typedef  
 
 | Param | Type | Description |
 | --- | --- | --- |
