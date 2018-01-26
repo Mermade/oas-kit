@@ -1,10 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-const url = require('url');
-
-const fetch = require('node-fetch');
-const yaml = require('js-yaml');
 const recurse = require('reftools/lib/recurse.js').recurse;
 const jptr = require('reftools/lib/jptr.js').jptr;
 const resolveInternal = jptr;
@@ -16,6 +11,10 @@ function uniqueOnly(value, index, self) {
 
 function hasDuplicates(array) {
     return (new Set(array)).size !== array.length;
+}
+
+function allSame(array) {
+    return (new Set(array)).size <= 1;
 }
 
 /**
@@ -43,118 +42,6 @@ String.prototype.toCamelCase = function camelize() {
 
 function getVersion() {
     return require('./package.json').version;
-}
-
-function readFileAsync(filename, encoding) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(filename, encoding, function (err, data) {
-            if (err)
-                reject(err);
-            else
-                resolve(data);
-        });
-    });
-}
-
-function resolveAllInternal(obj,context,options) {
-    recurse(obj,{},function(obj,key,state){
-        if (isRef(obj,key)) {
-            if (obj[key].startsWith('#')) {
-                if (options.verbose) console.warn('Internal resolution',obj[key]);
-                state.parent[state.pkey] = clone(resolveInternal(context,obj[key]));
-            }
-        }
-    });
-    return obj;
-}
-
-function resolveExternal(root, pointer, options, callback) {
-    var u = url.parse(options.source);
-    var base = options.source.split('\\').join('/').split('/');
-    let doc = base.pop(); // drop the actual filename
-    if (!doc) base.pop(); // in case it ended with a /
-    let fragment = '';
-    let fnComponents = pointer.split('#');
-    if (fnComponents.length > 1) {
-        fragment = '#' + fnComponents[1];
-        pointer = fnComponents[0];
-    }
-    base = base.join('/');
-
-    let u2 = url.parse(pointer);
-    let effectiveProtocol = (u2.protocol ? u2.protocol : (u.protocol ? u.protocol : 'file:'));
-
-    let target = url.resolve(base ? base + '/' : '', pointer)
-
-    if (options.cache[target]) {
-        if (options.verbose) console.log('CACHED',target);
-        let context = clone(options.cache[target]);
-        let data = context;
-        if (fragment) {
-            data = resolveInternal(data, fragment);
-        }
-        data = resolveAllInternal(data,context,options);
-        callback(data,target);
-        return Promise.resolve(data);
-    }
-
-    if (options.verbose) console.log('GET',target);
-
-    if (options.handlers && options.handlers[effectiveProtocol]) {
-        return options.handlers[effectiveProtocol](base,pointer,fragment,options)
-            .then(function(data){
-                callback(data,target);
-                return data;
-            });
-    }
-    else if (u.protocol && u.protocol.startsWith('http')) {
-        return fetch(target, {agent:options.agent})
-            .then(function (res) {
-                if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
-                return res.text();
-            })
-            .then(function (data) {
-                try {
-                    let context = data = yaml.safeLoad(data, { json: true });
-                    options.cache[target] = data;
-                    if (fragment) {
-                        data = resolveInternal(data, fragment);
-                    }
-                    data = resolveAllInternal(data,context,options);
-                }
-                catch (ex) {
-                    if (options.verbose) console.warn(ex);
-                }
-                callback(data,target);
-                return data;
-            })
-            .catch(function (err) {
-                if (options.verbose) console.warn(err);
-            });
-    }
-    else {
-        return readFileAsync(target, options.encoding || 'utf8')
-        .then(function(data){
-            try {
-                let context = data = yaml.safeLoad(data, { json: true });
-                options.cache[target] = data;
-                if (fragment) {
-                    data = resolveInternal(data, fragment);
-                }
-                data = resolveAllInternal(data,context,options);
-            }
-            catch (ex) {
-                if (options.verbose) console.warn(ex);
-            }
-            callback(data,target);
-            return data;
-        })
-        .catch(function(err){
-            console.warn(err.message);
-            if (options.promise) options.promise.reject(err);
-        });
-    }
-
 }
 
 const parameterTypeProperties = [
@@ -215,11 +102,11 @@ module.exports = {
     clone: clone,
     uniqueOnly: uniqueOnly,
     hasDuplicates: hasDuplicates,
+    allSame: allSame,
     recurse: recurse,
     hash: hash,
     getVersion: getVersion,
-    resolveExternal: resolveExternal,
-    resolveInternal: jptr,
+    resolveInternal: resolveInternal,
     parameterTypeProperties: parameterTypeProperties,
     arrayProperties: arrayProperties,
     httpVerbs: httpVerbs,

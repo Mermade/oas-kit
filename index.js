@@ -5,13 +5,13 @@ const fs = require('fs');
 const url = require('url');
 const pathlib = require('path');
 
-const co = require('co');
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch');
 const yaml = require('js-yaml');
 const jptr = require('reftools/lib/jptr.js');
 
 const common = require('./common.js');
+const resolver = require('./resolver.js');
 const walkSchema = require('./walkSchema.js').walkSchema;
 const statusCodes = require('./statusCodes.js').statusCodes;
 
@@ -160,7 +160,7 @@ function fixupRefs(obj, key, state) {
             let keys = obj[key].replace('#/definitions/', '').split('/');
             let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
             if (!newKey) {
-                throwOrWarn('Could not resolve reference '+obj[key],obj,options);
+                throwOrWarn('Could not resolve reference '+obj[key]+' ('+newKey+')',obj,options);
             }
             else {
                 keys[0] = newKey;
@@ -1096,30 +1096,6 @@ function extractServerParameters(server) {
     });
 }
 
-function findExternalRefs(master,options,actions) {
-    common.recurse(master, null, function (obj, key, state) {
-        if (common.isRef(obj,key)) {
-            if (!obj[key].startsWith('#')) {
-                actions.push(common.resolveExternal(master, obj[key], options, function (data, source) {
-                    let external = {};
-                    external.context = state.path;
-                    external.$ref = obj[key];
-                    external.original = common.clone(data);
-                    external.updated = data;
-                    external.source = source;
-                    options.externals.push(external);
-                    let localOptions = Object.assign({},options,{source:source});
-                    findExternalRefs(data,localOptions,actions);
-                    if (options.patch && obj.description && !data.description) {
-                        data.description = obj.description;
-                    }
-                    state.parent[state.pkey] = data;
-                }));
-            }
-        }
-    });
-}
-
 function fixInfo(openapi, options, reject) {
     if (!openapi.info) {
         if (options.patch) {
@@ -1197,6 +1173,8 @@ function fixPaths(openapi, options, reject) {
 function convertObj(swagger, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         options.externals = [];
+        options.externalRefs = {};
+        options.rewriteRefs = true; // avoids stack explosions
         options.promise = {};
         options.promise.resolve = resolve;
         options.promise.reject = reject;
@@ -1205,25 +1183,19 @@ function convertObj(swagger, options, callback) {
             options.openapi = common.clone(swagger);
             fixInfo(options.openapi, options, reject);
             fixPaths(options.openapi, options, reject);
-            let actions = [];
-            if (options.resolve) {
-                findExternalRefs(options.openapi, options, actions);
-            }
 
-            co(function* () {
-                // resolve multiple promises in parallel
-                for (let action of actions) {
-                    yield action; // because we can mutate the array
-                }
+            resolver.resolve(options) // is a no-op if options.resolve is not set
+            .then(function(){
                 if (options.direct) {
-                    resolve(options.openapi);
+                    return resolve(options.openapi);
                 }
                 else {
-                    resolve(options);
+                    return resolve(options);
                 }
             })
-            .catch(function (err) {
-                reject(err);
+            .catch(function(ex){
+                console.warn(ex);
+                reject(ex);
             });
             return; // we should have resolved or rejected by now
         }
@@ -1334,27 +1306,21 @@ function convertObj(swagger, options, callback) {
         delete openapi.parameters;
         delete openapi.securityDefinitions;
 
-        let actions = [];
-        if (options.resolve) {
-            findExternalRefs(openapi, options, actions);
-        }
-
-        co(function* () {
-            // resolve multiple promises in parallel
-            for (let action of actions) {
-                yield action; // because we can mutate the array
-            }
+        resolver.resolve(options) // is a no-op if options.resolve is not set
+        .then(function(){
             main(openapi, options);
             if (options.direct) {
-                return resolve(options.openapi);
+                resolve(options.openapi);
             }
             else {
-                return resolve(options);
+                resolve(options);
             }
         })
-        .catch(function (err) {
-            reject(err);
+        .catch(function(ex){
+            console.warn(ex);
+            reject(ex);
         });
+
     }));
 }
 
