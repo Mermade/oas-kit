@@ -78,6 +78,7 @@ var genStack = [];
 
 var options = argv;
 options.patch = !argv.nopatch;
+options.fatal = true;
 
 function finalise(err, options) {
     if (!argv.quiet || err) {

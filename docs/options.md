@@ -12,6 +12,7 @@ encoding|String|Input|Encoding to use when reading/writing files
 expectFailure|Boolean|Input|Flag to invert the status of a validation step
 externals|[Array](externals.md)|Output|Information required to unresolve a resolved definition back into its component parts
 fail|Boolean|Input|Command-line flag used by `testRunner`
+fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
 file|String|Input|Used to pass filename back to `testRunner`
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
@@ -29,7 +30,8 @@ output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml fi
 patch|Boolean|Input|Flag to fix-up minor errors in the source definition before conversion
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
-resolve|Boolean|Input|Flag to enable resolution of external `$ref`s.
+resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
+resolver|Object|Internal|Used by the resolver to track outstanding resolutions
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Output|The source filename or url of the definition
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
