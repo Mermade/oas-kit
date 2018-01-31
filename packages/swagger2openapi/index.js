@@ -204,12 +204,15 @@ function fixupRefs(obj, key, state) {
                     let suffix = 1;
                     while (jptr.jptr(options.openapi,'#/components/'+type+'/'+prefix+suffix)) suffix++;
                     let newRef = '#/components/'+type+'/'+prefix+suffix;
+                    let refSuffix = '';
+
                     if (type === 'examples') {
                         target = { value: target };
-                        newRef += '/value';
+                        refSuffix = '/value';
                     }
+
                     jptr.jptr(options.openapi,newRef,target);
-                    obj[key] = newRef;
+                    obj[key] = newRef+refSuffix;
                 }
             }
         }
