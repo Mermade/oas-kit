@@ -33,6 +33,9 @@ function readFileAsync(filename, encoding) {
 }
 
 function resolveAllInternal(obj, context, src, parentPath, base, options) {
+
+    let attachPoint = options.externalRefs[src+parentPath].paths[0];
+
     let baseUrl = url.parse(base);
     let seen = {}; // seen is indexed by the $ref value and contains path replacements
     let changes = 1;
@@ -41,7 +44,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
         common.recurse(obj, {identityDetection:true}, function (obj, key, state) {
             if (common.isRef(obj, key)) {
                 if (obj[key].startsWith('#')) {
-                    if (!seen[obj[key]]) {
+                    if (!seen[obj[key]] && !obj.$fixed) {
                         let target = common.clone(jptr(context, obj[key]));
                         if (options.verbose>1) console.log((target === false ? red : green)+'Internal resolution', obj[key], state.depth, normal);
                         /*
@@ -61,7 +64,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                     }
                     else {
                         if (!obj.$fixed) {
-                            let newRef = (parentPath+(seen[obj[key]].replace('#/','/')));
+                            let newRef = (attachPoint+'/'+seen[obj[key]]).split('/#/').join('/');
                             state.parent[state.pkey] = { $ref: newRef, $fixed: true };
                             if (options.verbose>1) console.log('Replacing with',newRef);
                             changes++;
@@ -81,6 +84,13 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
             }
         });
     }
+
+    common.recurse(obj,{},function(obj,key,state){
+        if (common.isRef(obj, key)) {
+            if (obj.$fixed) delete obj.$fixed;
+        };
+    });
+
     if (options.verbose>1) console.log('Finished internal resolution');
     return obj;
 }
@@ -129,7 +139,7 @@ function resolveExternal(root, pointer, options, callback) {
                 return data;
             })
             .catch(function(ex){
-                if (options.verbose>1) console.warn(ex);
+                if (options.verbose) console.warn(ex);
             });
     }
     else if (u.protocol && u.protocol.startsWith('http')) {
@@ -151,13 +161,13 @@ function resolveExternal(root, pointer, options, callback) {
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
                 }
                 catch (ex) {
-                    if (options.verbose>1) console.warn(ex);
+                    if (options.verbose) console.warn(ex);
                 }
                 callback(data, target, options);
                 return data;
             })
             .catch(function (err) {
-                if (options.verbose>1) console.warn(err);
+                if (options.verbose) console.warn(err);
                 options.cache[target] = {};
                 if (options.promise && options.fatal) options.promise.reject(err);
             });
@@ -179,13 +189,13 @@ function resolveExternal(root, pointer, options, callback) {
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
                 }
                 catch (ex) {
-                    if (options.verbose>1) console.warn(ex);
+                    if (options.verbose) console.warn(ex);
                 }
                 callback(data, target, options);
                 return data;
             })
             .catch(function(err){
-                if (options.verbose>1) console.warn(err);
+                if (options.verbose) console.warn(err);
                 options.cache[target] = {};
                 if (options.promise && options.fatal) options.promise.reject(err);
             });
@@ -301,7 +311,7 @@ function findExternalRefs(options) {
                 }
             })
             .catch(function(ex){
-                if (options.verbose>1) console.warn(ex);
+                if (options.verbose) console.warn(ex);
             });
 
         let result = {options:options};
@@ -337,11 +347,11 @@ function loopReferences(options, res, rej) {
                     }
                 })
                 .catch(function (ex) {
-                    if (options.verbose>1) console.warn(ex);
+                    if (options.verbose) console.warn(ex);
                 });
         })
         .catch(function(ex){
-            if (options.verbose>1) console.warn(ex);
+            if (options.verbose) console.warn(ex);
         });
 }
 

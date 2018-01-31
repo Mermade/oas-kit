@@ -21,9 +21,13 @@ paths:
                         type: string
                         description: bla
                   database:
-                    title: Check
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        description: bla
+                    $ref: '#/components/schemas/schema1'
+components:
+  schemas:
+    schema1:
+      title: Check
+      type: object
+      properties:
+        message:
+          type: string
+          description: bla
