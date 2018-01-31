@@ -25,9 +25,4 @@ components:
               type: string
               description: bla
         database:
-          title: Check
-          type: object
-          properties:
-            message:
-              type: string
-              description: bla
+          $ref: '#/components/schemas/health/properties/default'
