@@ -20,7 +20,7 @@ function loadRules(s) {
     }
 }
 
-function lint(objectName,object,options) {
+function lint(objectName,object,key,options) {
     for (let r in rules) {
         let rule = rules[r];
         if ((rule.object[0] === '*') || (rule.object.indexOf(objectName)>=0)) {
@@ -78,6 +78,13 @@ function lint(objectName,object,options) {
                     }
                 }
             }
+            if (rule.notEndWith) {
+                let property = (rule.notEndWith.property === '$key') ? key : object[rule.notEndWith.property];
+                if (typeof object[property] === 'string') {
+                    object[property].should.not.endWith(rule.notEndWith.value);
+                }
+            }
+            // speccy defines maxLength rule
         }
     }
     delete options.lintRule;
