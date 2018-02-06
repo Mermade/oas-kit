@@ -29,6 +29,7 @@ output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml fi
 patch|Boolean|Input|Flag to fix-up minor errors in the source definition before conversion
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
+refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s.
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Output|The source filename or url of the definition

@@ -179,6 +179,9 @@ function fixupRefs(obj, key, state) {
             // fixes up direct $refs or those created by resolvers
             let target = common.clone(jptr.jptr(options.openapi,obj[key]));
             if (target === false) throwOrWarn('direct $ref not found '+obj[key],obj,options)
+            else if (options.refmap[obj[key]]) {
+                obj[key] = options.refmap[obj[key]];
+            }
             else {
                 // we use a heuristic to determine what kind of thing is being referenced
                 let oldRef = obj[key];
@@ -212,6 +215,7 @@ function fixupRefs(obj, key, state) {
                     }
 
                     jptr.jptr(options.openapi,newRef,target);
+                    options.refmap[obj[key]] = newRef+refSuffix;
                     obj[key] = newRef+refSuffix;
                 }
             }
@@ -227,6 +231,16 @@ function fixupRefs(obj, key, state) {
             keys[0] = newKey;
         }
         obj[key] = '#/components/schemas/' + keys.join('/');
+    }
+}
+
+/*
+* This has to happen as a separate pass because multiple $refs may point
+* through elements of the same path
+*/
+function dedupeRefs(openapi, options) {
+    for (let ref in options.refmap) {
+        jptr.jptr(openapi,ref,{ $ref: options.refmap[ref] });
     }
 }
 
@@ -931,7 +945,9 @@ function main(openapi, options) {
     }
 
     // fix all $refs to their new locations (and potentially new names)
+    options.refmap = {};
     common.recurse(openapi, { payload: { options: options } }, fixupRefs);
+    dedupeRefs(openapi,options);
 
     for (let p in openapi.components.parameters) {
         let sname = common.sanitise(p);
