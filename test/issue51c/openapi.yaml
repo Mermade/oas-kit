@@ -14,12 +14,7 @@ paths:
                 type: object
                 properties:
                   default:
-                    title: Check
-                    type: object
-                    properties:
-                      message:
-                        type: string
-                        description: bla
+                    $ref: '#/components/schemas/schema1'
                   database:
                     $ref: '#/components/schemas/schema1'
 components:
