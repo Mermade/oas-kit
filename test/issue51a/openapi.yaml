@@ -14,12 +14,12 @@ paths:
                 type: object
                 properties:
                   default:
-                    $ref: '#/components/schemas/schema1'
+                    $ref: '#/components/schemas/Check'
                   database:
-                    $ref: '#/components/schemas/schema1'
+                    $ref: '#/components/schemas/Check'
 components:
   schemas:
-    schema1:
+    Check:
       title: Check
       type: object
       properties:
