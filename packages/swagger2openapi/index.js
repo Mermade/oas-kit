@@ -199,6 +199,10 @@ function fixupRefs(obj, key, state) {
                 // non-body/form parameters have not moved in the overall structure (like responses)
                 // but extracting the requestBodies can cause the *number* of parameters to change
 
+                if (type === 'schemas') {
+                    fixUpSchema(target);
+                }
+
                 if (type !== 'responses') {
                     let prefix = type.substr(0,type.length-1);
                     if ((prefix === 'parameter') && target.name && (target.name === common.sanitise(target.name))) {
