@@ -148,6 +148,16 @@ function fixUpSchema(schema,options) {
     });
 }
 
+function getMiroComponentName(ref) {
+    if (ref.indexOf('#')>=0) {
+        ref = ref.split('#')[1].split('/').pop();
+    }
+    else {
+        ref = ref.split('/').pop().split('.')[0];
+    }
+    return encodeURIComponent(common.sanitise(ref));
+}
+
 function fixupRefs(obj, key, state) {
     let options = state.payload.options;
     if (common.isRef(obj,key)) {
@@ -207,8 +217,14 @@ function fixupRefs(obj, key, state) {
                     if ((prefix === 'parameter') && target.name && (target.name === common.sanitise(target.name))) {
                         prefix = encodeURIComponent(target.name);
                     }
+
                     let suffix = 1;
-                    while (jptr.jptr(options.openapi,'#/components/'+type+'/'+prefix+suffix)) suffix++;
+                    if (obj['x-miro']) {
+                        prefix = getMiroComponentName(obj['x-miro']);
+                        suffix = '';
+                    }
+
+                    while (jptr.jptr(options.openapi,'#/components/'+type+'/'+prefix+suffix)) suffix = (suffix === '' ? 2 : suffix++);
                     let newRef = '#/components/'+type+'/'+prefix+suffix;
                     let refSuffix = '';
 
@@ -224,6 +240,7 @@ function fixupRefs(obj, key, state) {
             }
         }
     }
+    delete obj['x-miro'];
     if ((key === 'x-ms-odata') && (typeof obj[key] === 'string') && (obj[key].startsWith('#/'))) {
         let keys = obj[key].replace('#/definitions/', '').replace('#/components/schemas/','').split('/');
         let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
