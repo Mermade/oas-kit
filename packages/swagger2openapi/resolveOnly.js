@@ -13,7 +13,7 @@ let argv = require('yargs')
     .alias('o','output')
     .describe('output','file to output to')
     .default('output','resolved.yaml')
-    .boolean('quiet')
+    .count('quiet')
     .alias('q','quiet')
     .describe('quiet','reduce verbosity')
     .count('verbose')
@@ -28,7 +28,7 @@ let filespec = argv._[0];
 let options = {resolve: true};
 
 options.verbose = argv.verbose;
-if (argv.quiet) options.verbose = 1;
+if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 
 options.origin = filespec;
 options.source = filespec;

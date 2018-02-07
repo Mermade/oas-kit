@@ -46,7 +46,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 if (obj[key].startsWith('#')) {
                     if (!seen[obj[key]] && !obj.$fixed) {
                         let target = common.clone(jptr(context, obj[key]));
-                        if (options.verbose>1) console.log((target === false ? red : green)+'Internal resolution', obj[key], state.depth, normal);
+                        if (options.verbose>1) console.log((target === false ? red : green)+'Internal resolution', obj[key], normal);
                         /*
                             ResolutionCase:A is where there is a local reference in an externally
                             referenced document, and we have not seen it before. The reference
@@ -78,9 +78,14 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 }
                 else if (baseUrl.protocol) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.log(red+'Rewriting external ref',obj[key],'as',newRef);
+                    if (options.verbose>1) console.log(yellow+'Rewriting external url ref',obj[key],'as',newRef,normal);
                     obj['x-miro'] = obj[key];
                     obj[key] = newRef;
+                }
+                else {
+                    let newRef = url.resolve(base,obj[key]).toString();
+                    if (options.verbose>1) console.log(yellow+'Rewriting external ref',obj[key],'as',newRef,normal);
+                    obj[key] = newRef; // no point setting x-miro here as we will rewrite or replace this ref
                 }
             }
         });
@@ -274,7 +279,7 @@ function findExternalRefs(options) {
                                     refs[ref].resolved = true;
                                 }
 
-                                let localOptions = Object.assign({}, options, { source: source,
+                                let localOptions = Object.assign({}, options, { source: '',
                                     resolver: {actions: options.resolver.actions,
                                     depth: options.resolver.actions.length-1, base: options.resolver.base } });
                                 if (options.patch && refs[ref].description && !data.description &&
