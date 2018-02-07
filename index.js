@@ -225,7 +225,10 @@ function fixupRefs(obj, key, state) {
                         suffix = '';
                     }
 
-                    while (jptr.jptr(options.openapi,'#/components/'+type+'/'+prefix+suffix)) suffix = (suffix === '' ? 2 : suffix++);
+                    while (jptr.jptr(options.openapi,'#/components/'+type+'/'+prefix+suffix)) {
+                        suffix = (suffix === '' ? 2 : ++suffix);
+                    }
+
                     let newRef = '#/components/'+type+'/'+prefix+suffix;
                     let refSuffix = '';
 
