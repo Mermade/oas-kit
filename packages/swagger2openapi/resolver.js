@@ -82,10 +82,11 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                     obj['x-miro'] = obj[key];
                     obj[key] = newRef;
                 }
-                else {
+                else if (!obj['x-miro']) {
                     let newRef = url.resolve(base,obj[key]).toString();
                     if (options.verbose>1) console.log(yellow+'Rewriting external ref',obj[key],'as',newRef,normal);
-                    obj[key] = newRef; // no point setting x-miro here as we will rewrite or replace this ref
+                    obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
+                    obj[key] = newRef;
                 }
             }
         });
