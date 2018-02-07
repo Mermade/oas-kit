@@ -65,7 +65,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                     else {
                         if (!obj.$fixed) {
                             let newRef = (attachPoint+'/'+seen[obj[key]]).split('/#/').join('/');
-                            state.parent[state.pkey] = { $ref: newRef, $fixed: true };
+                            state.parent[state.pkey] = { $ref: newRef, 'x-miro': obj[key], $fixed: true };
                             if (options.verbose>1) console.log('Replacing with',newRef);
                             changes++;
                         }
@@ -79,6 +79,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 else if (baseUrl.protocol) {
                     let newRef = url.resolve(base,obj[key]).toString();
                     if (options.verbose>1) console.log(red+'Rewriting external ref',obj[key],'as',newRef);
+                    obj['x-miro'] = obj[key];
                     obj[key] = newRef;
                 }
             }
@@ -223,6 +224,7 @@ function scanExternalRefs(options) {
                             // we've already seen it
                             let newRef = refs[$ref].resolvedAt;
                             if (options.verbose>1) console.log('Rewriting ref', $ref, newRef);
+                            obj[key]['x-miro'] = $ref;
                             obj[key].$ref = newRef; // resolutionCase:C (new string)
                         }
                         else {
@@ -289,7 +291,7 @@ function findExternalRefs(options) {
                                     // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
                                     if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
                                         if (options.verbose>1) console.log('Creating pointer to data at', ptr);
-                                        jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt }); // resolutionCase:E (new object)
+                                        jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt, 'x-miro': ref }); // resolutionCase:E (new object)
                                     }
                                     else {
                                         if (!refs[ref].resolvedAt) {
