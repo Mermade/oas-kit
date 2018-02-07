@@ -301,9 +301,11 @@ function findExternalRefs(options) {
                                         }
                                         let cdata = common.clone(data);
                                         jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
-                                        options.resolver.actions[localOptions.resolver.depth].push(function () { return scanExternalRefs(localOptions) });
-                                        options.resolver.actions[localOptions.resolver.depth].push(function () { return findExternalRefs(localOptions) });
                                     }
+                                }
+                                if (options.resolver.actions[localOptions.resolver.depth].length === 0) {
+                                    //options.resolver.actions[localOptions.resolver.depth].push(function () { return scanExternalRefs(localOptions) });
+                                    options.resolver.actions[localOptions.resolver.depth].push(function () { return findExternalRefs(localOptions) }); // findExternalRefs calls scanExternalRefs
                                 }
                             });
                         });
