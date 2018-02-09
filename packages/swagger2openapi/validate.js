@@ -780,6 +780,9 @@ function checkPathItem(pathItem, path, openapi, options) {
             }
             if (options.lint) options.linter('operation',op,o,options);
         }
+        else if (!o.startsWith('x-')) {
+            should.fail(false,true,'PathItem should not have additional property '+o);
+        }
         options.context.pop();
     }
     if (options.lint) options.linter('pathItem',pathItem,path,options);
