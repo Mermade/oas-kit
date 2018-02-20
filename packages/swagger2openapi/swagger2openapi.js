@@ -59,7 +59,7 @@ var argv = require('yargs')
 function processResult(err, options) {
     if (err) {
         delete err.options;
-        console.log(util.inspect(err));
+        console.warn(util.inspect(err));
         return process.exitCode = 1;
     }
     if (options.yaml && options.outfile && options.outfile.indexOf('.json') > 0) {
