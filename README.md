@@ -22,21 +22,21 @@ Usage:
 swagger2openapi [options] [filename|url]
 Options:
   --warnProperty    Property name to use for warning extensions
-                                             [string] [default: "x-s2o-warning"]
-  --version         Show version number                                [boolean]
-  -c, --components  output information to unresolve a definition       [boolean]
-  -d, --debug       enable debug mode, adds specification-extensions   [boolean]
-  -e, --encoding    encoding for input/output files   [string] [default: "utf8"]
-  -h, --help        Show help                                          [boolean]
-  -i, --indent      JSON indent to use, defaults to 4 spaces            [string]
-  -o, --outfile     the output file to write to                         [string]
-  -p, --patch       fix up small errors in the source definition       [boolean]
-  -r, --resolve     resolve external references                        [boolean]
-  -u, --url         url of original spec, creates x-origin entry        [string]
-  -v, --verbose     increase verbosity                                   [count]
+                                                                  [string] [default: "x-s2o-warning"]
+  --version         Show version number                                                     [boolean]
+  -c, --components  output information to unresolve a definition                            [boolean]
+  -d, --debug       enable debug mode, adds specification-extensions                        [boolean]
+  -e, --encoding    encoding for input/output files                        [string] [default: "utf8"]
+  -h, --help        Show help                                                               [boolean]
+  -i, --indent      JSON indent to use, defaults to 4 spaces                                 [string]
+  -o, --outfile     the output file to write to                                              [string]
+  -p, --patch       fix up small errors in the source definition                            [boolean]
+  -r, --resolve     resolve external references                                             [boolean]
+  -u, --url         url of original spec, creates x-origin entry                             [string]
+  -v, --verbose     increase verbosity                                                        [count]
   -w, --warnOnly    Do not throw on non-patchable errors, add warning extensions
-                                                                       [boolean]
-  -y, --yaml        read and write YAML, default JSON                  [boolean]
+                                                                                            [boolean]
+  -y, --yaml        write YAML, default JSON (overridden by --outfile filepath extension)   [boolean]
 ```
 
 or use the APIs:
