@@ -12,6 +12,8 @@
 
 Convert Swagger 2.0 definitions into OpenApi 3.0.x
 
+The online version of the converter/validator runs on a [Linode](https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa) VPS. If you are considering a hosted server, please sign up through this link so we both receive free credit.
+
 Currently tracking [v3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)
 
 **If you are using Node.js 4 - please use the --harmony flag**
