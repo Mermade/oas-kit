@@ -86,7 +86,7 @@ every item, as with some model-based parsers. The exception is internal referenc
 
 ### Schema transformations
 
-Swagger2openapi will automatically 'repair' a number of problems where non-compliant Swagger 2.0 schemas have been used. It will attempt to transform JSON schemas (used incorrectly) into OpenAPI 3.0.x Schema objects.
+swagger2openapi will automatically 'repair' a number of problems where non-compliant Swagger 2.0 schemas have been used. It will attempt to transform JSON schemas (used incorrectly) into OpenAPI 3.0.x Schema objects.
 
 ### Specification extensions
 
