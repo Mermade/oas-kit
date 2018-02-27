@@ -39,6 +39,8 @@ let validateOpenAPI3 = ajv.compile(openapi3Schema);
 
 const dummySchema = { anyOf: {} };
 const emptySchema = {};
+const urlRegexStr = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
+const urlRegex = new RegExp(urlRegexStr, 'i');
 
 function contextAppend(options, s) {
     options.context.push((options.context[options.context.length - 1] + '/' + s).split('//').join('/'));
@@ -58,6 +60,7 @@ function validateUrl(s, contextServers, context, options) {
     if (s.indexOf('://') > 0) { // FIXME HACK
         base = undefined;
     }
+    //s.should.match(urlRegex); // doesn't allow for templated urls
     var u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
     return true; // if we haven't thrown
 }
@@ -329,6 +332,7 @@ function checkExample(ex, contextServers, openapi, options) {
 
 function checkContent(content, contextServers, openapi, options) {
     contextAppend(options, 'content');
+    content.should.be.an.Object();
     for (let ct in content) {
         contextAppend(options, jptr.jpescape(ct));
         // validate ct against https://tools.ietf.org/html/rfc6838#section-4.2
@@ -369,13 +373,16 @@ function checkContent(content, contextServers, openapi, options) {
 function checkServer(server, options) {
     server.should.have.property('url');
     should.doesNotThrow(function () { validateUrl(server.url, [], 'server.url', options) },'Invalid server.url');
+    if (typeof server.description !== 'undefined') {
+        server.description.should.be.a.String();
+    }
     let srvVars = 0;
     server.url.replace(/\{(.+?)\}/g, function (match, group1) {
         srvVars++;
         server.should.have.key('variables');
         server.variables.should.have.key(group1);
     });
-    if (server.variables) {
+    if (typeof server.variables !== 'undefined') {
         contextAppend(options, 'variables');
         for (let v in server.variables) {
             contextAppend(options, v);
@@ -825,6 +832,7 @@ function validateSync(openapi, options, callback) {
     openapi.should.not.have.key('basePath');
     openapi.should.not.have.key('schemes');
     openapi.should.have.key('paths');
+    should(openapi.paths).be.an.Object();
     openapi.should.not.have.key('definitions');
     openapi.should.not.have.key('parameters');
     openapi.should.not.have.key('responses');
@@ -880,20 +888,26 @@ function validateSync(openapi, options, callback) {
     options.context.pop();
 
     var contextServers = [];
-    if (openapi.servers) {
+    if (typeof openapi.servers !== 'undefined') {
+        should(openapi.servers).be.an.Object();
         contextAppend(options, 'servers');
         checkServers(openapi.servers, options);
         options.context.pop();
         contextServers.push(openapi.servers);
     }
-    if (openapi.externalDocs) {
+    if (typeof openapi.externalDocs !== 'undefined') {
+        should(openapi.externalDocs).be.an.Object();
         contextAppend(options, 'externalDocs');
         openapi.externalDocs.should.have.key('url');
+        if (typeof openapi.externalDocs.description !== 'undefined') {
+            should(openapi.externalDocs.description).be.a.String();
+        }
         should.doesNotThrow(function () { validateUrl(openapi.externalDocs.url, contextServers, 'externalDocs', options) },'Invalid externalDocs.url');
         options.context.pop();
     }
 
-    if (openapi.tags) {
+    if (typeof openapi.tags !== 'undefined') {
+        should(openapi.tags).be.an.Array();
         contextAppend(options, 'tags');
         let tagsSeen = new Map();
         for (let tag of openapi.tags) {
