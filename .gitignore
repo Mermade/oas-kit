@@ -12,6 +12,7 @@ in/
 out/
 dev/
 t/
+.idea/
 
 test/_*/
 

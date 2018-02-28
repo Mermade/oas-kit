@@ -498,7 +498,7 @@ function checkResponse(response, contextServers, openapi, options) {
     if (typeof response.schema !== 'undefined') {
         response.schema.should.be.an.Object();
         response.schema.should.not.be.an.Array();
-        checkSchema(contentType.schema,{},'schema',openapi,options);
+        checkSchema(response.schema,{},'schema',openapi,options);
     }
     if (response.headers) {
         contextAppend(options, 'headers');
