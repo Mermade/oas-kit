@@ -502,11 +502,7 @@ function checkResponse(response, contextServers, openapi, options) {
     response.should.have.property('description');
     should(response.description).have.type('string', 'response description should be of type string');
     response.should.not.have.property('examples');
-    if (typeof response.schema !== 'undefined') {
-        response.schema.should.be.an.Object();
-        response.schema.should.not.be.an.Array();
-        checkSchema(contentType.schema,{},'schema',openapi,options);
-    }
+    response.should.not.have.property('schema');
     if (response.headers) {
         contextAppend(options, 'headers');
         for (let h in response.headers) {
