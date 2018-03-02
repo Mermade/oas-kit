@@ -811,6 +811,16 @@ function checkSecurity(security,openapi,options) {
             if (sec.type !== 'oauth2') {
                 sr[i].should.be.empty();
             }
+            else if (sr[i].length) {
+                let allScopes = {};
+                if (sec.flows.password) allScopes = Object.assign(allScopes,sec.flows.password.scopes);
+                if (sec.flows.implicit) allScopes = Object.assign(allScopes,sec.flows.implicit.scopes);
+                if (sec.flows.authorizationCode) allScopes = Object.assign(allScopes,sec.flows.authorizationCode.scopes);
+                if (sec.flows.clientCredentials) allScopes = Object.assign(allScopes,sec.flows.clientCredentials.scopes);
+                for (let scope of sr[i]) {
+                    allScopes.should.have.property(scope);
+                }
+            }
         }
     }
     if (options.lint) options.linter('security',security,'security',options);
@@ -971,6 +981,8 @@ function validateSync(openapi, options, callback) {
                 scheme.should.have.property('flows');
                 for (let f in scheme.flows) {
                     var flow = scheme.flows[f];
+                    should(['implicit','password','authorizationCode','clientCredentials'].indexOf(f)).be.greaterThan(-1,'Unknown flow type: '+f);
+
                     if ((f === 'implicit') || (f === 'authorizationCode')) {
                         flow.should.have.property('authorizationUrl');
                         should.doesNotThrow(function () { validateUrl(flow.authorizationUrl, contextServers, 'authorizationUrl', options) },'Invalid authorizationUrl');
