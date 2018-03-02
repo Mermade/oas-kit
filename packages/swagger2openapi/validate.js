@@ -87,6 +87,7 @@ function checkSubSchema(schema, parent, state) {
     if (prop) contextAppend(state.options, prop);
     if (state.options.lint) state.options.linter('schema',schema,'schema',state.options);
     schema.should.be.an.Object();
+    schema.should.not.be.an.Array();
 
     if (typeof schema.$ref !== 'undefined') {
         schema.$ref.should.be.a.String();
@@ -185,6 +186,7 @@ function checkSubSchema(schema, parent, state) {
     }
     if (schema.properties) {
         schema.properties.should.be.an.Object();
+        schema.properties.should.not.be.an.Array();
     }
     schema.should.not.have.property('patternProperties');
     /*if (schema.patternProperties) {
@@ -224,6 +226,7 @@ function checkSubSchema(schema, parent, state) {
     }
     if (schema.not) {
         schema.not.should.be.an.Object();
+        schema.oneOf.should.not.be.an.Array();
     }
     if (typeof schema.title !== 'undefined') {
         schema.title.should.be.a.String(); //?
@@ -273,6 +276,7 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.discriminator !== 'undefined') {
         schema.discriminator.should.be.an.Object();
+        schema.discriminator.should.not.be.an.Array();
         schema.discriminator.should.have.property('propertyName');
         //"To avoid redundancy, the discriminator MAY be added to a parent schema definition..."
         //if ((Object.keys(parent).length>0) && !(parent.oneOf || parent.anyOf || parent.allOf)) {
@@ -281,6 +285,7 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.xml !== 'undefined') {
         schema.xml.should.be.an.Object();
+        schema.xml.should.not.be.an.Array();
     }
     // example can be any type
 
@@ -333,6 +338,7 @@ function checkExample(ex, contextServers, openapi, options) {
 function checkContent(content, contextServers, openapi, options) {
     contextAppend(options, 'content');
     content.should.be.an.Object();
+    content.should.not.be.an.Array();
     for (let ct in content) {
         contextAppend(options, jptr.jpescape(ct));
         // validate ct against https://tools.ietf.org/html/rfc6838#section-4.2
@@ -797,6 +803,7 @@ function checkSecurity(security,openapi,options) {
     security.should.be.an.Array();
     for (let sr of security) {
         sr.should.be.an.Object();
+        sr.should.not.be.an.Array();
         for (let i in sr) {
             sr[i].should.be.an.Array();
             let sec = jptr.jptr(openapi,'#/components/securitySchemes/'+i);
@@ -983,6 +990,8 @@ function validateSync(openapi, options, callback) {
                         should.doesNotThrow(function () { validateUrl(flow.refreshUrl, contextServers, 'refreshUrl', options) },'Invalid refreshUrl');
                     }
                     flow.should.have.property('scopes');
+                    flow.scopes.should.be.an.Object();
+                    flow.scopes.should.not.be.an.Array();
                 }
             }
             else {
