@@ -7,13 +7,13 @@
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-spacing": [
-            "error",
+            "off",
             "never"
         ],
         "array-callback-return": "error",
-        "arrow-body-style": "error",
+        "arrow-body-style": "off",
         "arrow-parens": [
-            "error",
+            "off",
             "as-needed"
         ],
         "arrow-spacing": [
@@ -24,13 +24,13 @@
             }
         ],
         "block-scoped-var": "off",
-        "block-spacing": "error",
+        "block-spacing": "off",
         "brace-style": [
-            "error",
+            "off",
             "stroustrup"
         ],
         "callback-return": "off",
-        "camelcase": "error",
+        "camelcase": "off",
         "class-methods-use-this": "error",
         "comma-dangle": "error",
         "comma-spacing": "off",
@@ -48,7 +48,7 @@
         "curly": "off",
         "default-case": "error",
         "dot-location": [
-            "error",
+            "off",
             "property"
         ],
         "dot-notation": [
@@ -83,17 +83,17 @@
             "error",
             "unix"
         ],
-        "lines-around-comment": "error",
-        "lines-around-directive": "error",
+        "lines-around-comment": "off",
+        "lines-around-directive": "off",
         "max-depth": "off",
         "max-len": "off",
         "max-lines": "off",
         "max-nested-callbacks": "error",
         "max-params": "off",
         "max-statements": "off",
-        "max-statements-per-line": "error",
+        "max-statements-per-line": "off",
         "multiline-ternary": [
-            "error",
+            "off",
             "never"
         ],
         "new-parens": "error",
@@ -102,17 +102,17 @@
         "newline-per-chained-call": "off",
         "no-alert": "error",
         "no-array-constructor": "error",
-        "no-bitwise": "error",
+        "no-bitwise": "off",
         "no-caller": "error",
         "no-catch-shadow": "off",
         "no-confusing-arrow": "error",
         "no-console": "off",
-        "no-continue": "error",
+        "no-continue": "off",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "off",
         "no-empty": [
-            "error",
+            "warn",
             {
                 "allowEmptyCatch": true
             }
@@ -133,7 +133,7 @@
             "error",
             "functions"
         ],
-        "no-invalid-this": "error",
+        "no-invalid-this": "off",
         "no-iterator": "error",
         "no-label-var": "error",
         "no-labels": "error",
@@ -143,7 +143,7 @@
         "no-magic-numbers": "off",
         "no-mixed-operators": "error",
         "no-mixed-requires": "error",
-        "no-multi-spaces": "error",
+        "no-multi-spaces": "off",
         "no-multi-str": "error",
         "no-multiple-empty-lines": "error",
         "no-negated-condition": "error",
@@ -180,8 +180,8 @@
         "no-throw-literal": "error",
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
-        "no-undefined": "error",
-        "no-underscore-dangle": "error",
+        "no-undefined": "warn",
+        "no-underscore-dangle": "off",
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": [
             "error",
@@ -191,23 +191,23 @@
         ],
         "no-unsafe-negation": "error",
         "no-unused-expressions": "error",
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "no-use-before-define": "off",
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
-        "no-useless-concat": "error",
+        "no-useless-concat": "off",
         "no-useless-constructor": "error",
-        "no-useless-escape": "error",
+        "no-useless-escape": "off",
         "no-useless-rename": "error",
         "no-var": "off",
         "no-void": "error",
         "no-warning-comments": "off",
         "no-whitespace-before-property": "error",
         "no-with": "error",
-        "object-curly-newline": "error",
+        "object-curly-newline": "off",
         "object-curly-spacing": "off",
         "object-property-newline": [
-            "error",
+            "off",
             {
                 "allowMultiplePropertiesPerLine": true
             }
@@ -232,7 +232,7 @@
         "require-yield": "off",
         "rest-spread-spacing": "error",
         "semi": "off",
-        "semi-spacing": "error",
+        "semi-spacing": "off",
         "sort-imports": "error",
         "sort-keys": "off",
         "sort-vars": "error",

@@ -1,3 +1,5 @@
+'use strict';
+
 const statusCodes = [
     {
         "code": "default",
