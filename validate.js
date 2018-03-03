@@ -426,20 +426,20 @@ function checkServers(servers, options) {
 
 function checkLink(link, options) {
     link.should.be.type('object');
-    if (typeof link.operationRef !== 'undefined') {
+    if (typeof link.operationRef === 'undefined') {
+        link.should.have.property('operationId');
+    }
+    else {
         link.operationRef.should.be.type('string');
         link.should.not.have.property('operationId');
     }
-    else {
-        link.should.have.property('operationId');
+    if (typeof link.operationId === 'undefined') {
+        link.should.have.property('operationRef');
     }
-    if (typeof link.operationId !== 'undefined') {
+    else {
         link.operationId.should.be.type('string');
         link.should.not.have.property('operationRef');
         // validate operationId exists (external refs?)
-    }
-    else {
-        link.should.have.property('operationRef');
     }
     if (typeof link.parameters != 'undefined') {
         link.parameters.should.be.type('object');

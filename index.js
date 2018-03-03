@@ -12,7 +12,7 @@ const yaml = require('js-yaml');
 const jptr = require('reftools/lib/jptr.js');
 
 const common = require('./common.js');
-const walkSchema = require('./walkSchema.js').walkSchema;
+const ws = require('./walkSchema.js');
 const statusCodes = require('./statusCodes.js').statusCodes;
 
 // TODO split out into params, security etc
@@ -41,7 +41,7 @@ function throwOrWarn(message, container, options) {
     }
 }
 
-function fixUpSubSchema(schema,parent) {
+function fixUpSubSchema(schema,parent,options) {
     if (schema.discriminator && typeof schema.discriminator === 'string') {
         schema.discriminator = { propertyName: schema.discriminator };
     }
@@ -88,7 +88,6 @@ function fixUpSubSchema(schema,parent) {
                     throwOrWarn('Lost properties from oneOf',schema,options);
                 }
                 delete schema.oneOf;
-
             }
         }
         // do not else this
@@ -142,10 +141,10 @@ function fixUpSubSchemaExtensions(schema,parent) {
     }
 }
 
-function fixUpSchema(schema) {
-    walkSchema(schema,{},{},function(schema,parent,state){
+function fixUpSchema(schema,options) {
+    ws.walkSchema(schema,{},{},function(schema,parent,state){
         fixUpSubSchemaExtensions(schema,parent);
-        fixUpSubSchema(schema,parent);
+        fixUpSubSchema(schema,parent,options);
     });
 }
 
@@ -159,11 +158,11 @@ function fixupRefs(obj, key, state) {
             //only the first part of a schema component name must be sanitised
             let keys = obj[key].replace('#/definitions/', '').split('/');
             let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
-            if (!newKey) {
-                throwOrWarn('Could not resolve reference '+obj[key],obj,options);
+            if (newKey) {
+                keys[0] = newKey;
             }
             else {
-                keys[0] = newKey;
+                throwOrWarn('Could not resolve reference '+obj[key],obj,options);
             }
             obj[key] = '#/components/schemas/' + keys.join('/');
         }
@@ -200,7 +199,7 @@ function fixupRefs(obj, key, state) {
                 // but extracting the requestBodies can cause the *number* of parameters to change
 
                 if (type === 'schemas') {
-                    fixUpSchema(target);
+                    fixUpSchema(target,options);
                 }
 
                 if (type !== 'responses') {
@@ -228,11 +227,11 @@ function fixupRefs(obj, key, state) {
     if ((key === 'x-ms-odata') && (typeof obj[key] === 'string') && (obj[key].startsWith('#/'))) {
         let keys = obj[key].replace('#/definitions/', '').replace('#/components/schemas/','').split('/');
         let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
-        if (!newKey) {
-            throwOrWarn('Could not resolve reference '+obj[key],obj,options);
+        if (newKey) {
+            keys[0] = newKey;
         }
         else {
-            keys[0] = newKey;
+            throwOrWarn('Could not resolve reference '+obj[key],obj,options);
         }
         obj[key] = '#/components/schemas/' + keys.join('/');
     }
@@ -423,11 +422,11 @@ function processParameter(param, op, path, index, openapi, options) {
         }
         if (param.type && typeof param.type === 'object' && param.type.$ref) {
             // $ref anywhere sensibility
-            param.type = resolveInternal(openapi, param.type.$ref);
+            param.type = common.resolveInternal(openapi, param.type.$ref);
         }
         if (param.description && typeof param.description === 'object' && param.description.$ref) {
             // $ref anywhere sensibility
-            param.description = resolveInternal(openapi, param.description.$ref);
+            param.description = common.resolveInternal(openapi, param.description.$ref);
         }
 
         var oldCollectionFormat = param.collectionFormat;
@@ -501,7 +500,7 @@ function processParameter(param, op, path, index, openapi, options) {
         }
 
         if (param.schema) {
-            fixUpSchema(param.schema);
+            fixUpSchema(param.schema,options);
         }
 
         if (param["x-ms-skip-url-encoding"]) {
@@ -588,7 +587,7 @@ function processParameter(param, op, path, index, openapi, options) {
         for (let mimetype of consumes) {
             result.content[mimetype] = {};
             result.content[mimetype].schema = common.clone(param.schema) || {};
-            fixUpSchema(result.content[mimetype].schema);
+            fixUpSchema(result.content[mimetype].schema,options);
         }
     }
 
@@ -684,7 +683,7 @@ function processResponse(response, name, op, openapi, options) {
         }
         if (response.schema) {
 
-            fixUpSchema(response.schema);
+            fixUpSchema(response.schema,options);
 
             if (response.schema.$ref && (typeof response.schema.$ref === 'string') && response.schema.$ref.startsWith('#/responses/')) {
                 response.schema.$ref = '#/components/responses/' + common.sanitise(decodeURIComponent(response.schema.$ref.replace('#/responses/', '')));
@@ -773,7 +772,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                                 return ((e.name === param.name) && (e.in === param.in));
                             });
 
-                            if (!match && (param.in === 'formData') || (param.in === 'body') || (param.type === 'file')) {
+                            if (!match && ((param.in === 'formData') || (param.in === 'body') || (param.type === 'file'))) {
                                 processParameter(param, op, path, p, openapi, options);
                             }
                         }
@@ -904,7 +903,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
         }
         if (path.parameters) {
             for (let p2 in path.parameters) {
-                var param = path.parameters[p2];
+                let param = path.parameters[p2];
                 processParameter(param, null, path, p, openapi, options); // index here is the path string
             }
             if (!options.debug) {
@@ -945,7 +944,7 @@ function main(openapi, options) {
             delete openapi.components.schemas[s];
         }
         componentNames.schemas[s] = sname + suffix;
-        fixUpSchema(openapi.components.schemas[sname+suffix])
+        fixUpSchema(openapi.components.schemas[sname+suffix],options)
     }
 
     // fix all $refs to their new locations (and potentially new names)
