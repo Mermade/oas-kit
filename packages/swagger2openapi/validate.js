@@ -810,13 +810,15 @@ function checkSecurity(security,openapi,options) {
                 sr[i].should.be.empty();
             }
             else if (sr[i].length) {
-                let allScopes = {};
-                if (sec.flows.password) allScopes = Object.assign(allScopes,sec.flows.password.scopes);
-                if (sec.flows.implicit) allScopes = Object.assign(allScopes,sec.flows.implicit.scopes);
-                if (sec.flows.authorizationCode) allScopes = Object.assign(allScopes,sec.flows.authorizationCode.scopes);
-                if (sec.flows.clientCredentials) allScopes = Object.assign(allScopes,sec.flows.clientCredentials.scopes);
+                if (!options.allScopes[i]) {
+                    options.allScopes[i] = {};
+                    if (sec.flows.password) Object.assign(options.allScopes[i],sec.flows.password.scopes);
+                    if (sec.flows.implicit) Object.assign(options.allScopes[i],sec.flows.implicit.scopes);
+                    if (sec.flows.authorizationCode) Object.assign(options.allScopes[i],sec.flows.authorizationCode.scopes);
+                    if (sec.flows.clientCredentials) Object.assign(options.allScopes[i],sec.flows.clientCredentials.scopes);
+                }
                 for (let scope of sr[i]) {
-                    allScopes.should.have.property(scope);
+                    options.allScopes[i].should.have.property(scope);
                 }
             }
         }
@@ -1228,6 +1230,7 @@ function setupOptions(options,openapi) {
     options.context = [ '#/' ];
     options.warnings = [];
     options.operationIds = [];
+    options.allScopes = {};
     options.openapi = openapi;
     if (options.lint && !options.linter) options.linter = linter.lint;
     if (!options.cache) options.cache = {};
