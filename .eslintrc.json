@@ -63,7 +63,7 @@
         "func-name-matching": "off",
         "func-names": "off",
         "func-style": [
-            "error",
+            "off",
             "declaration"
         ],
         "generator-star-spacing": "off",
@@ -230,7 +230,7 @@
         "radix": "error",
         "require-jsdoc": "off",
         "require-yield": "off",
-        "rest-spread-spacing": "error",
+        "rest-spread-spacing": "off",
         "semi": "off",
         "semi-spacing": "off",
         "sort-imports": "error",

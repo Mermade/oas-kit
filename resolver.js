@@ -53,13 +53,13 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                             is replaced by a copy of the data pointed to, which may be outside this fragment
                             but within the context of the external document
                         */
-                        if (target !== false) {
+                        if (target === false) {
+                            state.parent[state.pkey] = {}; /* case:A(2) where the resolution fails */
+                        }
+                        else {
                             changes++;
                             state.parent[state.pkey] = target;
                             seen[obj[key]] = state.path.replace('/%24ref','');
-                        }
-                        else {
-                            state.parent[state.pkey] = {}; /* case:A(2) where the resolution fails */
                         }
                     }
                     else {
@@ -95,7 +95,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
     common.recurse(obj,{},function(obj,key,state){
         if (common.isRef(obj, key)) {
             if (obj.$fixed) delete obj.$fixed;
-        };
+        }
     });
 
     if (options.verbose>1) console.log('Finished internal resolution');
@@ -300,12 +300,12 @@ function findExternalRefs(options) {
                                         jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt, 'x-miro': ref }); // resolutionCase:E (new object)
                                     }
                                     else {
-                                        if (!refs[ref].resolvedAt) {
-                                            refs[ref].resolvedAt = ptr;
-                                            if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
+                                        if (refs[ref].resolvedAt) {
+                                            if (options.verbose>1) console.log('Avoiding circular reference');
                                         }
                                         else {
-                                            if (options.verbose>1) console.log('Avoiding circular reference');
+                                            refs[ref].resolvedAt = ptr;
+                                            if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
                                         }
                                         let cdata = common.clone(data);
                                         jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
