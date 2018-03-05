@@ -19,7 +19,7 @@ const statusCodes = require('./statusCodes.js').statusCodes;
 // TODO handle specification-extensions with plugins?
 
 const targetVersion = '3.0.0';
-var componentNames; // initialised in main
+let componentNames; // initialised in main
 
 function throwError(message, options) {
     let err = new Error(message);
@@ -375,8 +375,8 @@ function processParameter(param, op, path, index, openapi, options) {
     if (param.$ref && (typeof param.$ref === 'string')) {
         // if we still have a ref here, it must be an internal one
         fixParamRef(param, options);
-        var ptr = decodeURIComponent(param.$ref.replace('#/components/parameters/', ''));
-        var rbody = false;
+        let ptr = decodeURIComponent(param.$ref.replace('#/components/parameters/', ''));
+        let rbody = false;
         let target = openapi.components.parameters[ptr]; // resolves a $ref, must have been sanitised already
 
         if (((!target) || (target["x-s2o-delete"])) && param.$ref.startsWith('#/')) {
@@ -429,7 +429,7 @@ function processParameter(param, op, path, index, openapi, options) {
             param.description = common.resolveInternal(openapi, param.description.$ref);
         }
 
-        var oldCollectionFormat = param.collectionFormat;
+        let oldCollectionFormat = param.collectionFormat;
         if (param.collectionFormat) {
             if (param.type != 'array') {
                 if (options.patch) {
@@ -515,7 +515,7 @@ function processParameter(param, op, path, index, openapi, options) {
         // convert to requestBody component
         singularRequestBody = false;
         result.content = {};
-        var contentType = 'application/x-www-form-urlencoded';
+        let contentType = 'application/x-www-form-urlencoded';
         if ((consumes.length) && (consumes.indexOf('multipart/form-data') >= 0)) {
             contentType = 'multipart/form-data';
         }
@@ -532,7 +532,7 @@ function processParameter(param, op, path, index, openapi, options) {
             result.content[contentType].schema.type = 'object';
             result.content[contentType].schema.properties = {};
             result.content[contentType].schema.properties[param.name] = {};
-            var schema = result.content[contentType].schema;
+            let schema = result.content[contentType].schema;
             let target = result.content[contentType].schema.properties[param.name];
             if (param.description) target.description = param.description;
             if (param.example) target.example = param.example;
@@ -739,7 +739,7 @@ function processResponse(response, name, op, openapi, options) {
 
 function processPaths(container, containerName, options, requestBodyCache, openapi) {
     for (let p in container) {
-        var path = container[p];
+        let path = container[p];
         // path.$ref is external only
         if ((path['x-trace']) && (typeof path['x-trace'] === 'object')) {
             path.trace = path['x-trace'];
@@ -759,7 +759,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
         }
         for (let method in path) {
             if ((common.httpVerbs.indexOf(method) >= 0) || (method === 'x-amazon-apigateway-any-method')) {
-                var op = path[method];
+                let op = path[method];
 
                 if (op.parameters && Array.isArray(op.parameters)) {
                     if (path.parameters) {
@@ -768,7 +768,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                                 fixParamRef(param, options);
                                 param = common.resolveInternal(openapi, param.$ref);
                             }
-                            var match = op.parameters.find(function (e, i, a) {
+                            let match = op.parameters.find(function (e, i, a) {
                                 return ((e.name === param.name) && (e.in === param.in));
                             });
 
@@ -791,12 +791,12 @@ function processPaths(container, containerName, options, requestBodyCache, opena
 
                 // responses
                 if (!op.responses) {
-                    var defaultResp = {};
+                    let defaultResp = {};
                     defaultResp.description = 'Default response';
                     op.responses = { default: defaultResp };
                 }
                 for (let r in op.responses) {
-                    var response = op.responses[r];
+                    let response = op.responses[r];
                     processResponse(response, r, op, openapi, options);
                 }
 
@@ -835,7 +835,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         if (example.parameters) {
                             for (let p in example.parameters) {
                                 let value = example.parameters[p];
-                                for (var param of (op.parameters||[]).concat(path.parameters||[])) {
+                                for (let param of (op.parameters||[]).concat(path.parameters||[])) {
                                     if (param.$ref) {
                                         param = jptr.jptr(openapi,param.$ref);
                                     }
@@ -883,13 +883,13 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                 if (op.parameters && op.parameters.length === 0) delete op.parameters;
 
                 if (op.requestBody) {
-                    var effectiveOperationId = op.operationId ? common.sanitiseAll(op.operationId) : common.sanitiseAll(method + p).toCamelCase();
-                    var rbName = common.sanitise(op.requestBody['x-s2o-name'] || effectiveOperationId || '');
+                    let effectiveOperationId = op.operationId ? common.sanitiseAll(op.operationId) : common.sanitiseAll(method + p).toCamelCase();
+                    let rbName = common.sanitise(op.requestBody['x-s2o-name'] || effectiveOperationId || '');
                     delete op.requestBody['x-s2o-name'];
-                    var rbStr = JSON.stringify(op.requestBody);
-                    var rbHash = common.hash(rbStr);
+                    let rbStr = JSON.stringify(op.requestBody);
+                    let rbHash = common.hash(rbStr);
                     if (!requestBodyCache[rbHash]) {
-                        var entry = {};
+                        let entry = {};
                         entry.name = rbName;
                         entry.body = op.requestBody;
                         entry.refs = [];
@@ -915,7 +915,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
 
 function main(openapi, options) {
 
-    var requestBodyCache = {};
+    let requestBodyCache = {};
     componentNames = { schemas: {} };
 
     if (openapi.security) processSecurity(openapi.security);
@@ -974,7 +974,7 @@ function main(openapi, options) {
             openapi.components.responses[sname] = openapi.components.responses[r];
             delete openapi.components.responses[r];
         }
-        var response = openapi.components.responses[sname];
+        let response = openapi.components.responses[sname];
         processResponse(response, sname, null, openapi, options);
         if (response.headers) {
             for (let h in response.headers) {
@@ -1026,16 +1026,16 @@ function main(openapi, options) {
     delete openapi.produces;
     delete openapi.schemes;
 
-    var rbNamesGenerated = [];
+    let rbNamesGenerated = [];
 
     openapi.components.requestBodies = {}; // for now as we've dereffed them
 
-    var counter = 1;
+    let counter = 1;
     for (let e in requestBodyCache) {
         let entry = requestBodyCache[e];
         if (entry.refs.length > 1) {
             // create a shared requestBody
-            var suffix = '';
+            let suffix = '';
             if (!entry.name) {
                 entry.name = 'requestBody';
                 // @ts-ignore
@@ -1049,7 +1049,7 @@ function main(openapi, options) {
             rbNamesGenerated.push(entry.name);
             openapi.components.requestBodies[entry.name] = common.clone(entry.body);
             for (let r in entry.refs) {
-                var ref = {};
+                let ref = {};
                 ref.$ref = '#/components/requestBodies/' + entry.name;
                 jptr.jptr(openapi,entry.refs[r],ref);
             }
@@ -1231,7 +1231,7 @@ function convertObj(swagger, options, callback) {
             return reject(new Error('Unsupported swagger/OpenAPI version: ' + (swagger.openapi ? swagger.openapi : swagger.swagger)));
         }
 
-        var openapi = options.openapi = {};
+        let openapi = options.openapi = {};
         openapi.openapi = targetVersion; // semver
 
         if (options.origin) {

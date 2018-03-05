@@ -11,7 +11,7 @@ const yaml = require('js-yaml');
 const converter = require('./index.js');
 
 // @ts-ignore
-var argv = require('yargs')
+let argv = require('yargs')
     .boolean('components')
     .alias('c', 'components')
     .describe('components', 'output information to unresolve a definition')
@@ -69,7 +69,7 @@ function processResult(err, options) {
         options.yaml = true;
     }
 
-    var s;
+    let s;
     if (options.yaml) {
         s = options.debug ? yaml.dump(options.openapi) : yaml.safeDump(options.openapi);
     }
@@ -90,7 +90,7 @@ function processResult(err, options) {
 }
 
 argv.source = argv._[0];
-var u = url.parse(argv.source);
+let u = url.parse(argv.source);
 if (u.protocol && u.protocol.startsWith('http')) {
     converter.convertUrl(argv.source, argv, processResult);
 }

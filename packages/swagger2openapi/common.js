@@ -69,8 +69,8 @@ function resolveAllInternal(obj,context,options) {
 }
 
 function resolveExternal(root, pointer, options, callback) {
-    var u = url.parse(options.source);
-    var base = options.source.split('\\').join('/').split('/');
+    let u = url.parse(options.source);
+    let base = options.source.split('\\').join('/').split('/');
     let doc = base.pop(); // drop the actual filename
     if (!doc) base.pop(); // in case it ended with a /
     let fragment = '';
@@ -197,7 +197,7 @@ const httpVerbs = [
 
 function sanitise(s) {
     s = s.replace('[]','Array');
-    var components = s.split('/');
+    let components = s.split('/');
     components[0] = components[0].replace(/[^A-Za-z0-9_\-\.]+|\s+/gm, '_');
     return components.join('/');
 }

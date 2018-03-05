@@ -13,9 +13,9 @@ const common = require('./common.js');
 const swagger2openapi = require('./index.js');
 const validator = require('./validate.js');
 
-var globalExpectFailure = false;
+let globalExpectFailure = false;
 
-var argv = require('yargs')
+let argv = require('yargs')
     .usage('testRunner [options] [{path-to-specs}...]')
     .string('encoding')
     .alias('e', 'encoding')
@@ -69,14 +69,14 @@ const green = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[32m';
 const yellow = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[33;1m';
 const normal = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[0m';
 
-var pass = 0;
-var fail = 0;
-var failures = [];
-var warnings = [];
+let pass = 0;
+let fail = 0;
+let failures = [];
+let warnings = [];
 
-var genStack = [];
+let genStack = [];
 
-var options = argv;
+let options = argv;
 options.patch = !argv.nopatch;
 
 function finalise(err, options) {
@@ -94,16 +94,16 @@ function finalise(err, options) {
         options.valid = !!options.expectFailure;
     }
     if (options.warnings) {
-        for (var warning of options.warnings) {
+        for (let warning of options.warnings) {
             warnings.push(options.file + ' ' + warning);
         }
     }
 
-    var src = options.original;
-    var result = options.valid;
+    let src = options.original;
+    let result = options.valid;
 
     if (!argv.quiet) {
-        var colour = ((options.expectFailure ? !result : result) ? green : red);
+        let colour = ((options.expectFailure ? !result : result) ? green : red);
         if (src && src.info) {
             console.log(colour + '  %s %s', src.info.title, src.info.version);
             if (src["x-testcase"]) console.log(' ',src["x-testcase"]);
@@ -127,7 +127,7 @@ function finalise(err, options) {
 }
 
 function handleResult(err, options) {
-    var result = false;
+    let result = false;
     if (err) {
         options = err.options || { file: 'unknown', src: { info: { version: '', title: '' } } };
         options.context = [];
@@ -138,7 +138,7 @@ function handleResult(err, options) {
     else {
         result = options.openapi;
     }
-    var resultStr = JSON.stringify(result);
+    let resultStr = JSON.stringify(result);
 
     if (typeof result !== 'boolean') try {
         if (!options.yaml) {
@@ -163,24 +163,24 @@ function handleResult(err, options) {
 
 function genStackNext() {
     if (!genStack.length) return false;
-    var gen = genStack.shift();
+    let gen = genStack.shift();
     gen.next();
     return true;
 }
 
 function* check(file, force, expectFailure) {
-    var result = false;
+    let result = false;
     options.context = [];
     options.expectFailure = expectFailure;
     options.file = file;
-    var components = file.split(path.sep);
-    var name = components[components.length - 1];
+    let components = file.split(path.sep);
+    let name = components[components.length - 1];
+    let src;
 
     if ((name.indexOf('.yaml') >= 0) || (name.indexOf('.json') >= 0) || force) {
 
         if (!file.startsWith('http')) {
-            var srcStr = fs.readFileSync(path.resolve(file), options.encoding);
-            var src;
+            let srcStr = fs.readFileSync(path.resolve(file), options.encoding);
             try {
                 src = JSON.parse(srcStr);
             }
@@ -189,7 +189,7 @@ function* check(file, force, expectFailure) {
                     src = yaml.safeLoad(srcStr, { schema: yaml.JSON_SCHEMA, json: true });
                 }
                 catch (ex) {
-                    var warning = 'Could not parse file ' + file + '\n' + ex.message;
+                    let warning = 'Could not parse file ' + file + '\n' + ex.message;
                     console.log(red + warning);
                     warnings.push(warning);
                 }
@@ -256,8 +256,8 @@ function processPathSpec(pathspec, expectFailure) {
     globalExpectFailure = expectFailure;
     if (pathspec.startsWith('@')) {
         pathspec = pathspec.substr(1, pathspec.length - 1);
-        var list = fs.readFileSync(pathspec, 'utf8').split('\r').join('').split('\n');
-        for (var file of list) {
+        let list = fs.readFileSync(pathspec, 'utf8').split('\r').join('').split('\n');
+        for (let file of list) {
             genStack.push(check(file, false, expectFailure));
         }
         genStackNext();
@@ -276,7 +276,7 @@ function processPathSpec(pathspec, expectFailure) {
         })
         .then(files => {
             files = files.sort();
-            for (var file of files) {
+            for (let file of files) {
                 genStack.push(check(file, false, expectFailure));
             }
             genStackNext();
@@ -308,14 +308,14 @@ process.on('exit', function () {
     if (warnings.length) {
         warnings.sort();
         console.log(normal + '\nWarnings:' + yellow);
-        for (var w in warnings) {
+        for (let w in warnings) {
             console.log(warnings[w]);
         }
     }
     if (failures.length) {
         failures.sort();
         console.log(normal + '\nFailures:' + red);
-        for (var f in failures) {
+        for (let f in failures) {
             console.log(failures[f]);
         }
     }

@@ -9,7 +9,7 @@ const util = require('util');
 const yaml = require('js-yaml');
 const should = require('should');
 const co = require('co');
-var ajv = require('ajv')({
+let ajv = require('ajv')({
     allErrors: true,
     verbose: true,
     jsonPointers: true,
@@ -18,11 +18,11 @@ var ajv = require('ajv')({
 });
 //meta: false, // optional, to prevent adding draft-06 meta-schema
 
-var ajvFormats = require('ajv/lib/compile/formats.js');
+let ajvFormats = require('ajv/lib/compile/formats.js');
 ajv.addFormat('uriref', ajvFormats.full['uri-reference']);
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema'; // optional, using unversioned URI is out of spec
-var metaSchema = require('ajv/lib/refs/json-schema-v5.json');
+let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
 ajv.addMetaSchema(metaSchema);
 ajv._opts.defaultMeta = metaSchema.id;
 
@@ -50,7 +50,7 @@ function validateUrl(s, contextServers, context, options) {
     s.should.be.a.String();
     s.should.not.be.Null();
     if (!options.laxurls) s.should.not.be.exactly('', 'Invalid empty URL ' + context);
-    var base = options.origin || 'http://localhost/';
+    let base = options.origin || 'http://localhost/';
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
         if (servers.length) {
@@ -61,7 +61,7 @@ function validateUrl(s, contextServers, context, options) {
         base = undefined;
     }
     //s.should.match(urlRegex); // doesn't allow for templated urls
-    var u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
+    let u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
     return true; // if we haven't thrown
 }
 
@@ -75,7 +75,7 @@ function validateHeaderName(name) {
 
 function validateSchema(schema, openapi, options) {
     validateMetaSchema(schema);
-    var errors = validateSchema.errors;
+    let errors = validateSchema.errors;
     if (errors && errors.length) {
         throw (new Error('Schema invalid: ' + util.inspect(errors)));
     }
@@ -343,13 +343,12 @@ function checkContent(content, contextServers, openapi, options) {
         contextAppend(options, jptr.jpescape(ct));
         // validate ct against https://tools.ietf.org/html/rfc6838#section-4.2
         should(/[a-zA-Z0-9!#$%^&\*_\-\+{}\|'.`~]+\/[a-zA-Z0-9!#$%^&\*_\-\+{}\|'.`~]+/.test(ct)).be.exactly(true,'media-type should match RFC6838 format'); // this is a SHOULD not MUST
-        var contentType = content[ct];
+        let contentType = content[ct];
         should(contentType).be.an.Object();
         should(contentType).not.be.an.Array();
+
         if (typeof contentType.schema !== 'undefined') {
-            contentType.schema.should.be.an.Object();
-            contentType.schema.should.not.be.an.Array();
-            checkSchema(contentType.schema,{},'schema',openapi,options);
+            checkSchema(contentType.schema,emptySchema,'schema',openapi,options);
         }
         if (contentType.example) {
             contentType.should.not.have.property('examples');
@@ -370,7 +369,6 @@ function checkContent(content, contextServers, openapi, options) {
             }
             options.context.pop();
         }
-        if (typeof contentType.schema !== 'undefined') checkSchema(contentType.schema, emptySchema, 'schema', openapi, options);
         options.context.pop();
     }
     options.context.pop();
@@ -456,7 +454,7 @@ function checkLink(link, options) {
 
 function checkHeader(header, contextServers, openapi, options) {
     if (header.$ref) {
-        var ref = header.$ref;
+        let ref = header.$ref;
         should(header.$ref).be.type('string');
         if (options.lint) options.linter('reference',header,'$ref',options);
         header = common.resolveInternal(openapi, ref);
@@ -499,7 +497,7 @@ function checkHeader(header, contextServers, openapi, options) {
 
 function checkResponse(response, contextServers, openapi, options) {
     if (response.$ref) {
-        var ref = response.$ref;
+        let ref = response.$ref;
         should(response.$ref).be.type('string');
         if (options.lint) options.linter('reference',response,'$ref',options);
         response = common.resolveInternal(openapi, ref);
@@ -541,7 +539,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     if (param.$ref) {
         should(param.$ref).be.type('string');
         if (options.lint) options.linter('reference',param,'$ref',options);
-        var ref = param.$ref;
+        let ref = param.$ref;
         param = common.resolveInternal(openapi, ref);
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
@@ -638,7 +636,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
 
 function checkPathItem(pathItem, path, openapi, options) {
 
-    var contextServers = [];
+    let contextServers = [];
     contextServers.push(openapi.servers);
     if (pathItem.servers) contextServers.push(pathItem.servers);
 
@@ -658,7 +656,7 @@ function checkPathItem(pathItem, path, openapi, options) {
 
     for (let o in pathItem) {
         contextAppend(options, o);
-        var op = pathItem[o];
+        let op = pathItem[o];
         if (o === '$ref') {
             should(op).be.ok();
             op.should.have.type('string');
@@ -723,7 +721,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             for (let r in op.responses) {
                 if (!r.startsWith('x-')) {
                     contextAppend(options, r);
-                    var response = op.responses[r];
+                    let response = op.responses[r];
                     checkResponse(response, contextServers, openapi, options);
                     options.context.pop();
                 }
@@ -829,6 +827,7 @@ function checkSecurity(security,openapi,options) {
 
 function validateSync(openapi, options, callback) {
     setupOptions(options,openapi);
+    let contextServers = [];
 
     if (options.jsonschema) {
         let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
@@ -865,6 +864,13 @@ function validateSync(openapi, options, callback) {
     should(openapi.info.title).be.type('string', 'title should be of type string');
     openapi.info.should.have.key('version');
     should(openapi.info.version).be.type('string', 'version should be of type string');
+    if (typeof openapi.servers !== 'undefined') {
+        should(openapi.servers).be.an.Object();
+        contextAppend(options, 'servers');
+        checkServers(openapi.servers, options);
+        options.context.pop();
+        contextServers.push(openapi.servers);
+    }
     if (openapi.info.license) {
         contextAppend(options, 'license');
         openapi.info.license.should.have.key('name');
@@ -900,14 +906,6 @@ function validateSync(openapi, options, callback) {
     if (options.lint) options.linter('info',openapi.info,'info',options);
     options.context.pop();
 
-    var contextServers = [];
-    if (typeof openapi.servers !== 'undefined') {
-        should(openapi.servers).be.an.Object();
-        contextAppend(options, 'servers');
-        checkServers(openapi.servers, options);
-        options.context.pop();
-        contextServers.push(openapi.servers);
-    }
     if (typeof openapi.externalDocs !== 'undefined') {
         should(openapi.externalDocs).be.an.Object();
         contextAppend(options, 'externalDocs');
@@ -949,7 +947,7 @@ function validateSync(openapi, options, callback) {
         for (let s in openapi.components.securitySchemes) {
             options.context.push('#/components/securitySchemes/' + s);
             validateComponentName(s).should.be.equal(true, 'component name invalid');
-            var scheme = openapi.components.securitySchemes[s];
+            let scheme = openapi.components.securitySchemes[s];
             scheme.should.have.property('type');
             scheme.type.should.have.type('string');
             scheme.type.should.not.be.exactly('basic', 'Security scheme basic should be http with scheme basic');
@@ -980,7 +978,7 @@ function validateSync(openapi, options, callback) {
                 scheme.should.not.have.property('flow');
                 scheme.should.have.property('flows');
                 for (let f in scheme.flows) {
-                    var flow = scheme.flows[f];
+                    let flow = scheme.flows[f];
                     should(['implicit','password','authorizationCode','clientCredentials'].indexOf(f)).be.greaterThan(-1,'Unknown flow type: '+f);
 
                     if ((f === 'implicit') || (f === 'authorizationCode')) {
@@ -1024,7 +1022,7 @@ function validateSync(openapi, options, callback) {
         if (common.isRef(obj,key)) {
             options.context.push(state.path);
             obj[key].should.not.startWith('#/definitions/');
-            var refUrl = url.parse(obj[key]);
+            let refUrl = url.parse(obj[key]);
             if (!refUrl.protocol && !refUrl.path) {
                 should(obj[key]+'/%24ref').not.be.equal(state.path,'Circular reference');
                 should(jptr.jptr(openapi,obj[key])).not.be.exactly(false, 'Cannot resolve reference: ' + obj[key]);
@@ -1199,7 +1197,7 @@ function validateSync(openapi, options, callback) {
     }
 
     validateOpenAPI3(openapi);
-    var errors = validateOpenAPI3.errors;
+    let errors = validateOpenAPI3.errors;
     if (errors && errors.length) {
         throw (new Error('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
     }
@@ -1238,13 +1236,13 @@ function setupOptions(options,openapi) {
 function validate(openapi, options, callback) {
     setupOptions(options,openapi);
 
-    var actions = [];
+    let actions = [];
     if (options.resolve) {
         findExternalRefs(openapi, options, actions);
     }
 
     co(function* () {
-        for (var promise of actions) {
+        for (let promise of actions) {
             yield promise; // because we mutate the array
         }
         options.context = [];
