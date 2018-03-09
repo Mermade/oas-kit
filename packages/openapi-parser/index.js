@@ -1229,7 +1229,7 @@ function validate(openapi, options, callback) {
 
     let actions = [];
 
-    resolver.resolve(options)
+    resolver.optionalResolve(options)
     .then(function(){
         options.context = [];
         validateSync(openapi, options, callback);

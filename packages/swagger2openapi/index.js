@@ -1209,7 +1209,7 @@ function convertObj(swagger, options, callback) {
             fixInfo(options.openapi, options, reject);
             fixPaths(options.openapi, options, reject);
 
-            resolver.resolve(options) // is a no-op if options.resolve is not set
+            resolver.optionalResolve(options) // is a no-op if options.resolve is not set
             .then(function(){
                 if (options.direct) {
                     return resolve(options.openapi);
@@ -1331,7 +1331,7 @@ function convertObj(swagger, options, callback) {
         delete openapi.parameters;
         delete openapi.securityDefinitions;
 
-        resolver.resolve(options) // is a no-op if options.resolve is not set
+        resolver.optionalResolve(options) // is a no-op if options.resolve is not set
         .then(function(){
             main(openapi, options);
             if (options.direct) {

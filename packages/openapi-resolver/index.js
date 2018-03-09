@@ -362,11 +362,20 @@ function loopReferences(options, res, rej) {
         });
 }
 
-function resolve(options) {
+function setupOptions(options) {
+    if (!options.cache) options.cache = [];
+    if (!options.externals) options.externals = {};
+    if (!options.externalRefs) options.externalRefs = [];
+    options.rewriteRefs = true;
     options.resolver = {};
     options.resolver.depth = 0;
     options.resolver.base = options.source;
     options.resolver.actions = [[]];
+}
+
+/** compatibility function for swagger2openapi */
+function optionalResolve(options) {
+    setupOptions(options);
     return new Promise(function (res, rej) {
         if (options.resolve)
             loopReferences(options, res, rej)
@@ -375,7 +384,19 @@ function resolve(options) {
     });
 }
 
+function resolve(openapi,source,options) {
+    if (!options) options = {};
+    options.openapi = openapi;
+    options.source = source;
+    options.resolve = true;
+    setupOptions(options);
+    return new Promise(function (res, rej) {
+        loopReferences(options, res, rej)
+    });
+}
+
 module.exports = {
+    optionalResolve: optionalResolve,
     resolve: resolve
 };
 
