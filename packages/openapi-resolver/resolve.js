@@ -8,7 +8,7 @@ const util = require('util');
 const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 
-const resolver = require('./resolver.js');
+const resolver = require('./index.js');
 
 let argv = require('yargs')
     .string('output')
@@ -77,5 +77,4 @@ else {
 
 process.on('exit',function(){
     //console.log(util.inspect(options.openapi,{depth:null}));
-    console.log(options.status);
 });

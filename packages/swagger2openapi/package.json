@@ -30,10 +30,11 @@
   "dependencies": {
     "ajv": "^5.0.1",
     "call-me-maybe": "^1.0.1",
-    "co": "^4.6.0",
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",
     "node-readfiles": "^0.2.0",
+    "openapi-resolver": "^1.0.0",
+    "openapi-walk-schema": "^1.0.0",
     "reftools": "0.0.20",
     "should": "^13.0.1",
     "yargs": "^11.0.0"

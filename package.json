@@ -2,5 +2,8 @@
 	"devDependencies": {
 		"lerna": "^3.0.0-beta.1"
 	},
-	"name": "openapi-kit"
+	"name": "openapi-kit",
+	"dependencies": {
+		"js-yaml": "^3.11.0"
+	}
 }

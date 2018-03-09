@@ -1,0 +1,18 @@
+{
+  "name": "openapi-walk-schema",
+  "version": "1.0.0",
+  "description": "Library to walk OAS 3 schema objects and call a callback",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "oas",
+    "schema",
+    "json-schema"
+  ],
+  "author": "Mike Ralphson",
+  "license": "BSD-3-Clause"
+}

@@ -10,9 +10,10 @@ const fetch = require('node-fetch');
 const yaml = require('js-yaml');
 const jptr = require('reftools/lib/jptr.js');
 
+const resolver = require('openapi-resolver');
+const ws = require('openapi-walk-schema');
+
 const common = require('./common.js');
-const resolver = require('./resolver.js');
-const ws = require('./walkSchema.js');
 const statusCodes = require('./statusCodes.js').statusCodes;
 
 // TODO split out into params, security etc

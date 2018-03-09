@@ -1,7 +1,5 @@
 'use strict';
 
-const util = require('util');
-
 function getDefaultState() {
     return { depth: 0, seen: new WeakMap(), top: true, combine: false };
 }
