@@ -9,8 +9,9 @@ const fetch = require('node-fetch');
 const yaml = require('js-yaml');
 
 const jptr = require('reftools/lib/jptr.js').jptr;
-
-const common = require('./common.js');
+const recurse = require('reftools/lib/recurse.js').recurse;
+const clone = require('reftools/lib/clone.js').clone;
+const isRef = require('reftools/lib/isref.js').isRef;
 
 const red = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[31m';
 const green = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[32m';
@@ -41,11 +42,11 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
     let changes = 1;
     while (changes) {
         changes = 0;
-        common.recurse(obj, {identityDetection:true}, function (obj, key, state) {
-            if (common.isRef(obj, key)) {
+        recurse(obj, {identityDetection:true}, function (obj, key, state) {
+            if (isRef(obj, key)) {
                 if (obj[key].startsWith('#')) {
                     if (!seen[obj[key]] && !obj.$fixed) {
-                        let target = common.clone(jptr(context, obj[key]));
+                        let target = clone(jptr(context, obj[key]));
                         if (options.verbose>1) console.log((target === false ? red : green)+'Internal resolution', obj[key], normal);
                         /*
                             ResolutionCase:A is where there is a local reference in an externally
@@ -92,8 +93,8 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
         });
     }
 
-    common.recurse(obj,{},function(obj,key,state){
-        if (common.isRef(obj, key)) {
+    recurse(obj,{},function(obj,key,state){
+        if (isRef(obj, key)) {
             if (obj.$fixed) delete obj.$fixed;
         }
     });
@@ -126,14 +127,14 @@ function resolveExternal(root, pointer, options, callback) {
             resolutionSource:A this is where we have cached the externally-referenced document from a
             file, http or custom handler
         */
-        let context = common.clone(options.cache[target]);
+        let context = clone(options.cache[target]);
         let data = context;
         if (fragment) {
             data = jptr(data, fragment);
             if (data === false) data = {}; // case:A(2) where the resolution fails
         }
         data = resolveAllInternal(data, context, pointer, fragment, target, options);
-        callback(common.clone(data), target, options);
+        callback(clone(data), target, options);
         return Promise.resolve(data);
     }
 
@@ -159,7 +160,7 @@ function resolveExternal(root, pointer, options, callback) {
                 try {
                     let context = yaml.safeLoad(data, { json: true });
                     data = context;
-                    options.cache[target] = common.clone(data);
+                    options.cache[target] = clone(data);
                     /* resolutionSource:B, from the network, data is fresh, but we clone it into the cache */
                     if (fragment) {
                         data = jptr(data, fragment);
@@ -188,7 +189,7 @@ function resolveExternal(root, pointer, options, callback) {
                     /*
                         resolutionSource:C from a file, data is fresh but we clone it into the cache
                     */
-                    options.cache[target] = common.clone(data);
+                    options.cache[target] = clone(data);
                     if (fragment) {
                         data = jptr(data, fragment);
                         if (data === false) data = {}; /* case:C(2) where the resolution fails */
@@ -218,8 +219,8 @@ function scanExternalRefs(options) {
             return res(refs);
         }
 
-        common.recurse(options.openapi, {identityDetection: true}, function (obj, key, state) {
-            if (obj[key] && common.isRef(obj[key],'$ref')) {
+        recurse(options.openapi, {identityDetection: true}, function (obj, key, state) {
+            if (obj[key] && isRef(obj[key],'$ref')) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) {
                     if (!refs[$ref]) {
@@ -234,7 +235,7 @@ function scanExternalRefs(options) {
                             obj[key].$ref = newRef; // resolutionCase:C (new string)
                         }
                         else {
-                            obj[key] = common.clone(refs[$ref].data); // resolutionCase:D (cloned:yes)
+                            obj[key] = clone(refs[$ref].data); // resolutionCase:D (cloned:yes)
                         }
                     }
                     else {
@@ -273,7 +274,7 @@ function findExternalRefs(options) {
                                     let external = {};
                                     external.context = refs[ref];
                                     external.$ref = ref;
-                                    external.original = common.clone(data);
+                                    external.original = clone(data);
                                     external.updated = data;
                                     external.source = source;
                                     options.externals.push(external);
@@ -307,7 +308,7 @@ function findExternalRefs(options) {
                                             refs[ref].resolvedAt = ptr;
                                             if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
                                         }
-                                        let cdata = common.clone(data);
+                                        let cdata = clone(data);
                                         jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
                                     }
                                 }

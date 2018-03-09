@@ -8,15 +8,15 @@ const pathlib = require('path');
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch');
 const yaml = require('js-yaml');
-const jptr = require('reftools/lib/jptr.js');
 
+const jptr = require('reftools/lib/jptr.js');
+const isRef = require('reftools/lib/isref.js').isRef;
 const resolver = require('openapi-resolver');
 const ws = require('openapi-walk-schema');
 
 const common = require('./common.js');
 const statusCodes = require('./statusCodes.js').statusCodes;
 
-// TODO split out into params, security etc
 // TODO handle specification-extensions with plugins?
 
 const targetVersion = '3.0.0';
@@ -161,7 +161,7 @@ function getMiroComponentName(ref) {
 
 function fixupRefs(obj, key, state) {
     let options = state.payload.options;
-    if (common.isRef(obj,key)) {
+    if (isRef(obj,key)) {
         if (obj[key].startsWith('#/components/')) {
             // nop
         }

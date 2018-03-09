@@ -93,10 +93,6 @@ function sanitiseAll(s) {
     return sanitise(s.split('/').join('_'));
 }
 
-function isRef(obj,key) {
-    return ((key === '$ref') && (typeof obj[key] === 'string'));
-}
-
 module.exports = {
 
     clone: clone,
@@ -111,7 +107,6 @@ module.exports = {
     arrayProperties: arrayProperties,
     httpVerbs: httpVerbs,
     sanitise: sanitise,
-    sanitiseAll: sanitiseAll,
-    isRef: isRef
+    sanitiseAll: sanitiseAll
 
 };

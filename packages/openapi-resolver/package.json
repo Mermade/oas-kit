@@ -1,0 +1,26 @@
+{
+  "name": "openapi-resolver",
+  "version": "1.0.0",
+  "description": "Resolve external $refs in OpenAPI (swagger) 2.0 / 3.x definitions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "oas",
+    "resolver",
+    "resolution",
+    "ref",
+    "json-pointer",
+    "json-ref"
+  ],
+  "author": "Mike Ralphson",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "js-yaml": "^3.11.0",
+    "node-fetch": "^2.1.1",
+    "reftools": "0.0.20"
+  }
+}

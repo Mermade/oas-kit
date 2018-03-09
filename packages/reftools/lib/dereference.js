@@ -5,6 +5,7 @@ const util = require('util');
 const recurse = require('./recurse.js').recurse;
 const clone = require('./clone.js').shallowClone;
 const jptr = require('./jptr.js').jptr;
+const isRef = require('./isref.js').isRef;
 
 var getLogger = function (options) {
     if (options && options.verbose) {
@@ -50,7 +51,7 @@ function dereference(o,definitions,options) {
     while (changes > 0) {
         changes = 0;
     recurse(container,options.state,function(obj,key,state){
-        if ((key === '$ref') && (typeof obj[key] === 'string')) {
+        if (isRef(obj,key)) {
             let $ref = obj[key]; // immutable
             changes++;
             if (!options.cache[$ref]) {

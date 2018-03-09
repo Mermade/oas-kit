@@ -10,6 +10,7 @@
 
 const util = require('util');
 const recurse = require('./recurse.js').recurse;
+const isRef = require('./isref.js').isRef;
 
 /*
 
@@ -107,7 +108,7 @@ function objToGraph(obj, containerName) {
     }
 
     recurse(obj,{identityDetection:true},function(obj,key,state){
-        if ((key === '$ref') && (typeof obj[key] === 'string')) {
+        if (isRef(obj,key) {
             let ptr = obj[key].replace('/$ref','');
             let spath = state.path.replace('/$ref','');
             let target = graph.find(function(e){
