@@ -7,20 +7,20 @@ const yaml = require('js-yaml');
 
 const swagger2openapi = require('../packages/swagger2openapi/index.js');
 
-const tests = fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && file !== 'include';
+const tests = fs.readdirSync(path.join(__dirname,'s2o-test')).filter(file => {
+    return fs.statSync(path.join(__dirname, 's2o-test', file)).isDirectory() && file !== 'include';
 });
 
 tests.forEach((test) => {
     describe(test, () => {
         it('should match expected output', (done) => {
-            const swagger = yaml.safeLoad(fs.readFileSync(path.join(__dirname, test, 'swagger.yaml'),'utf8'),{json:true});
-            const openapi = yaml.safeLoad(fs.readFileSync(path.join(__dirname, test, 'openapi.yaml'),'utf8'),{json:true});
+            const swagger = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'swagger.yaml'),'utf8'),{json:true});
+            const openapi = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'openapi.yaml'),'utf8'),{json:true});
 
             let options = {};
             try {
-                options = yaml.safeLoad(fs.readFileSync(path.join(__dirname, test, 'options.yaml'),'utf8'),{json:true});
-                options.source = path.join(__dirname, test, 'swagger.yaml');
+                options = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'options.yaml'),'utf8'),{json:true});
+                options.source = path.join(__dirname, 's2o-test', test, 'swagger.yaml');
             }
             catch (ex) {}
 
