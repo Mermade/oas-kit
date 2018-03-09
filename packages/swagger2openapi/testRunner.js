@@ -9,9 +9,11 @@ const util = require('util');
 const readfiles = require('node-readfiles');
 const yaml = require('js-yaml');
 
-const common = require('./common.js');
+const validator = require('openapi-parser');
+const common = require('openapi-kit-common');
+const clone = require('reftools/lib/clone.js').clone;
+
 const swagger2openapi = require('./index.js');
-const validator = require('./validate.js');
 
 let globalExpectFailure = false;
 
@@ -64,11 +66,6 @@ let argv = require('yargs')
     .version()
     .argv;
 
-const red = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[31m';
-const green = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[32m';
-const yellow = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[33;1m';
-const normal = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[0m';
-
 let pass = 0;
 let fail = 0;
 let failures = [];
@@ -82,10 +79,10 @@ options.fatal = true;
 
 function finalise(err, options) {
     if (!argv.quiet || err) {
-        console.log(normal + options.file);
+        console.log(common.colour.normal + options.file);
     }
     if (err) {
-        console.log(red + options.context.pop() + '\n' + err.message);
+        console.log(common.colour.red + options.context.pop() + '\n' + err.message);
         if (err.stack && err.name !== 'AssertionError') {
             console.log(err.stack);
         }
@@ -104,11 +101,11 @@ function finalise(err, options) {
     let result = options.valid;
 
     if (!argv.quiet) {
-        let colour = ((options.expectFailure ? !result : result) ? green : red);
+        let colour = ((options.expectFailure ? !result : result) ? common.colour.green : common.colour.red);
         if (src && src.info) {
             console.log(colour + '  %s %s', src.info.title, src.info.version);
             if (src["x-testcase"]) console.log(' ',src["x-testcase"]);
-            console.log('  %s', src.swagger ? (src.host ? src.host : 'relative') : (src.servers && src.servers.length ? src.servers[0].url : 'relative'),normal);
+            console.log('  %s', src.swagger ? (src.host ? src.host : 'relative') : (src.servers && src.servers.length ? src.servers[0].url : 'relative'),common.colour.normal);
         }
     }
     if (result) {
@@ -152,8 +149,8 @@ function handleResult(err, options) {
         validator.validate(result, options, finalise);
     }
     catch (ex) {
-        console.log(normal + options.file);
-        console.log(red + options.context.pop() + '\n' + ex.message);
+        console.log(common.colour.normal + options.file);
+        console.log(common.colour.red + options.context.pop() + '\n' + ex.message);
         if (ex.stack && ex.name !== 'AssertionError') {
             console.log(ex.stack);
         }
@@ -191,7 +188,7 @@ function* check(file, force, expectFailure) {
                 }
                 catch (ex) {
                     let warning = 'Could not parse file ' + file + '\n' + ex.message;
-                    console.log(red + warning);
+                    console.log(common.colour.red + warning);
                     warnings.push(warning);
                 }
             }
@@ -210,12 +207,12 @@ function* check(file, force, expectFailure) {
         }
 
         if (file.startsWith('http')) {
-            swagger2openapi.convertUrl(file, common.clone(options))
+            swagger2openapi.convertUrl(file, clone(options))
             .then(function(options){
                 handleResult(null,options);
             })
             .catch(function(ex){
-                console.warn(red+ex,normal);
+                console.warn(common.colour.red+ex,common.colour.normal);
                 if (expectFailure) {
                     warnings.push('Converter failed ' + options.source);
                 }
@@ -228,12 +225,12 @@ function* check(file, force, expectFailure) {
             });
         }
         else {
-            swagger2openapi.convertObj(src, common.clone(options))
+            swagger2openapi.convertObj(src, clone(options))
             .then(function(options){
                 handleResult(null,options);
             })
             .catch(function(ex){
-                console.warn(red+ex,normal);
+                console.warn(common.colour.red+ex,common.colour.normal);
                 if (expectFailure) {
                     warnings.push('Converter failed ' + options.source);
                 }
@@ -308,19 +305,19 @@ process.on('unhandledRejection', r => console.warn(r));
 process.on('exit', function () {
     if (warnings.length) {
         warnings.sort();
-        console.log(normal + '\nWarnings:' + yellow);
+        console.log(common.colour.normal + '\nWarnings:' + common.colour.yellow);
         for (let w in warnings) {
             console.log(warnings[w]);
         }
     }
     if (failures.length) {
         failures.sort();
-        console.log(normal + '\nFailures:' + red);
+        console.log(common.colour.normal + '\nFailures:' + common.colour.red);
         for (let f in failures) {
             console.log(failures[f]);
         }
     }
-    console.log(normal);
+    console.log(common.colour.normal);
     console.log('Tests: %s passing, %s failing, %s warnings', pass, fail, warnings.length);
     process.exitCode = ((fail === 0) && (pass > 0)) ? 0 : 1;
 });

@@ -10,12 +10,17 @@ const fetch = require('node-fetch');
 const yaml = require('js-yaml');
 
 const jptr = require('reftools/lib/jptr.js');
+const resolveInternal = jptr.jptr;
 const isRef = require('reftools/lib/isref.js').isRef;
+const clone = require('reftools/lib/clone.js').clone;
+const recurse = require('reftools/lib/recurse.js').recurse;
 const resolver = require('openapi-resolver');
 const ws = require('openapi-walk-schema');
+const common = require('openapi-kit-common');
 
-const common = require('./common.js');
 const statusCodes = require('./statusCodes.js').statusCodes;
+
+const ourVersion = require('./package.json').version;
 
 // TODO handle specification-extensions with plugins?
 
@@ -187,7 +192,7 @@ function fixupRefs(obj, key, state) {
         }
         else if (obj[key].startsWith('#')) {
             // fixes up direct $refs or those created by resolvers
-            let target = common.clone(jptr.jptr(options.openapi,obj[key]));
+            let target = clone(jptr.jptr(options.openapi,obj[key]));
             if (target === false) throwOrWarn('direct $ref not found '+obj[key],obj,options)
             else if (options.refmap[obj[key]]) {
                 obj[key] = options.refmap[obj[key]];
@@ -411,7 +416,7 @@ function processParameter(param, op, path, index, openapi, options) {
 
         if (rbody) {
             let ref = param.$ref;
-            let newParam = common.resolveInternal(openapi, param.$ref);
+            let newParam = resolveInternal(openapi, param.$ref);
             if (!newParam && ref.startsWith('#/')) {
                 throwOrWarn('Could not resolve reference ' + ref, param, options);
             }
@@ -443,11 +448,11 @@ function processParameter(param, op, path, index, openapi, options) {
         }
         if (param.type && typeof param.type === 'object' && param.type.$ref) {
             // $ref anywhere sensibility
-            param.type = common.resolveInternal(openapi, param.type.$ref);
+            param.type = resolveInternal(openapi, param.type.$ref);
         }
         if (param.description && typeof param.description === 'object' && param.description.$ref) {
             // $ref anywhere sensibility
-            param.description = common.resolveInternal(openapi, param.description.$ref);
+            param.description = resolveInternal(openapi, param.description.$ref);
         }
 
         let oldCollectionFormat = param.collectionFormat;
@@ -502,7 +507,7 @@ function processParameter(param, op, path, index, openapi, options) {
                 if (param.items) {
                     param.schema.items = param.items;
                     delete param.items;
-                    common.recurse(param.schema.items, null, function (obj, key, state) {
+                    recurse(param.schema.items, null, function (obj, key, state) {
                         if ((key === 'collectionFormat') && (typeof obj[key] === 'string')) {
                             if (oldCollectionFormat && obj[key] !== oldCollectionFormat) {
                                 throwOrWarn('Nested collectionFormats are not supported', param, options);
@@ -607,7 +612,7 @@ function processParameter(param, op, path, index, openapi, options) {
 
         for (let mimetype of consumes) {
             result.content[mimetype] = {};
-            result.content[mimetype].schema = common.clone(param.schema) || {};
+            result.content[mimetype].schema = clone(param.schema) || {};
             fixUpSchema(result.content[mimetype].schema,options);
         }
     }
@@ -716,7 +721,7 @@ function processResponse(response, name, op, openapi, options) {
             response.content = {};
             for (let mimetype of produces) {
                 response.content[mimetype] = {};
-                response.content[mimetype].schema = common.clone(response.schema);
+                response.content[mimetype].schema = clone(response.schema);
                 if (response.examples && response.examples[mimetype]) {
                     let example = {};
                     example.value = response.examples[mimetype];
@@ -779,7 +784,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
             delete path['x-servers'];
         }
         for (let method in path) {
-            if ((common.httpVerbs.indexOf(method) >= 0) || (method === 'x-amazon-apigateway-any-method')) {
+            if ((common.httpMethods.indexOf(method) >= 0) || (method === 'x-amazon-apigateway-any-method')) {
                 let op = path[method];
 
                 if (op.parameters && Array.isArray(op.parameters)) {
@@ -787,7 +792,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         for (let param of path.parameters) {
                             if (typeof param.$ref === 'string') {
                                 fixParamRef(param, options);
-                                param = common.resolveInternal(openapi, param.$ref);
+                                param = resolveInternal(openapi, param.$ref);
                             }
                             let match = op.parameters.find(function (e, i, a) {
                                 return ((e.name === param.name) && (e.in === param.in));
@@ -831,7 +836,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                                 op.servers = [];
                             }
                             for (let server of openapi.servers) {
-                                let newServer = common.clone(server);
+                                let newServer = clone(server);
                                 let serverUrl = url.parse(newServer.url);
                                 serverUrl.protocol = scheme;
                                 newServer.url = serverUrl.format();
@@ -883,7 +888,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                                     }
                                 }
                                 if (example.responses[r].body) {
-                                    openapi.components.examples[se] = { value: common.clone(example.responses[r].body) };
+                                    openapi.components.examples[se] = { value: clone(example.responses[r].body) };
                                     if (op.responses[r] && op.responses[r].content) {
                                         for (let ct in op.responses[r].content) {
                                             let contentType = op.responses[r].content[ct];
@@ -970,7 +975,7 @@ function main(openapi, options) {
 
     // fix all $refs to their new locations (and potentially new names)
     options.refmap = {};
-    common.recurse(openapi, { payload: { options: options } }, fixupRefs);
+    recurse(openapi, { payload: { options: options } }, fixupRefs);
     dedupeRefs(openapi,options);
 
     for (let p in openapi.components.parameters) {
@@ -1068,7 +1073,7 @@ function main(openapi, options) {
             }
             entry.name = entry.name + suffix;
             rbNamesGenerated.push(entry.name);
-            openapi.components.requestBodies[entry.name] = common.clone(entry.body);
+            openapi.components.requestBodies[entry.name] = clone(entry.body);
             for (let r in entry.refs) {
                 let ref = {};
                 ref.$ref = '#/components/requestBodies/' + entry.name;
@@ -1200,7 +1205,7 @@ function convertObj(swagger, options, callback) {
         options.promise.reject = reject;
         if (!options.cache) options.cache = {};
         if (swagger.openapi && (typeof swagger.openapi === 'string') && swagger.openapi.startsWith('3.')) {
-            options.openapi = common.clone(swagger);
+            options.openapi = clone(swagger);
             fixInfo(options.openapi, options, reject);
             fixPaths(options.openapi, options, reject);
 
@@ -1237,12 +1242,12 @@ function convertObj(swagger, options, callback) {
             origin.version = swagger.swagger;
             origin.converter = {};
             origin.converter.url = 'https://github.com/mermade/swagger2openapi';
-            origin.converter.version = common.getVersion();
+            origin.converter.version = ourVersion();
             openapi["x-origin"].push(origin);
         }
 
         // we want the new and existing properties to appear in a sensible order. Not guaranteed
-        openapi = Object.assign(openapi, common.clone(swagger));
+        openapi = Object.assign(openapi, clone(swagger));
         delete openapi.swagger;
 
         if (swagger.host) {
@@ -1279,7 +1284,7 @@ function convertObj(swagger, options, callback) {
             for (let msp in xMsPHost.parameters) {
                 let param = xMsPHost.parameters[msp];
                 if (param.$ref) {
-                    param = common.resolveInternal(openapi, param.$ref);
+                    param = resolveInternal(openapi, param.$ref);
                 }
                 if (!msp.startsWith('x-')) {
                     delete param.required; // all true

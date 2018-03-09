@@ -12,11 +12,7 @@ const jptr = require('reftools/lib/jptr.js').jptr;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const clone = require('reftools/lib/clone.js').clone;
 const isRef = require('reftools/lib/isref.js').isRef;
-
-const red = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[31m';
-const green = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[32m';
-const yellow = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[33;1m';
-const normal = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[0m';
+const common = require('openapi-kit-common');
 
 function unique(arr) {
     return [... new Set(arr)];
@@ -47,7 +43,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 if (obj[key].startsWith('#')) {
                     if (!seen[obj[key]] && !obj.$fixed) {
                         let target = clone(jptr(context, obj[key]));
-                        if (options.verbose>1) console.log((target === false ? red : green)+'Internal resolution', obj[key], normal);
+                        if (options.verbose>1) console.log((target === false ? common.colour.red : common.colour.green)+'Internal resolution', obj[key], common.colour.normal);
                         /*
                             ResolutionCase:A is where there is a local reference in an externally
                             referenced document, and we have not seen it before. The reference
@@ -79,13 +75,13 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 }
                 else if (baseUrl.protocol) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.log(yellow+'Rewriting external url ref',obj[key],'as',newRef,normal);
+                    if (options.verbose>1) console.log(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key];
                     obj[key] = newRef;
                 }
                 else if (!obj['x-miro']) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.log(yellow+'Rewriting external ref',obj[key],'as',newRef,normal);
+                    if (options.verbose>1) console.log(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
                     obj[key] = newRef;
                 }
@@ -263,7 +259,7 @@ function findExternalRefs(options) {
                     for (let source of refs[ref].sources) { // TODO replace with ..find
                         if (source === options.source) forUs = true;
                     }
-                    if (!forUs && !refs[ref].resolved && options.verbose) console.log(yellow+'Skipping ref from other source',ref,normal);
+                    if (!forUs && !refs[ref].resolved && options.verbose) console.log(common.colour.yellow+'Skipping ref from other source',ref,common.colour.normal);
 
                     if ((!refs[ref].resolved) && forUs) {
                         let depth = options.resolver.depth;
@@ -352,7 +348,7 @@ function loopReferences(options, res, rej) {
                             }, 0);
                         }
                         else {
-                            if (options.verbose>1) console.log(yellow+'Finished resolution!',normal);
+                            if (options.verbose>1) console.log(common.colour.yellow+'Finished resolution!',common.colour.normal);
                             res(options);
                         }
                     }
@@ -382,3 +378,4 @@ function resolve(options) {
 module.exports = {
     resolve: resolve
 };
+

@@ -1,27 +1,28 @@
 {
-  "name": "openapi-resolver",
+  "name": "openapi-parser",
   "version": "1.0.0",
-  "description": "Resolve external $refs in OpenAPI (swagger) 2.0 / 3.x definitions",
+  "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "openapi",
-    "swagger",
     "oas",
-    "resolver",
-    "resolution",
-    "ref",
-    "json-pointer",
-    "json-ref"
+    "parser",
+    "validator",
+    "validation"
   ],
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "ajv": "^5.5.2",
     "js-yaml": "^3.11.0",
-    "node-fetch": "^2.1.1",
     "openapi-kit-common": "^1.0.0",
-    "reftools": "0.0.20"
+    "openapi-lint": "^1.0.0",
+    "openapi-resolver": "^1.0.0",
+    "openapi-walk-schema": "^1.0.0",
+    "reftools": "^0.0.20",
+    "should": "^13.2.1"
   }
 }

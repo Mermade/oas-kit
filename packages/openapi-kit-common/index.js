@@ -1,9 +1,8 @@
 'use strict';
 
-const recurse = require('reftools/lib/recurse.js').recurse;
-const jptr = require('reftools/lib/jptr.js').jptr;
-const resolveInternal = jptr;
-const clone = require('reftools/lib/clone.js').clone;
+const colour = process.env.NODE_DISABLE_COLORS ? 
+    { red: '', yellow: '', green: '', normal: '' } :
+    { red: '\x1b[31m', yellow: '\x1b[33;1m', green: '\x1b[32m', normal: '\x1b[0m' };
 
 function uniqueOnly(value, index, self) {
     return self.indexOf(value) === index;
@@ -40,10 +39,6 @@ String.prototype.toCamelCase = function camelize() {
     });
 }
 
-function getVersion() {
-    return require('./package.json').version;
-}
-
 const parameterTypeProperties = [
     'format',
     'minimum',
@@ -71,7 +66,7 @@ const arrayProperties = [
     'uniqueItems'
 ];
 
-const httpVerbs = [
+const httpMethods = [
     'get',
     'post',
     'put',
@@ -95,17 +90,14 @@ function sanitiseAll(s) {
 
 module.exports = {
 
-    clone: clone,
+    colour: colour,
     uniqueOnly: uniqueOnly,
     hasDuplicates: hasDuplicates,
     allSame: allSame,
-    recurse: recurse,
     hash: hash,
-    getVersion: getVersion,
-    resolveInternal: resolveInternal,
     parameterTypeProperties: parameterTypeProperties,
     arrayProperties: arrayProperties,
-    httpVerbs: httpVerbs,
+    httpMethods: httpMethods,
     sanitise: sanitise,
     sanitiseAll: sanitiseAll
 

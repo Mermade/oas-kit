@@ -33,6 +33,8 @@
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",
     "node-readfiles": "^0.2.0",
+    "openapi-kit-common": "^1.0.0",
+    "openapi-parser": "^1.0.0",
     "openapi-resolver": "^1.0.0",
     "openapi-walk-schema": "^1.0.0",
     "reftools": "0.0.20",

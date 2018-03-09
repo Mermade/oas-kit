@@ -8,7 +8,6 @@ const util = require('util');
 
 const yaml = require('js-yaml');
 const should = require('should');
-const co = require('co');
 let ajv = require('ajv')({
     allErrors: true,
     verbose: true,
@@ -26,11 +25,15 @@ let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
 ajv.addMetaSchema(metaSchema);
 ajv._opts.defaultMeta = metaSchema.id;
 
-const common = require('./common.js');
+const common = require('openapi-kit-common');
 const jptr = require('reftools/lib/jptr.js');
-const walkSchema = require('./walkSchema.js').walkSchema;
-const wsGetDefaultState = require('./walkSchema.js').getDefaultState;
-const linter = require('./linter/linter.js');
+const resolveInternal = jptr.jptr;
+const clone = require('reftools/lib/clone.js').clone;
+const recurse = require('reftools/lib/recurse.js').recurse;
+const isRef = require('reftools/lib/isref.js').isRef;
+const ws = require('openapi-walk-schema');
+const linter = require('openapi-lint');
+const resolver = require('openapi-resolver');
 
 const jsonSchema = require('./schemas/json_v5.json');
 const validateMetaSchema = ajv.compile(jsonSchema);
@@ -298,11 +301,11 @@ function checkSubSchema(schema, parent, state) {
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
-    let state = wsGetDefaultState();
+    let state = ws.getDefaultState();
     state.openapi = openapi;
     state.options = options;
     state.property = prop;
-    walkSchema(schema,parent,state,checkSubSchema);
+    ws.walkSchema(schema,parent,state,checkSubSchema);
 }
 
 function checkExample(ex, contextServers, openapi, options) {
@@ -457,7 +460,7 @@ function checkHeader(header, contextServers, openapi, options) {
         let ref = header.$ref;
         should(header.$ref).be.type('string');
         if (options.lint) options.linter('reference',header,'$ref',options);
-        header = common.resolveInternal(openapi, ref);
+        header = resolveInternal(openapi, ref);
         should(header).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
     header.should.not.have.property('name');
@@ -500,7 +503,7 @@ function checkResponse(response, contextServers, openapi, options) {
         let ref = response.$ref;
         should(response.$ref).be.type('string');
         if (options.lint) options.linter('reference',response,'$ref',options);
-        response = common.resolveInternal(openapi, ref);
+        response = resolveInternal(openapi, ref);
         should(response).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
     response.should.have.property('description');
@@ -540,7 +543,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
         should(param.$ref).be.type('string');
         if (options.lint) options.linter('reference',param,'$ref',options);
         let ref = param.$ref;
-        param = common.resolveInternal(openapi, ref);
+        param = resolveInternal(openapi, ref);
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
     param.should.have.property('name');
@@ -677,7 +680,7 @@ function checkPathItem(pathItem, path, openapi, options) {
         else if (o === 'description') {
             pathItem.description.should.have.type('string');
         }
-        else if (common.httpVerbs.indexOf(o) >= 0) {
+        else if (common.httpMethods.indexOf(o) >= 0) {
             op.should.not.be.empty();
             op.should.not.have.property('consumes');
             op.should.not.have.property('produces');
@@ -730,7 +733,7 @@ function checkPathItem(pathItem, path, openapi, options) {
 
             if (typeof op.parameters !== 'undefined') {
                 should(op.parameters).be.an.Array();
-                let localPathParameters = common.clone(pathParameters);
+                let localPathParameters = clone(pathParameters);
                 let opParameters = {};
                 contextAppend(options, 'parameters');
                 for (let p in op.parameters) {
@@ -1020,8 +1023,8 @@ function validateSync(openapi, options, callback) {
         }
     }
 
-    common.recurse(openapi, null, function (obj, key, state) {
-        if (common.isRef(obj,key)) {
+    recurse(openapi, null, function (obj, key, state) {
+        if (isRef(obj,key)) {
             options.context.push(state.path);
             obj[key].should.not.startWith('#/definitions/');
             let refUrl = url.parse(obj[key]);
@@ -1210,21 +1213,6 @@ function validateSync(openapi, options, callback) {
     return options.valid;
 }
 
-function findExternalRefs(master, options, actions) {
-    common.recurse(master, {}, function (obj, key, state) {
-        if (common.isRef(obj,key)) {
-            if (!obj[key].startsWith('#')) {
-                options.context.push(state.path);
-                actions.push(common.resolveExternal(master, obj[key], options, function (data, newSource) {
-                    state.parent[state.pkey] = findExternalRefs(data,options,actions);
-                }));
-                options.context.pop();
-            }
-        }
-    });
-    return master;
-}
-
 function setupOptions(options,openapi) {
     options.valid = false;
     options.context = [ '#/' ];
@@ -1240,14 +1228,9 @@ function validate(openapi, options, callback) {
     setupOptions(options,openapi);
 
     let actions = [];
-    if (options.resolve) {
-        findExternalRefs(openapi, options, actions);
-    }
 
-    co(function* () {
-        for (let promise of actions) {
-            yield promise; // because we mutate the array
-        }
+    resolver.resolve(options)
+    .then(function(){
         options.context = [];
         validateSync(openapi, options, callback);
     })

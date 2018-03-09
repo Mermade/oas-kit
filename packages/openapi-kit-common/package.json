@@ -1,0 +1,17 @@
+{
+  "name": "openapi-kit-common",
+  "version": "1.0.0",
+  "description": "Common utility functions for openapi-kit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "oas",
+    "utility"
+  ],
+  "author": "Mike Ralphson",
+  "license": "BSD-3-Clause"
+}
