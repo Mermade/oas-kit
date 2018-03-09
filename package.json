@@ -1,0 +1,6 @@
+{
+	"devDependencies": {
+		"lerna": "^3.0.0-beta.1"
+	},
+	"name": "openapi-kit"
+}
