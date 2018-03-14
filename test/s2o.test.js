@@ -7,8 +7,10 @@ const yaml = require('js-yaml');
 
 const swagger2openapi = require('../packages/swagger2openapi/index.js');
 
+const doPrivate = (!process.env.SKIP_PRIVATE);
+
 const tests = fs.readdirSync(path.join(__dirname,'s2o-test')).filter(file => {
-    return fs.statSync(path.join(__dirname, 's2o-test', file)).isDirectory() && file !== 'include';
+    return fs.statSync(path.join(__dirname, 's2o-test', file)).isDirectory() && file !== 'include' && (!file.startsWith('_') || doPrivate);
 });
 
 tests.forEach((test) => {
