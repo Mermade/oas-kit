@@ -61,49 +61,51 @@ function fixUpSubSchema(schema,parent,options) {
         else schema.items = { anyOf: schema.items };
     }
 
-    if (options.patch && schema.type && Array.isArray(schema.type)) {
-        if (schema.type.length === 0) {
-            delete schema.type;
-        }
-        else {
-            if (!schema.oneOf) schema.oneOf = [];
-            for (let type of schema.type) {
-                let newSchema = {};
-                if (type === 'null') {
-                    schema.nullable = true;
-                }
-                else {
-                    newSchema.type = type;
-                    for (let prop of common.arrayProperties) {
-                        if (typeof schema.prop !== 'undefined') {
-                            newSchema[prop] = schema[prop];
-                            delete schema[prop];
+    if (schema.type && Array.isArray(schema.type)) {
+        if (options.patch) {
+            if (schema.type.length === 0) {
+                delete schema.type;
+            }
+            else {
+                if (!schema.oneOf) schema.oneOf = [];
+                for (let type of schema.type) {
+                    let newSchema = {};
+                    if (type === 'null') {
+                        schema.nullable = true;
+                    }
+                    else {
+                        newSchema.type = type;
+                        for (let prop of common.arrayProperties) {
+                            if (typeof schema.prop !== 'undefined') {
+                                newSchema[prop] = schema[prop];
+                                delete schema[prop];
+                            }
                         }
                     }
+                    if (newSchema.type) {
+                        schema.oneOf.push(newSchema);
+                    }
                 }
-                if (newSchema.type) {
-                    schema.oneOf.push(newSchema);
+                delete schema.type;
+                if (schema.oneOf.length === 0) {
+                    delete schema.oneOf; // means was just null => nullable
+                }
+                else if (schema.oneOf.length < 2) {
+                    schema.type = schema.oneOf[0].type;
+                    if (Object.keys(schema.oneOf[0]).length > 1) {
+                        throwOrWarn('Lost properties from oneOf',schema,options);
+                    }
+                    delete schema.oneOf;
                 }
             }
-            delete schema.type;
-            if (schema.oneOf.length === 0) {
-                delete schema.oneOf; // means was just null => nullable
-            }
-            else if (schema.oneOf.length < 2) {
-                schema.type = schema.oneOf[0].type;
-                if (Object.keys(schema.oneOf[0]).length > 1) {
-                    throwOrWarn('Lost properties from oneOf',schema,options);
-                }
-                delete schema.oneOf;
+            // do not else this
+            if (schema.type && Array.isArray(schema.type) && schema.type.length === 1) {
+                schema.type = schema.type[0];
             }
         }
-        // do not else this
-        if (schema.type && Array.isArray(schema.type) && schema.type.length === 1) {
-            schema.type = schema.type[0];
+        else {
+            throwError('(Patchable) schema type must not be an array', options);
         }
-    }
-    else {
-        throwError('(Patchable) schema type must not be an array', options);
     }
 
     if (schema.type && schema.type === 'null') {
