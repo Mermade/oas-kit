@@ -60,7 +60,8 @@ function fixUpSubSchema(schema,parent,options) {
         }
         else schema.items = { anyOf: schema.items };
     }
-    if (schema.type && Array.isArray(schema.type)) {
+
+    if (options.patch && schema.type && Array.isArray(schema.type)) {
         if (schema.type.length === 0) {
             delete schema.type;
         }
@@ -101,6 +102,10 @@ function fixUpSubSchema(schema,parent,options) {
             schema.type = schema.type[0];
         }
     }
+    else {
+        throwError('(Patchable) schema type must not be an array', options);
+    }
+
     if (schema.type && schema.type === 'null') {
         delete schema.type;
         schema.nullable = true;
