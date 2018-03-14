@@ -664,7 +664,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             should(op).be.ok();
             op.should.have.type('string');
             should(op.startsWith('#/')).equal(false,'PathItem $refs must be external ('+op+')');
-            if (options.lint) options.linter('reference',op,'$ref',options);
+            if (options.lint) options.linter('reference',pathItem,'$ref',options);
         }
         else if (o === 'parameters') {
             // checked above
