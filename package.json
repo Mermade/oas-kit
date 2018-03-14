@@ -1,4 +1,5 @@
 {
+	"license": "BSD-3-Clause",
 	"devDependencies": {
 		"lerna": "^3.0.0-beta.1"
 	},
