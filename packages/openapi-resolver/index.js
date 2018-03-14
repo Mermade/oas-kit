@@ -220,7 +220,7 @@ function scanExternalRefs(options) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) {
                     if (!refs[$ref]) {
-                        refs[$ref] = { resolved: false, paths: [], sources: [], description: obj.description };
+                        refs[$ref] = { resolved: false, paths: [], sources: [], description: obj[key].description };
                     }
                     if (refs[$ref].resolved) {
                         if (options.rewriteRefs) {
