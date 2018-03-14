@@ -1291,7 +1291,7 @@ function convertObj(swagger, options, callback) {
             for (let msp in xMsPHost.parameters) {
                 let param = xMsPHost.parameters[msp];
                 if (param.$ref) {
-                    param = resolveInternal(openapi, param.$ref);
+                    param = clone(resolveInternal(openapi, param.$ref));
                 }
                 if (!msp.startsWith('x-')) {
                     delete param.required; // all true
