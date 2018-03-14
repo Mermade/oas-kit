@@ -108,7 +108,7 @@ function objToGraph(obj, containerName) {
     }
 
     recurse(obj,{identityDetection:true},function(obj,key,state){
-        if (isRef(obj,key) {
+        if (isRef(obj,key)) {
             let ptr = obj[key].replace('/$ref','');
             let spath = state.path.replace('/$ref','');
             let target = graph.find(function(e){
