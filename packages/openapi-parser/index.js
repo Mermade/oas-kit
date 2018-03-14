@@ -425,7 +425,14 @@ function checkServers(servers, options) {
     }
 }
 
-function checkLink(link, options) {
+function checkLink(link, openapi, options) {
+    if (link.$ref) {
+        let ref = link.$ref;
+        should(link.$ref).be.type('string');
+        if (options.lint) options.linter('reference',link,'$ref',options);
+        link = resolveInternal(openapi, ref);
+        should(link).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
+    }
     link.should.be.type('object');
     if (typeof link.operationRef === 'undefined') {
         link.should.have.property('operationId');
@@ -529,7 +536,7 @@ function checkResponse(response, contextServers, openapi, options) {
         contextAppend(options, 'links');
         for (let l in response.links) {
             contextAppend(options, l);
-            checkLink(response.links[l], options);
+            checkLink(response.links[l], openapi, options);
             options.context.pop();
         }
         options.context.pop();
@@ -1194,7 +1201,7 @@ function validateSync(openapi, options, callback) {
                 if (options.lint) options.linter('reference',link,'$ref',options);
             }
             else {
-                checkLink(link, options);
+                checkLink(link, openapi, options);
             }
             options.context.pop();
         }
