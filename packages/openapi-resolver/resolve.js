@@ -32,23 +32,13 @@ let options = {resolve: true};
 options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 
-options.origin = filespec;
-options.source = filespec;
-options.externals = [];
-options.externalRefs = {};
-options.rewriteRefs = true;
-options.cache = [];
-options.status ='undefined';
-
-function main(str){
-    options.openapi = yaml.safeLoad(str,{json:true});
-    resolver.resolve(options)
-    .then(function(){
-        options.status = 'resolved';
+function main(str,source,options){
+    let input = yaml.safeLoad(str,{json:true});
+    resolver.resolve(input,source,options)
+    .then(function(options){
         fs.writeFileSync(argv.output,yaml.safeDump(options.openapi,{lineWidth:-1}),'utf8');
     })
     .catch(function(err){
-        options.status = 'rejected';
         console.warn(err);
     });
 }
@@ -59,7 +49,7 @@ if (filespec && filespec.startsWith('http')) {
         if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
         return res.text();
     }).then(function (body) {
-        main(body);
+        main(body,filespec,options);
     }).catch(function (err) {
         console.warn(err);
     });
@@ -70,7 +60,7 @@ else {
             console.warn(err);
         }
         else {
-            main(data);
+            main(data,filespec,options);
         }
     });
 }

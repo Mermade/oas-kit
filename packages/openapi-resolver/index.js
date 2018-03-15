@@ -146,7 +146,7 @@ function resolveExternal(root, pointer, options, callback) {
                 if (options.verbose) console.warn(ex);
             });
     }
-    else if (u.protocol && u.protocol.startsWith('http')) {
+    else if (effectiveProtocol.startsWith('http')) {
         return fetch(target, { agent: options.agent })
             .then(function (res) {
                 if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
@@ -363,8 +363,11 @@ function loopReferences(options, res, rej) {
 }
 
 function setupOptions(options) {
-    if (!options.cache) options.cache = [];
-    if (!options.externals) options.externals = {};
+    if (!options.cache) options.cache = {};
+
+    options.cache[options.source] = { '$ref': '#/' };
+
+    if (!options.externals) options.externals = [];
     if (!options.externalRefs) options.externalRefs = [];
     options.rewriteRefs = true;
     options.resolver = {};
