@@ -19,9 +19,9 @@
     "ajv": "^5.5.2",
     "js-yaml": "^3.11.0",
     "openapi-kit-common": "^1.0.0",
-    "openapi-lint": "^1.0.0",
+    "openapi-linter": "^1.0.0",
     "openapi-resolver": "^1.0.0",
-    "openapi-walk-schema": "^1.0.0",
+    "openapi-schema-walker": "^1.0.0",
     "reftools": "^0.0.20",
     "should": "^13.2.1"
   }

@@ -1,5 +1,5 @@
 {
-  "name": "openapi-lint",
+  "name": "openapi-linter",
   "version": "1.0.0",
   "description": "Default linter plugin for openapi-parser",
   "main": "index.js",

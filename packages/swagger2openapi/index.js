@@ -15,7 +15,7 @@ const isRef = require('reftools/lib/isref.js').isRef;
 const clone = require('reftools/lib/clone.js').clone;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const resolver = require('openapi-resolver');
-const ws = require('openapi-walk-schema');
+const sw = require('openapi-schema-walker');
 const common = require('openapi-kit-common');
 
 const statusCodes = require('./statusCodes.js').statusCodes;
@@ -155,7 +155,7 @@ function fixUpSubSchemaExtensions(schema,parent) {
 }
 
 function fixUpSchema(schema,options) {
-    ws.walkSchema(schema,{},{},function(schema,parent,state){
+    sw.walkSchema(schema,{},{},function(schema,parent,state){
         fixUpSubSchemaExtensions(schema,parent);
         fixUpSubSchema(schema,parent,options);
     });

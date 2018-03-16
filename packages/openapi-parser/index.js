@@ -31,7 +31,7 @@ const resolveInternal = jptr.jptr;
 const clone = require('reftools/lib/clone.js').clone;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const isRef = require('reftools/lib/isref.js').isRef;
-const ws = require('openapi-walk-schema');
+const sw = require('openapi-schema-walker');
 const linter = require('openapi-lint');
 const resolver = require('openapi-resolver');
 
@@ -301,11 +301,11 @@ function checkSubSchema(schema, parent, state) {
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
-    let state = ws.getDefaultState();
+    let state = sw.getDefaultState();
     state.openapi = openapi;
     state.options = options;
     state.property = prop;
-    ws.walkSchema(schema,parent,state,checkSubSchema);
+    sw.walkSchema(schema,parent,state,checkSubSchema);
 }
 
 function checkExample(ex, contextServers, openapi, options) {
