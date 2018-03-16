@@ -220,7 +220,7 @@ function scanExternalRefs(options) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) {
                     if (!refs[$ref]) {
-                        refs[$ref] = { resolved: false, paths: [], sources: [], description: obj[key].description };
+                        refs[$ref] = { resolved: false, paths: [], description: obj[key].description };
                     }
                     if (refs[$ref].resolved) {
                         if (options.rewriteRefs) {
@@ -236,7 +236,6 @@ function scanExternalRefs(options) {
                     }
                     else {
                         refs[$ref].paths.push(state.path);
-                        refs[$ref].sources.push(options.source);
                     }
                 }
             }
@@ -253,15 +252,7 @@ function findExternalRefs(options) {
             .then(function (refs) {
                 for (let ref in refs) {
 
-                    // we must check the ref's source matches ours. Nested external $refs have been url-resolved
-                    // TODO: forUs might be unnecessary, leading to refs[ref].sources being unnecessary now?
-                    let forUs = false;
-                    for (let source of refs[ref].sources) { // TODO replace with ..find
-                        if (source === options.source) forUs = true;
-                    }
-                    if (!forUs && !refs[ref].resolved && options.verbose) console.log(common.colour.yellow+'Skipping ref from other source',ref,common.colour.normal);
-
-                    if ((!refs[ref].resolved) && forUs) {
+                    if (!refs[ref].resolved) {
                         let depth = options.resolver.depth;
                         if (depth>0) depth++;
                         options.resolver.actions[depth].push(function () {
