@@ -1,13 +1,5 @@
 # reftools
 [![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/reftools.svg)](https://greenkeeper.io/)
-## Constants
-
-<dl>
-<dt><a href="#util">util</a></dt>
-<dd><p>TopoSort function is LICENSE: MIT, everything else is BSD-3-Clause</p>
-</dd>
-</dl>
-
 ## Functions
 
 <dl>
@@ -82,12 +74,6 @@ the following functions:</p>
 </dd>
 </dl>
 
-<a name="util"></a>
-
-## util
-TopoSort function is LICENSE: MIT, everything else is BSD-3-Clause
-
-**Kind**: global constant  
 <a name="nop"></a>
 
 ## nop(obj) ⇒
