@@ -363,7 +363,7 @@ function checkContent(content, contextServers, openapi, options) {
             contentType.examples.should.not.be.an.Array();
             for (let e in contentType.examples) {
                 let ex = contentType.examples[e];
-                if (ex.$ref) {
+                if (typeof ex.$ref !== 'undefined') {
                     if (options.lint) options.linter('reference',ex,'$ref',options);
                 }
                 else {
@@ -428,7 +428,7 @@ function checkServers(servers, options) {
 }
 
 function checkLink(link, openapi, options) {
-    if (link.$ref) {
+    if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
         should(link.$ref).be.type('string');
         if (options.lint) options.linter('reference',link,'$ref',options);
@@ -465,7 +465,7 @@ function checkLink(link, openapi, options) {
 }
 
 function checkHeader(header, contextServers, openapi, options) {
-    if (header.$ref) {
+    if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
         should(header.$ref).be.type('string');
         if (options.lint) options.linter('reference',header,'$ref',options);
@@ -508,7 +508,7 @@ function checkHeader(header, contextServers, openapi, options) {
 }
 
 function checkResponse(response, contextServers, openapi, options) {
-    if (response.$ref) {
+    if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
         should(response.$ref).be.type('string');
         if (options.lint) options.linter('reference',response,'$ref',options);
@@ -548,7 +548,7 @@ function checkResponse(response, contextServers, openapi, options) {
 
 function checkParam(param, index, path, contextServers, openapi, options) {
     contextAppend(options, index);
-    if (param.$ref) {
+    if (typeof param.$ref !== 'undefined') {
         should(param.$ref).be.type('string');
         if (options.lint) options.linter('reference',param,'$ref',options);
         let ref = param.$ref;
@@ -778,7 +778,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 contextAppend(options, 'callbacks');
                 for (let c in op.callbacks) {
                     let callback = op.callbacks[c];
-                    if (callback && callback.$ref) {
+                    if (callback && typeof callback.$ref !== 'undefined') {
                         if (options.lint) options.linter('reference',callback,'$ref',options);
                     }
                     else {
@@ -1188,7 +1188,7 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/examples/' + e);
             validateComponentName(e).should.be.equal(true, 'component name invalid');
             let ex = openapi.components.examples[e];
-            if (ex.$ref) {
+            if (typeof ex.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',ex,'$ref',options);
             }
             else {
@@ -1206,7 +1206,7 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/callbacks/' + c);
             validateComponentName(c).should.be.equal(true, 'component name invalid');
             let cb = openapi.components.callbacks[c];
-            if (cb.$ref) {
+            if (typeof cb.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',cb,'$ref',options);
             }
             else {
@@ -1230,7 +1230,7 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/links/' + l);
             validateComponentName(l).should.be.equal(true, 'component name invalid');
             let link = openapi.components.links[l];
-            if (link.$ref) {
+            if (typeof link.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',link,'$ref',options);
             }
             else {
