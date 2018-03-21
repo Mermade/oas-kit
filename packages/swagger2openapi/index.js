@@ -1129,13 +1129,16 @@ function extractServerParameters(server) {
 }
 
 function fixInfo(openapi, options, reject) {
-    if (!openapi.info) {
+    if ((typeof openapi.info === 'undefined') || (openapi.info === null)) {
         if (options.patch) {
             openapi.info = { version: '', title: '' };
         }
         else {
             return reject(new Error('(Patchable) info object is mandatory'));
         }
+    }
+    if ((typeof openapi.info !== 'object') || (Array.isArray(openapi.info))) {
+        return reject(new Error('info must be an object'));
     }
     if ((typeof openapi.info.title === 'undefined') || (openapi.info.title === null)) {
         if (options.patch) {
@@ -1158,7 +1161,7 @@ function fixInfo(openapi, options, reject) {
             openapi.info.version = openapi.info.version.toString();
         }
         else {
-            return reject(new Error('(Patchable) info.version cannot be null'));
+            return reject(new Error('(Patchable) info.version must be a string'));
         }
     }
     if (typeof openapi.info.logo !== 'undefined') {
@@ -1192,7 +1195,7 @@ function fixInfo(openapi, options, reject) {
 }
 
 function fixPaths(openapi, options, reject) {
-    if (!openapi.paths) {
+    if (typeof openapi.paths === 'undefined') {
         if (options.patch) {
             openapi.paths = {};
         }

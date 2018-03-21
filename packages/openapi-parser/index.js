@@ -32,7 +32,7 @@ const clone = require('reftools/lib/clone.js').clone;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const isRef = require('reftools/lib/isref.js').isRef;
 const sw = require('openapi-schema-walker');
-const linter = require('openapi-lint');
+const linter = require('openapi-linter');
 const resolver = require('openapi-resolver');
 
 const jsonSchema = require('./schemas/json_v5.json');
@@ -50,13 +50,13 @@ function contextAppend(options, s) {
 }
 
 function validateUrl(s, contextServers, context, options) {
-    s.should.be.a.String();
+    should(s).be.a.String();
     s.should.not.be.Null();
     if (!options.laxurls) s.should.not.be.exactly('', 'Invalid empty URL ' + context);
     let base = options.origin || 'http://localhost/';
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
-        if (servers.length) {
+        if (servers && servers.length) {
             base = servers[0].url;
         }
     }
@@ -381,7 +381,7 @@ function checkServer(server, options) {
     server.should.have.property('url');
     should.doesNotThrow(function () { validateUrl(server.url, [], 'server.url', options) },'Invalid server.url');
     if (typeof server.description !== 'undefined') {
-        server.description.should.be.a.String();
+        should(server.description).be.a.String();
     }
     let srvVars = 0;
     server.url.replace(/\{(.+?)\}/g, function (match, group1) {
@@ -393,11 +393,12 @@ function checkServer(server, options) {
         contextAppend(options, 'variables');
         for (let v in server.variables) {
             contextAppend(options, v);
+            should(server.variables[v]).be.an.Object();
             server.variables[v].should.have.key('default');
             server.variables[v].default.should.be.type('string');
             if (typeof server.variables[v].enum !== 'undefined') {
                 contextAppend(options, 'enum');
-                server.variables[v].enum.should.be.an.Array();
+                should(server.variables[v].enum).be.an.Array();
                 should(server.variables[v].enum.length).not.be.exactly(0, 'Server variables enum should not be empty');
                 for (let e in server.variables[v].enum) {
                     contextAppend(options, e);
@@ -417,6 +418,7 @@ function checkServer(server, options) {
 
 function checkServers(servers, options) {
     servers.should.be.an.Array();
+    //common.distinctArray(servers).should.be.exactly(true,'servers array must be distinct'); // TODO move to linter
     for (let s in servers) {
         contextAppend(options, s);
         let server = servers[s];
@@ -776,7 +778,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 contextAppend(options, 'callbacks');
                 for (let c in op.callbacks) {
                     let callback = op.callbacks[c];
-                    if (callback.$ref) {
+                    if (callback && callback.$ref) {
                         if (options.lint) options.linter('reference',callback,'$ref',options);
                     }
                     else {
@@ -809,6 +811,7 @@ function checkPathItem(pathItem, path, openapi, options) {
 function checkSecurity(security,openapi,options) {
     contextAppend(options, 'security');
     security.should.be.an.Array();
+    //common.distinctArray(security).should.be.exactly(true,'security array should be distinct'); // TODO move to linter
     for (let sr of security) {
         sr.should.be.an.Object();
         sr.should.not.be.an.Array();
@@ -871,6 +874,8 @@ function validateSync(openapi, options, callback) {
     }
 
     openapi.should.have.key('info');
+    should(openapi.info).be.an.Object();
+    openapi.info.should.not.be.an.Array();
     contextAppend(options, 'info');
     openapi.info.should.have.key('title');
     should(openapi.info.title).be.type('string', 'title should be of type string');
@@ -883,10 +888,12 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
         contextServers.push(openapi.servers);
     }
-    if (openapi.info.license) {
+    if (typeof openapi.info.license !== 'undefined') {
+        should(openapi.info.license).be.an.Object();
+        openapi.info.license.should.not.be.an.Array();
         contextAppend(options, 'license');
         openapi.info.license.should.have.key('name');
-        openapi.info.license.name.should.have.type('string');
+        should(openapi.info.license.name).have.type('string');
         if (typeof openapi.info.license.url !== 'undefined') {
             should.doesNotThrow(function () { validateUrl(openapi.info.license.url, contextServers, 'license.url', options) },'Invalid license.url');
         }
@@ -898,8 +905,12 @@ function validateSync(openapi, options, callback) {
     }
     if (typeof openapi.info.contact !== 'undefined') {
         contextAppend(options, 'contact');
-        openapi.info.contact.should.be.type('object');
-        openapi.info.contact.should.not.be.an.Array();
+        should(openapi.info.contact).be.type('object');
+        should(openapi.info.contact).not.be.an.Array();
+        should(openapi.info.contact).not.be.Null();
+        if (typeof openapi.info.contact.name !== 'undefined') {
+            should(openapi.info.contact.name).be.a.String();
+        }
         if (typeof openapi.info.contact.url !== 'undefined') {
             should.doesNotThrow(function () { validateUrl(openapi.info.contact.url, contextServers, 'url', options) },'Invalid contact.url');
         }
@@ -914,6 +925,9 @@ function validateSync(openapi, options, callback) {
             }
         }
         options.context.pop();
+    }
+    if (typeof openapi.info.description !== 'undefined') {
+        should(openapi.info.description).be.a.String();
     }
     if (options.lint) options.linter('info',openapi.info,'info',options);
     options.context.pop();
@@ -939,8 +953,13 @@ function validateSync(openapi, options, callback) {
             tag.name.should.have.type('string');
             tagsSeen.has(tag.name).should.be.exactly(false,'Tag names must be unique');
             tagsSeen.set(tag.name,true);
-            if (tag.externalDocs) {
+            if (typeof tag.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
+                should(tag.externalDocs).be.an.Object();
+                tag.externalDocs.should.not.be.an.Array();
+                if (typeof tag.externalDocs.description) {
+                    should(tag.externalDocs.description).be.a.String();
+                }
                 tag.externalDocs.should.have.key('url');
                 should.doesNotThrow(function () { validateUrl(tag.externalDocs.url, contextServers, 'tag.externalDocs', options) },'Invalid externalDocs.url');
                 options.context.pop();
@@ -955,7 +974,18 @@ function validateSync(openapi, options, callback) {
         checkSecurity(openapi.security,openapi,options);
     }
 
-    if (openapi.components && openapi.components.securitySchemes) {
+    if (typeof openapi.components !== 'undefined') {
+        options.context.push('#/components');
+        should(openapi.components).be.an.Object();
+        openapi.components.should.not.be.an.Array();
+        if (options.lint) options.linter('components',openapi.components,'components',options);
+        options.context.pop();
+    }
+
+    if (openapi.components && (typeof openapi.components.securitySchemes !== 'undefined')) {
+        options.context.push('#/components/securitySchemes');
+        should(openapi.components.securitySchemes).be.an.Object();
+        openapi.components.securitySchemes.should.not.be.an.Array();
         for (let s in openapi.components.securitySchemes) {
             options.context.push('#/components/securitySchemes/' + s);
             validateComponentName(s).should.be.equal(true, 'component name invalid');
@@ -1028,6 +1058,7 @@ function validateSync(openapi, options, callback) {
             }
             options.context.pop();
         }
+        options.context.pop();
     }
 
     recurse(openapi, null, function (obj, key, state) {
@@ -1077,8 +1108,10 @@ function validateSync(openapi, options, callback) {
         }
     }
 
-    if (openapi.components && openapi.components.parameters) {
+    if (openapi.components && (typeof openapi.components.parameters !== 'undefined')) {
         options.context.push('#/components/parameters/');
+        should(openapi.components.parameters).be.an.Object();
+        openapi.components.parameters.should.not.be.an.Array();
         for (let p in openapi.components.parameters) {
             checkParam(openapi.components.parameters[p], p, '', contextServers, openapi, options);
             contextAppend(options, p);
@@ -1088,9 +1121,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.schemas) {
+    if (openapi.components && (typeof openapi.components.schemas !== 'undefined')) {
         options.context.push('#/components/schemas');
-        openapi.components.schemas.should.be.type('object');
+        should(openapi.components.schemas).be.an.Object();
         openapi.components.schemas.should.not.be.an.Array();
         for (let s in openapi.components.schemas) {
             options.context.push('#/components/schemas/' + s);
@@ -1101,9 +1134,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.responses) {
+    if (openapi.components && (typeof openapi.components.responses !== 'undefined')) {
         options.context.push('#/components/responses');
-        openapi.components.responses.should.be.type('object');
+        should(openapi.components.responses).be.an.Object();
         openapi.components.responses.should.not.be.an.Array();
         for (let r in openapi.components.responses) {
             options.context.push('#/components/responses/' + r);
@@ -1114,9 +1147,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.headers) {
+    if (openapi.components && (typeof openapi.components.headers !== 'undefined')) {
         options.context.push('#/components/headers');
-        openapi.components.headers.should.be.type('object');
+        should(openapi.components.headers).be.an.Object();
         openapi.components.headers.should.not.be.an.Array();
         for (let h in openapi.components.headers) {
             options.context.push('#/components/headers/' + h);
@@ -1127,9 +1160,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.requestBodies) {
+    if (openapi.components && (typeof openapi.components.requestBodies !== 'undefined')) {
         options.context.push('#/components/requestBodies');
-        openapi.components.requestBodies.should.be.type('object');
+        should(openapi.components.requestBodies).be.an.Object();
         openapi.components.requestBodies.should.not.be.an.Array();
         for (let r in openapi.components.requestBodies) {
             options.context.push('#/components/requestBodies/' + r);
@@ -1147,9 +1180,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.examples) {
+    if (openapi.components && (typeof openapi.components.examples !== 'undefined')) {
         options.context.push('#/components/examples');
-        openapi.components.examples.should.be.type('object');
+        should(openapi.components.examples).be.an.Object();
         openapi.components.examples.should.not.be.an.Array();
         for (let e in openapi.components.examples) {
             options.context.push('#/components/examples/' + e);
@@ -1165,9 +1198,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.callbacks) {
+    if (openapi.components && (typeof openapi.components.callbacks !== 'undefined')) {
         options.context.push('#/components/callbacks');
-        openapi.components.callbacks.should.be.type('object');
+        should(openapi.components.callbacks).be.an.Object();
         openapi.components.callbacks.should.not.be.an.Array();
         for (let c in openapi.components.callbacks) {
             options.context.push('#/components/callbacks/' + c);
@@ -1189,9 +1222,9 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (openapi.components && openapi.components.links) {
+    if (openapi.components && (typeof openapi.components.links !== 'undefined')) {
         options.context.push('#/components/links');
-        openapi.components.links.should.be.type('object');
+        should(openapi.components.links).be.type('object');
         openapi.components.links.should.not.be.an.Array();
         for (let l in openapi.components.links) {
             options.context.push('#/components/links/' + l);

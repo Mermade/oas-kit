@@ -1,6 +1,6 @@
 'use strict';
 
-const colour = process.env.NODE_DISABLE_COLORS ? 
+const colour = process.env.NODE_DISABLE_COLORS ?
     { red: '', yellow: '', green: '', normal: '' } :
     { red: '\x1b[31m', yellow: '\x1b[33;1m', green: '\x1b[32m', normal: '\x1b[0m' };
 
@@ -14,6 +14,29 @@ function hasDuplicates(array) {
 
 function allSame(array) {
     return (new Set(array)).size <= 1;
+}
+
+function deepEquals(obj1, obj2) {
+    function _equals(obj1, obj2) {
+        return JSON.stringify(obj1)
+            === JSON.stringify(Object.assign({}, obj1, obj2));
+    }
+    return _equals(obj1, obj2) && _equals(obj2, obj1);
+}
+
+function compressArray(arr) {
+    let result = [];
+    for (let candidate of arr) {
+        let dupe = result.find(function(e,i,a){
+            return deepEquals(e,candidate);
+        });
+        if (!dupe) result.push(candidate);
+    }
+    return result;
+}
+
+function distinctArray(arr) {
+    return (arr.length === compressArray(arr).length);
 }
 
 /**
@@ -94,6 +117,7 @@ module.exports = {
     uniqueOnly: uniqueOnly,
     hasDuplicates: hasDuplicates,
     allSame: allSame,
+    distinctArray: distinctArray,
     hash: hash,
     parameterTypeProperties: parameterTypeProperties,
     arrayProperties: arrayProperties,
@@ -102,3 +126,4 @@ module.exports = {
     sanitiseAll: sanitiseAll
 
 };
+

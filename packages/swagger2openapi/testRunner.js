@@ -83,8 +83,15 @@ function finalise(err, options) {
     }
     if (err) {
         console.log(common.colour.red + options.context.pop() + '\n' + err.message);
-        if (err.stack && err.name !== 'AssertionError') {
+        if (err.name.indexOf('ERR_INVALID_URL')>=0) {
+            // nop
+        }
+        else if (err.message.indexOf('schema validation')>=0) {
+            warnings.push('Schema fallback '+options.file);
+        }
+        else if (err.stack && err.name !== 'AssertionError') {
             console.log(err.stack);
+            warnings.push(err.name+' '+options.file);
         }
         if (options.lintRule && options.lintRule.description !== err.message) {
             console.warn(options.lintRule.description);
@@ -127,7 +134,7 @@ function finalise(err, options) {
 function handleResult(err, options) {
     let result = false;
     if (err) {
-        options = err.options || { file: 'unknown', src: { info: { version: '', title: '' } } };
+        options = err.options || { file: 'unknown', src: { info: { version: '', title: '' } } }; // src is just enough to provide dummy outputs
         options.context = [];
         options.warnings = [];
         options.expectFailure = globalExpectFailure;
