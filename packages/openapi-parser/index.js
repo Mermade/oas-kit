@@ -391,6 +391,8 @@ function checkServer(server, options) {
     });
     if (typeof server.variables !== 'undefined') {
         contextAppend(options, 'variables');
+        should(server.variables).be.an.Object();
+        server.variables.should.not.be.an.Array();
         for (let v in server.variables) {
             contextAppend(options, v);
             should(server.variables[v]).be.an.Object();
@@ -402,7 +404,7 @@ function checkServer(server, options) {
                 should(server.variables[v].enum.length).not.be.exactly(0, 'Server variables enum should not be empty');
                 for (let e in server.variables[v].enum) {
                     contextAppend(options, e);
-                    server.variables[v].enum[e].should.be.type('string');
+                    should(server.variables[v].enum[e]).be.type('string');
                     options.context.pop();
                 }
                 options.context.pop();
