@@ -27,7 +27,7 @@
             "items": {
                 "$ref": "#/definitions/server"
             },
-            "uniqueItems": true
+            "uniqueItems": false
         },
         "paths": {
             "$ref": "#/definitions/paths"
@@ -40,7 +40,7 @@
             "items": {
                 "$ref": "#/definitions/securityRequirement"
             },
-            "uniqueItems": true
+            "uniqueItems": false
         },
         "tags": {
             "type": "array",
@@ -185,7 +185,7 @@
                     "items": {
                         "type": "string"
                     },
-                    "uniqueItems": true
+                    "uniqueItems": false
                 },
                 "default": {
                     "type": "string"
@@ -295,7 +295,7 @@
                     "items": {
                         "$ref": "#/definitions/server"
                     },
-                    "uniqueItems": true
+                    "uniqueItems": false
                 },
                 "parameters": {
                     "type": "array",
@@ -362,14 +362,14 @@
                     "items": {
                         "$ref": "#/definitions/securityRequirement"
                     },
-                    "uniqueItems": true
+                    "uniqueItems": false
                 },
                 "servers": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/server"
                     },
-                    "uniqueItems": true
+                    "uniqueItems": false
                 }
             }
         },
@@ -412,7 +412,8 @@
                     "type": "string"
                 },
                 "in": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [ "cookie", "path", "query", "header" ]
                 },
                 "description": {
                     "type": "string"
@@ -713,7 +714,8 @@
                     "type": "string"
                 },
                 "in": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [ "header" ]
                 },
                 "description": {
                     "type": "string"
@@ -1005,7 +1007,8 @@
                     "type": "string"
                 },
                 "in": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [ "cookie", "query", "header" ]
                 },
                 "scheme": {
                     "type": "string"
