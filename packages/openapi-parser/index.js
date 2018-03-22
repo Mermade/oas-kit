@@ -959,7 +959,7 @@ function validateSync(openapi, options, callback) {
                 contextAppend(options, 'externalDocs');
                 should(tag.externalDocs).be.an.Object();
                 tag.externalDocs.should.not.be.an.Array();
-                if (typeof tag.externalDocs.description) {
+                if (typeof tag.externalDocs.description !== 'undefined') {
                     should(tag.externalDocs.description).be.a.String();
                 }
                 tag.externalDocs.should.have.key('url');
