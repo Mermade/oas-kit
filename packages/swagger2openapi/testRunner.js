@@ -196,6 +196,9 @@ function* check(file, force, expectFailure) {
                 catch (ex) {
                     let warning = 'Could not parse file ' + file + '\n' + ex.message;
                     console.log(common.colour.red + warning);
+                    if (ex.stack && ex.message.indexOf('stack')>=0) {
+                        console.warn(ex.stack);
+                    }
                     warnings.push(warning);
                 }
             }
