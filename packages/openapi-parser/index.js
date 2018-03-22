@@ -686,17 +686,20 @@ function checkPathItem(pathItem, path, openapi, options) {
             options.context.pop();
         }
         else if (o === 'summary') {
-            pathItem.summary.should.have.type('string');
+            should(pathItem.summary).have.type('string');
         }
         else if (o === 'description') {
-            pathItem.description.should.have.type('string');
+            should(pathItem.description).have.type('string');
         }
         else if (common.httpMethods.indexOf(o) >= 0) {
-            op.should.not.be.empty();
+            should(op).be.an.Object();
+            op.should.not.be.an.Array();
             op.should.not.have.property('consumes');
             op.should.not.have.property('produces');
             op.should.not.have.property('schemes');
             op.should.have.property('responses');
+            should(op.responses).be.an.Object();
+            op.responses.should.not.be.an.Array();
             op.responses.should.not.be.empty();
             if (op.summary) op.summary.should.have.type('string');
             if (op.description) op.description.should.have.type('string');
@@ -812,7 +815,7 @@ function checkPathItem(pathItem, path, openapi, options) {
 
 function checkSecurity(security,openapi,options) {
     contextAppend(options, 'security');
-    security.should.be.an.Array();
+    should(security).be.an.Array();
     //common.distinctArray(security).should.be.exactly(true,'security array should be distinct'); // TODO move to linter
     for (let sr of security) {
         sr.should.be.an.Object();
@@ -966,13 +969,16 @@ function validateSync(openapi, options, callback) {
                 should.doesNotThrow(function () { validateUrl(tag.externalDocs.url, contextServers, 'tag.externalDocs', options) },'Invalid externalDocs.url');
                 options.context.pop();
             }
+            if (typeof tag.description !== 'undefined') {
+                should(tag.description).be.a.String();
+            }
             if (options.lint) options.linter('tag',tag,tag.name,options); // should be index
             options.context.pop();
         }
         options.context.pop();
     }
 
-    if (openapi.security) {
+    if (typeof openapi.security !== 'undefined') {
         checkSecurity(openapi.security,openapi,options);
     }
 
