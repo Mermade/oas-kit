@@ -24,5 +24,6 @@
     "openapi-schema-walker": "^1.0.0",
     "reftools": "^0.0.20",
     "should": "^13.2.1"
-  }
+  },
+  "devDependencies": {}
 }
