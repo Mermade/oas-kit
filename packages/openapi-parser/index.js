@@ -292,9 +292,12 @@ function checkSubSchema(schema, parent, state) {
     }
     // example can be any type
 
-    if (schema.externalDocs) {
+    if (typeof schema.externalDocs !== 'undefined') {
+        should(schema.externalDocs).be.an.Object();
+        schema.externalDocs.should.not.be.an.Array();
         schema.externalDocs.should.have.key('url');
         should.doesNotThrow(function() { validateUrl(schema.externalDocs.url, [state.openapi.servers], 'externalDocs', state.options)}, 'Invalid externalDocs.url');
+        if (state.options.lint) state.options.linter('externalDocs',schema.externalDocs,'externalDocs',state.options);
     }
     if (prop) state.options.context.pop();
     if (!prop || prop === 'schema') validateSchema(schema, state.openapi, state.options); // top level only
@@ -397,7 +400,7 @@ function checkServer(server, options) {
             contextAppend(options, v);
             should(server.variables[v]).be.an.Object();
             server.variables[v].should.have.key('default');
-            server.variables[v].default.should.be.type('string');
+            should(server.variables[v].default).be.a.String();
             if (typeof server.variables[v].enum !== 'undefined') {
                 contextAppend(options, 'enum');
                 should(server.variables[v].enum).be.an.Array();
@@ -419,7 +422,7 @@ function checkServer(server, options) {
 }
 
 function checkServers(servers, options) {
-    servers.should.be.an.Array();
+    should(servers).be.an.Array();
     //common.distinctArray(servers).should.be.exactly(true,'servers array must be distinct'); // TODO move to linter
     for (let s in servers) {
         contextAppend(options, s);
@@ -650,6 +653,9 @@ function checkParam(param, index, path, contextServers, openapi, options) {
 
 function checkPathItem(pathItem, path, openapi, options) {
 
+    should(pathItem).be.an.Object();
+    pathItem.should.not.be.an.Array();
+
     let contextServers = [];
     contextServers.push(openapi.servers);
     if (pathItem.servers) contextServers.push(pathItem.servers);
@@ -702,23 +708,23 @@ function checkPathItem(pathItem, path, openapi, options) {
             op.responses.should.not.be.an.Array();
             op.responses.should.not.be.empty();
             if (op.summary) op.summary.should.have.type('string');
-            if (op.description) op.description.should.have.type('string');
+            if (typeof op.description !== 'undefined') should(op.description).be.a.String();
             if (typeof op.operationId !== 'undefined') {
-                op.operationId.should.have.type('string');
+                should(op.operationId).be.a.String();
                 should(options.operationIds.indexOf(op.operationId)).be.exactly(-1,'operationIds must be unique');
                 options.operationIds.push(op.operationId);
             }
 
-            if (op.servers) {
+            if (typeof op.servers !== 'undefined') {
                 contextAppend(options, 'servers');
                 checkServers(op.servers, options); // won't be here in converted definitions
                 options.context.pop();
                 contextServers.push(op.servers);
             }
 
-            if (op.tags) {
+            if (typeof op.tags !== 'undefined') {
                 contextAppend(options, 'tags');
-                op.tags.should.be.an.Array();
+                should(op.tags).be.an.Array();
                 for (let tag of op.tags) {
                     tag.should.be.a.String();
                 }
@@ -773,10 +779,16 @@ function checkPathItem(pathItem, path, openapi, options) {
             if (typeof op.deprecated !== 'undefined') {
                 op.deprecated.should.be.a.Boolean();
             }
-            if (op.externalDocs) {
+            if (typeof op.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
+                should(op.externalDocs).be.an.Object();
+                op.externalDocs.should.not.be.an.Array();
                 op.externalDocs.should.have.key('url');
+                if (typeof op.externalDocs.description !== 'undefined') {
+                    should(op.externalDocs.description).be.a.String();
+                }
                 should.doesNotThrow(function () { validateUrl(op.externalDocs.url, contextServers, 'externalDocs', options) },'Invalid externalDocs.url');
+                if (options.lint) options.linter('externalDocs',op.externalDocs,'externalDocs',options);
                 options.context.pop();
             }
             if (op.callbacks) {
@@ -821,7 +833,7 @@ function checkSecurity(security,openapi,options) {
         sr.should.be.an.Object();
         sr.should.not.be.an.Array();
         for (let i in sr) {
-            sr[i].should.be.an.Array();
+            should(sr[i]).be.an.Array();
             let sec = jptr.jptr(openapi,'#/components/securitySchemes/'+i);
             sec.should.not.be.exactly(false,'Could not dereference securityScheme '+i);
             if (sec.type !== 'oauth2') {
@@ -920,8 +932,9 @@ function validateSync(openapi, options, callback) {
             should.doesNotThrow(function () { validateUrl(openapi.info.contact.url, contextServers, 'url', options) },'Invalid contact.url');
         }
         if (typeof openapi.info.contact.email !== 'undefined') {
-            openapi.info.contact.email.should.have.type('string');
+            should(openapi.info.contact.email).be.a.String();
             should(openapi.info.contact.email.indexOf('@')).be.greaterThan(-1,'Contact email must be a valid email address');
+            should(openapi.info.contact.email.indexOf('.')).be.greaterThan(-1,'Contact email must be a valid email address');
         }
         if (options.lint) options.linter('contact',openapi.info.contact,'contact',options);
         for (let k in openapi.info.contact) {
@@ -945,6 +958,7 @@ function validateSync(openapi, options, callback) {
             should(openapi.externalDocs.description).be.a.String();
         }
         should.doesNotThrow(function () { validateUrl(openapi.externalDocs.url, contextServers, 'externalDocs', options) },'Invalid externalDocs.url');
+        if (options.lint) options.linter('externalDocs',openapi.externalDocs,'externalDocs',options);
         options.context.pop();
     }
 
@@ -955,7 +969,7 @@ function validateSync(openapi, options, callback) {
         for (let tag of openapi.tags) {
             tag.should.have.property('name');
             contextAppend(options, tag.name);
-            tag.name.should.have.type('string');
+            should(tag.name).be.a.String();
             tagsSeen.has(tag.name).should.be.exactly(false,'Tag names must be unique');
             tagsSeen.set(tag.name,true);
             if (typeof tag.externalDocs !== 'undefined') {
@@ -967,6 +981,7 @@ function validateSync(openapi, options, callback) {
                 }
                 tag.externalDocs.should.have.key('url');
                 should.doesNotThrow(function () { validateUrl(tag.externalDocs.url, contextServers, 'tag.externalDocs', options) },'Invalid externalDocs.url');
+                if (options.lint) options.linter('externalDocs',tag.externalDocs,'externalDocs',options);
                 options.context.pop();
             }
             if (typeof tag.description !== 'undefined') {
