@@ -2096,7 +2096,7 @@
                 },
                 "openIdConnectUrl": {
                     "type": "string",
-                    "format": "url"
+                    "format": "uriref"
                 },
                 "description": {
                     "type": "string"
