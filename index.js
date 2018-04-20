@@ -781,7 +781,12 @@ function processPaths(container, containerName, options, requestBodyCache, opena
             if ((common.httpVerbs.indexOf(method) >= 0) || (method === 'x-amazon-apigateway-any-method')) {
                 let op = path[method];
 
-                if (op.parameters && Array.isArray(op.parameters)) {
+                if (op.parameters === null) {
+                    delete op.parameters;
+                    continue;
+                }
+
+                if (Array.isArray(op.parameters)) {
                     if (path.parameters) {
                         for (let param of path.parameters) {
                             if (typeof param.$ref === 'string') {
