@@ -53,7 +53,7 @@ function validateUrl(s, contextServers, context, options) {
     let base = options.origin || 'http://localhost/';
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
-        if (servers.length) {
+        if (servers && servers.length) {
             base = servers[0].url;
         }
     }

@@ -10,7 +10,10 @@ const swagger2openapi = require('../');
 const doPrivate = (!process.env.SKIP_PRIVATE);
 
 const tests = fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && file !== 'include' && (!file.startsWith('_') || doPrivate);
+    const isDir = fs.statSync(path.join(__dirname, file)).isDirectory();
+    const isTest = !(['include', 'validate'].includes(file));
+    const isPrivate = file.startsWith('_');
+    return (isDir && isTest && (doPrivate || !isPrivate));
 });
 
 tests.forEach((test) => {
