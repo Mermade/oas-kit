@@ -8,7 +8,9 @@ const yaml = require('js-yaml');
 const swagger2openapi = require('../');
 
 const tests = fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && file !== 'include';
+    const isDir = fs.statSync(path.join(__dirname, file)).isDirectory();
+    const isTest = !(['include', 'validate'].includes(file));
+    return isDir && isTest;
 });
 
 tests.forEach((test) => {
