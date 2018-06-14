@@ -1,6 +1,6 @@
 'use strict';
 const should = require('should');
-const flatten = require('../lib/flatten.js').flatten;
+const flatten = require('../packages/reftools/lib/flatten.js').flatten;
 
 const input = { container: { child: { value: true } }, sibling: { value: false } };
 

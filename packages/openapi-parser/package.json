@@ -17,6 +17,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "^5.5.2",
+    "better-ajv-errors": "^0.5.1",
     "js-yaml": "^3.11.0",
     "openapi-kit-common": "^1.0.0",
     "openapi-linter": "^1.0.0",
@@ -24,6 +25,5 @@
     "openapi-schema-walker": "^1.0.0",
     "reftools": "^0.0.20",
     "should": "^13.2.1"
-  },
-  "devDependencies": {}
+  }
 }

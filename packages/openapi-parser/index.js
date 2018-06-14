@@ -229,7 +229,7 @@ function checkSubSchema(schema, parent, state) {
     }
     if (schema.not) {
         schema.not.should.be.an.Object();
-        schema.oneOf.should.not.be.an.Array();
+        schema.not.should.not.be.an.Array();
     }
     if (typeof schema.title !== 'undefined') {
         schema.title.should.be.a.String(); //?
@@ -356,10 +356,10 @@ function checkContent(content, contextServers, openapi, options) {
         if (typeof contentType.schema !== 'undefined') {
             checkSchema(contentType.schema,emptySchema,'schema',openapi,options);
         }
-        if (contentType.example) {
+        if (typeof contentType.example !== 'undefined') {
             contentType.should.not.have.property('examples');
         }
-        if (contentType.examples) {
+        if (typeof contentType.examples !== 'undefined') {
             contextAppend(options, 'examples');
             contentType.should.not.have.property('example');
             contentType.examples.should.be.an.Object();
@@ -374,6 +374,12 @@ function checkContent(content, contextServers, openapi, options) {
                 }
             }
             options.context.pop();
+        }
+
+        for (let k in contentType) {
+            if (!k.startsWith('x-')) {
+                should(['schema','example','examples','encoding'].indexOf(k)).be.greaterThan(-1,'mediaType object cannot have additionalProperty: '+k);
+            }
         }
         options.context.pop();
     }
@@ -513,6 +519,7 @@ function checkHeader(header, contextServers, openapi, options) {
 }
 
 function checkResponse(response, contextServers, openapi, options) {
+    should(response).not.be.null();
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
         should(response.$ref).be.type('string');
@@ -731,8 +738,11 @@ function checkPathItem(pathItem, path, openapi, options) {
                 options.context.pop();
             }
 
-            if (op.requestBody && op.requestBody.content) {
+            if (typeof op.requestBody !== 'undefined') {
                 contextAppend(options, 'requestBody');
+                should(op.requestBody).not.be.null();
+                op.requestBody.should.be.an.Object();
+                op.requestBody.should.not.be.an.Array();
                 op.requestBody.should.have.property('content');
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
                 if (typeof op.requestBody.required !== 'undefined') op.requestBody.required.should.have.type('boolean');
@@ -865,6 +875,10 @@ function validateSync(openapi, options, callback) {
         let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
         openapi3Schema = yaml.safeLoad(schemaStr, { json: true });
         validateOpenAPI3 = ajv.compile(openapi3Schema);
+    }
+
+    if (options.validateSchema === 'first') {
+        schemaValidate(openapi);
     }
 
     should(openapi).be.an.Object();
@@ -1264,16 +1278,22 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    validateOpenAPI3(openapi);
-    let errors = validateOpenAPI3.errors;
-    if (errors && errors.length) {
-        throw (new Error('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
+    if (!options.validateSchema || (options.validateSchema === 'last')) {
+        schemaValidate(openapi);
     }
 
     options.valid = !options.expectFailure;
     if (options.lint) options.linter('openapi',openapi,'',options);
     if (callback) callback(null, options);
     return options.valid;
+}
+
+function schemaValidate(openapi) {
+    validateOpenAPI3(openapi);
+    let errors = validateOpenAPI3.errors;
+    if (errors && errors.length) {
+        throw (new Error('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
+    }
 }
 
 function setupOptions(options,openapi) {

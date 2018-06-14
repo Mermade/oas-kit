@@ -1,7 +1,0 @@
-language: node_js
-before_script:
-  . ./bin/setflags.sh
-node_js:
-  - "9"
-  - "8"
-  - "6"

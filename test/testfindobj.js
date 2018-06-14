@@ -1,4 +1,4 @@
-const findObj = require('../lib/findObj.js').findObj;
+const findObj = require('../packages/reftools/lib/findObj.js').findObj;
 const should = require('should');
 
 const data = { a: { b: true } };

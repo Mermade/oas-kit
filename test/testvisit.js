@@ -2,8 +2,8 @@
 const util = require('util');
 
 const should = require('should');
-const visit = require('../lib/visit.js').visit;
-const clone = require('../lib/clone.js').clone;
+const visit = require('../packages/reftools/lib/visit.js').visit;
+const clone = require('../packages/reftools/lib/clone.js').clone;
 
 const original = JSON.parse(`
 {

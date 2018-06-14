@@ -1,10 +1,32 @@
 {
-	"license": "BSD-3-Clause",
-	"devDependencies": {
-		"lerna": "^3.0.0-beta.8"
-	},
-	"name": "openapi-kit",
-	"dependencies": {
-		"js-yaml": "^3.11.0"
-	}
+  "license": "BSD-3-Clause",
+  "devDependencies": {},
+  "name": "openapi-kit",
+  "dependencies": {
+    "js-yaml": "^3.11.0",
+    "should": "^13.2.1"
+  },
+  "description": "This is the mono-repo for the following related projects",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mermade/swagger2openapi.git"
+  },
+  "author": "Mike Ralphson",
+  "bugs": {
+    "url": "https://github.com/mermade/swagger2openapi/issues"
+  },
+  "homepage": "https://github.com/mermade/swagger2openapi#readme",
+  "keywords": [
+    "openapi",
+    "oas",
+    "swagger"
+  ]
 }

@@ -2,7 +2,7 @@
 const util = require('util');
 
 const should = require('should');
-const reref = require('../lib/reref.js').reref;
+const reref = require('../packages/reftools/lib/reref.js').reref;
 
 const input = JSON.parse(`
 {

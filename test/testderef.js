@@ -1,6 +1,6 @@
 'use strict';
 const should = require('should');
-const deref = require('../lib/dereference.js').dereference;
+const deref = require('../packages/reftools/lib/dereference.js').dereference;
 
 const input = JSON.parse(`
 {

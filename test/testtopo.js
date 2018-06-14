@@ -1,7 +1,7 @@
 'use strict';
 const should = require('should');
-const toposort = require('../lib/toposort.js').toposort;
-const objToGraph = require('../lib/toposort.js').objToGraph;
+const toposort = require('../packages/reftools/lib/toposort.js').toposort;
+const objToGraph = require('../packages/reftools/lib/toposort.js').objToGraph;
 
 describe('Topological sorting', function() {
   describe('Acyclic Graph Test',function(){

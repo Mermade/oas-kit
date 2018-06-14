@@ -49,6 +49,8 @@ let argv = require('yargs')
     .boolean('stop')
     .alias('s', 'stop')
     .describe('stop', 'stop on first error')
+    .string('validateSchema')
+    .describe('validateSchema','Run schema validation step: first, last* or never')
     .count('verbose')
     .alias('v', 'verbose')
     .describe('verbose', 'increase verbosity')
@@ -87,7 +89,9 @@ function finalise(err, options) {
             // nop
         }
         else if (err.message.indexOf('schema validation')>=0) {
-            warnings.push('Schema fallback '+options.file);
+            if (options.validateSchema !== 'first') {
+                warnings.push('Schema fallback '+options.file);
+            }
         }
         else if (err.stack && err.name !== 'AssertionError') {
             console.log(err.stack);
@@ -182,7 +186,7 @@ function* check(file, force, expectFailure) {
     let name = components[components.length - 1];
     let src;
 
-    if ((name.indexOf('.yaml') >= 0) || (name.indexOf('.json') >= 0) || force) {
+    if ((name.indexOf('.yaml') >= 0) || (name.indexOf('.yml') >= 0) || (name.indexOf('.json') >= 0) || force) {
 
         if (!file.startsWith('http')) {
             let srcStr = fs.readFileSync(path.resolve(file), options.encoding);

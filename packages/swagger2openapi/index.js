@@ -461,6 +461,7 @@ function processParameter(param, op, path, index, openapi, options) {
             // $ref anywhere sensibility
             param.description = resolveInternal(openapi, param.description.$ref);
         }
+        if (param.description == null) delete param.description;
 
         let oldCollectionFormat = param.collectionFormat;
         if (param.collectionFormat) {

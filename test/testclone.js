@@ -1,6 +1,6 @@
 'use strict';
 const should = require('should');
-const clone = require('../lib/clone.js');
+const clone = require('../packages/reftools/lib/clone.js');
 
 const input = { container: { child: { value: true } } };
 

@@ -1,7 +1,7 @@
 'use strict';
 
 const should = require('should');
-const isRef = require('../lib/isref.js').isRef;
+const isRef = require('../packages/reftools/lib/isref.js').isRef;
 
 const simple = { '$ref': '#/' };
 const extended = { '$ref': '#/', description: 'desc' };

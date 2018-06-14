@@ -11,7 +11,7 @@
         "object": "parameter",
         "enabled": true,
         "description": "parameter names should match RFC6570",
-        "pattern": { "property": "name", "value": "^[A-Za-z0-9?()]+$" }
+        "pattern": { "property": "name", "value": "^[A-Za-z0-9?_()]+$" }
     },
     "3": {
         "name": "operation-operationId",
