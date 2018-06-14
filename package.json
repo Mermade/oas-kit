@@ -1,13 +1,13 @@
 {
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "lerna": "^3.0.0-beta.21"
-  },
-  "name": "openapi-kit",
-  "dependencies": {
-    "js-yaml": "^3.11.0",
+    "js-yaml": "^3.12.0",
+    "lerna": "^3.0.0-beta.21",
+    "mocha": "^5.2.0",
     "should": "^13.2.1"
   },
+  "name": "openapi-kit",
+  "dependencies": {},
   "description": "This is the mono-repo for the following related projects",
   "version": "1.0.0",
   "main": "index.js",
