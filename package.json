@@ -1,6 +1,8 @@
 {
   "license": "BSD-3-Clause",
-  "devDependencies": {},
+  "devDependencies": {
+    "lerna": "^3.0.0-beta.21"
+  },
   "name": "openapi-kit",
   "dependencies": {
     "js-yaml": "^3.11.0",
