@@ -743,10 +743,11 @@ function checkPathItem(pathItem, path, openapi, options) {
                 should(op.requestBody).not.be.null();
                 op.requestBody.should.be.an.Object();
                 op.requestBody.should.not.be.an.Array();
-                op.requestBody.should.have.property('content');
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
                 if (typeof op.requestBody.required !== 'undefined') op.requestBody.required.should.have.type('boolean');
-                checkContent(op.requestBody.content, contextServers, openapi, options);
+                if (typeof op.requestBody.content !== 'undefined') {
+                    checkContent(op.requestBody.content, contextServers, openapi, options);
+                }
                 options.context.pop();
             }
 
