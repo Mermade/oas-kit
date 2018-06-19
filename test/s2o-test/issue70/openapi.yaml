@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+info:
+  version: ""
+  title: ""
+paths: {}
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        petType:
+          type: string
+      discriminator:
+        propertyName: petType
+        mapping:
+          dog: Hound
+          cat: '#/components/schemas/Feline'
+    Hound: {}
+    Feline: {}

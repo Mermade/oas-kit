@@ -152,6 +152,16 @@ function fixUpSubSchemaExtensions(schema,parent) {
         schema.nullable = schema["x-nullable"];
         delete schema["x-nullable"];
     }
+    if ((typeof schema["x-discriminator"] === 'object') && (typeof schema["x-discriminator"].propertyName === 'string')) {
+        schema.discriminator = schema["x-discriminator"];
+        delete schema["x-discriminator"];
+        for (let entry in schema.discriminator.mapping) {
+            let schemaOrRef = schema.discriminator.mapping[entry];
+            if (schemaOrRef.startsWith('#/definitions/')) {
+                schema.discriminator.mapping[entry] = schemaOrRef.replace('#/definitions/','#/components/schemas/');
+            }
+        }
+    }
 }
 
 function fixUpSchema(schema,options) {

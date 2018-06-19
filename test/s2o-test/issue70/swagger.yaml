@@ -1,0 +1,18 @@
+swagger: "2.0"
+info:
+  version: ""
+  title: ""
+paths: {}
+definitions:
+  Pet:
+    type: object
+    properties:
+      petType:
+        type: string
+    x-discriminator:
+      propertyName: petType
+      mapping:
+        dog: Hound
+        cat: '#/definitions/Feline'
+  Hound: {}
+  Feline: {}
