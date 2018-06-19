@@ -141,11 +141,11 @@ function fixUpSubSchemaExtensions(schema,parent) {
         delete schema["x-anyOf"];
     }
     if (schema["x-oneOf"]) {
-        schema.anyOf = schema["x-oneOf"];
+        schema.oneOf = schema["x-oneOf"];
         delete schema["x-oneOf"];
     }
     if (schema["x-not"]) {
-        schema.anyOf = schema["x-not"];
+        schema.not = schema["x-not"];
         delete schema["x-not"];
     }
     if (typeof schema["x-nullable"] === 'boolean') {
