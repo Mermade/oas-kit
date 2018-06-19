@@ -249,16 +249,16 @@ function checkSubSchema(schema, parent, state) {
         schema.format.should.be.a.String();
         if (schema.type && ['date-time','email','hostname','ipv4','ipv6','uri','uriref',
             'byte','binary','date','password'].indexOf(schema.format) >= 0) {
-            schema.type.should.equal('string');
+            schema.type.should.equal('string',`Invalid type ${schema.type} for format ${schema.format}`);
         }
         if (schema.type && ['int32','int64'].indexOf(schema.format) >= 0) {
             if (schema.type !== 'string' && schema.type !== 'number') { // common case - googleapis
-               schema.type.should.equal('integer');
+               schema.type.should.equal('integer',`Invalid type ${schema.type} for format ${schema.format}`);
             }
         }
         if (schema.type && ['float','double'].indexOf(schema.format) >= 0) {
             if (schema.type !== 'string') { // occasionally seen
-                schema.type.should.equal('number');
+                schema.type.should.equal('number',`Invalid type ${schema.type} for format ${schema.format}`);
             }
         }
     }
