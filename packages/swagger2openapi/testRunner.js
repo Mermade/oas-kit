@@ -43,7 +43,6 @@ let argv = yargs
     .string('output')
     .alias('o', 'output')
     .describe('output', 'output conversion result')
-    .default('output','openapi.yaml')
     .boolean('quiet')
     .alias('q', 'quiet')
     .describe('quiet', 'do not show test passes on console, for CI')
@@ -127,7 +126,7 @@ function finalise(err, options) {
     if (result) {
         pass++;
         if ((options.file.indexOf('swagger.yaml') >= 0) && argv.output) {
-            let outFile = options.file.replace('swagger.yaml', 'openapi.yaml');
+            let outFile = options.file.replace('swagger.yaml', argv.output);
             let resultStr = yaml.safeDump(options.openapi, {lineWidth: -1});
             fs.writeFile(outFile, resultStr, argv.encoding);
         }
