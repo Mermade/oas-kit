@@ -1,6 +1,6 @@
 # swagger2openapi
 
-![logo](https://github.com/Mermade/swagger2openapi/blob/master/docs/logo.png?raw=true)
+![logo](https://github.com/Mermade/oas-kit/blob/master/docs/logo.png?raw=true)
 
 [![OpenAPI Validation](https://mermade.org.uk/openapi-converter/api/v1/badge?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)](https://mermade.org.uk/openapi-converter/api/v1/validate?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)
 ![Build](https://img.shields.io/travis/Mermade/swagger2openapi/master.svg)
@@ -65,13 +65,13 @@ validator.validate(openapi, options, function(err, options){
 // also available is a synchronous validateSync method which returns a boolean
 ```
 
-See here for complete [documentation](/docs/options.md) of the `options` object.
+See here for complete [documentation](/packages/swagger2openapi/docs/options.md) of the `options` object.
 
 Or use the [online version](https://mermade.org.uk/openapi-converter) which also includes its own [API](http://petstore.swagger.io/?url=https://mermade.org.uk/openapi-converter/contract/swagger.json).
 
 ### Browser Support
 
-See [initial documentation](/docs/browser.md).
+See [initial documentation](/packages/swagger2openapi/docs/browser.md).
 
 ## Features
 
@@ -114,7 +114,7 @@ swagger2openapi will automatically 'repair' a number of problems where non-compl
 
 ### Specification extensions
 
-swagger2openapi has support for a limited number of real-world [specification extensions](/docs/extensions.md) which have a direct bearing on the conversion. All other specification extensions are left untouched. swagger2openapi is [swaggerplusplus](https://github.com/mermade/swaggerplusplus)-compatible.
+swagger2openapi has support for a limited number of real-world [specification extensions](/packages/swagger2openapi/docs/extensions.md) which have a direct bearing on the conversion. All other specification extensions are left untouched. swagger2openapi is [swaggerplusplus](https://github.com/mermade/swaggerplusplus)-compatible.
 
 It is expected to be able to configure the process of specification-extension modification using options or a plugin mechanism in a future release.
 

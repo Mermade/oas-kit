@@ -1,3 +1,3 @@
-# openapi-kit-common
+# oas-kit-common
 
-Common utility functions for openapi-kit
+Common utility functions for oas-kit
