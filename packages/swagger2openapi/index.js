@@ -128,6 +128,10 @@ function fixUpSubSchema(schema,parent,options) {
     // TODO if we have a nested properties (object inside an object) and the
     // *parent* type is not set, force it to object
     // TODO if default is set but type is not set, force type to typeof default
+
+    if (schema.xml && typeof schema.xml.namespace === 'string') {
+        if (!schema.xml.namespace) delete schema.xml.namespace;
+    }
 }
 
 function fixUpSubSchemaExtensions(schema,parent) {
