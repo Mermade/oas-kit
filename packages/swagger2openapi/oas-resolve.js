@@ -8,7 +8,7 @@ const util = require('util');
 const yaml = require('js-yaml');
 const fetch = require('node-fetch');
 
-const resolver = require('./index.js');
+const resolver = require('openapi-resolver');
 
 let argv = require('yargs')
     .string('output')

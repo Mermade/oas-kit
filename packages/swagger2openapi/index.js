@@ -18,7 +18,7 @@ const resolver = require('openapi-resolver');
 const sw = require('openapi-schema-walker');
 const common = require('openapi-kit-common');
 
-const statusCodes = require('./statusCodes.js').statusCodes;
+const statusCodes = require('./lib/statusCodes.js').statusCodes;
 
 const ourVersion = require('./package.json').version;
 

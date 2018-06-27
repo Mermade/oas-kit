@@ -9,7 +9,7 @@ const util = require('util');
 const readfiles = require('node-readfiles');
 const yaml = require('js-yaml');
 
-const validator = require('openapi-parser');
+const validator = require('oas-validator');
 const common = require('openapi-kit-common');
 const clone = require('reftools/lib/clone.js').clone;
 
@@ -18,7 +18,7 @@ const swagger2openapi = require('./index.js');
 let globalExpectFailure = false;
 
 let argv = require('yargs')
-    .usage('testRunner [options] [{path-to-specs}...]')
+    .usage(path.basename(process.argv[1])+' [options] [{path-to-specs}...]')
     .string('encoding')
     .alias('e', 'encoding')
     .default('encoding', 'utf8')

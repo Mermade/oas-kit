@@ -8,7 +8,7 @@
   },
   "name": "openapi-kit",
   "dependencies": {},
-  "description": "This is the mono-repo for the following related projects",
+  "description": "This is the mono-repo for swagger2openapi and related projects",
   "version": "1.0.0",
   "main": "index.js",
   "directories": {

@@ -1,7 +1,7 @@
 {
   "name": "openapi-linter",
   "version": "1.0.0",
-  "description": "Default linter plugin for openapi-parser",
+  "description": "Default linter plugin for oas-validator",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
