@@ -92,6 +92,7 @@ Options:
   -f, --fail        path to specs expected to fail                      [string]
   -j, --jsonschema  path to alternative JSON schema                     [string]
   -l, --laxurls     lax checking of empty urls                         [boolean]
+  -m, --mediatype   check media-types against RFC pattern              [boolean]
   -n, --nopatch     do not patch minor errors in the source definition [boolean]
   -o, --output      output conversion result  [string] [default: "openapi.yaml"]
   -q, --quiet       do not show test passes on console, for CI         [boolean]
