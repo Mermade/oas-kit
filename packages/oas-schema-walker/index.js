@@ -7,7 +7,7 @@ function getDefaultState() {
 function walkSchema(schema, parent, state, callback) {
 
     if (typeof state.depth === 'undefined') state = getDefaultState();
-    if (schema === null) return schema;
+    if ((schema === null) || (typeof schema === 'undefined')) return schema;
     if (typeof schema.$ref !== 'undefined') {
         let temp = {$ref:schema.$ref};
         callback(temp,parent,state);
