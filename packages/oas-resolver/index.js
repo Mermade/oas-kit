@@ -12,7 +12,7 @@ const jptr = require('reftools/lib/jptr.js').jptr;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const clone = require('reftools/lib/clone.js').clone;
 const isRef = require('reftools/lib/isref.js').isRef;
-const common = require('openapi-kit-common');
+const common = require('oas-kit-common');
 
 function unique(arr) {
     return [... new Set(arr)];

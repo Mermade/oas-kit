@@ -14,9 +14,9 @@ const resolveInternal = jptr.jptr;
 const isRef = require('reftools/lib/isref.js').isRef;
 const clone = require('reftools/lib/clone.js').clone;
 const recurse = require('reftools/lib/recurse.js').recurse;
-const resolver = require('openapi-resolver');
-const sw = require('openapi-schema-walker');
-const common = require('openapi-kit-common');
+const resolver = require('oas-resolver');
+const sw = require('oas-schema-walker');
+const common = require('oas-kit-common');
 
 const statusCodes = require('./lib/statusCodes.js').statusCodes;
 

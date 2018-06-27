@@ -20,7 +20,7 @@ Currently tracking [v3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/ma
 
 Usage:
 
-```
+```text
 swagger2openapi [options] [filename|url]
 Options:
   --warnProperty    Property name to use for warning extensions
@@ -77,7 +77,30 @@ See [initial documentation](/docs/browser.md).
 
 ### OpenAPI 3.0.x validation
 
-The `testRunner` harness can also be used as a simple validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The testRunner can have a linting mode enabled with the `--lint` option. Rules are defined [here](/linter/rules.json). Contributions of rules and rule actions for the linter are very much appreciated.
+`oas-validate` can be used as a validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/linter/rules.json). Contributions of rules and rule actions for the linter are very much appreciated.
+
+```text
+oas-validate.js [options] {path-to-specs}...
+
+Options:
+  --lint            lint the definition                                [boolean]
+  --validateSchema  Run schema validation step: first, last* or never   [string]
+  --warnOnly        Do not throw on non-patchable errors               [boolean]
+  -h, --help        Show help                                          [boolean]
+  --version         Show version number                                [boolean]
+  -e, --encoding    encoding for input/output files   [string] [default: "utf8"]
+  -f, --fail        path to specs expected to fail                      [string]
+  -j, --jsonschema  path to alternative JSON schema                     [string]
+  -l, --laxurls     lax checking of empty urls                         [boolean]
+  -n, --nopatch     do not patch minor errors in the source definition [boolean]
+  -o, --output      output conversion result  [string] [default: "openapi.yaml"]
+  -q, --quiet       do not show test passes on console, for CI         [boolean]
+  -r, --resolve     resolve external references                        [boolean]
+  -s, --stop        stop on first error                                [boolean]
+  -v, --verbose     increase verbosity                                   [count]
+  -w, --whatwg      enable WHATWG URL parsing                          [boolean]
+  -y, --yaml        skip YAML-safe test                                [boolean]
+```
 
 ### Reference preservation
 

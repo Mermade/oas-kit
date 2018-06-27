@@ -1,7 +1,7 @@
 {
-  "name": "openapi-kit-common",
+  "name": "oas-kit-common",
   "version": "1.0.0",
-  "description": "Common utility functions for openapi-kit",
+  "description": "Common utility functions for oas-kit",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

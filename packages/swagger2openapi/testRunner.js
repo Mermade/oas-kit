@@ -10,15 +10,18 @@ const readfiles = require('node-readfiles');
 const yaml = require('js-yaml');
 
 const validator = require('oas-validator');
-const common = require('openapi-kit-common');
+const common = require('oas-kit-common');
 const clone = require('reftools/lib/clone.js').clone;
 
 const swagger2openapi = require('./index.js');
 
 let globalExpectFailure = false;
 
-let argv = require('yargs')
-    .usage(path.basename(process.argv[1])+' [options] [{path-to-specs}...]')
+const baseName = path.basename(process.argv[1]);
+
+const yargs = require('yargs');
+let argv = yargs
+    .usage(baseName+' [options] {path-to-specs}...')
     .string('encoding')
     .alias('e', 'encoding')
     .default('encoding', 'utf8')
@@ -37,9 +40,10 @@ let argv = require('yargs')
     .boolean('nopatch')
     .alias('n', 'nopatch')
     .describe('nopatch', 'do not patch minor errors in the source definition')
-    .boolean('output')
+    .string('output')
     .alias('o', 'output')
-    .describe('output', 'output conversion as openapi.yaml')
+    .describe('output', 'output conversion result')
+    .default('output','openapi.yaml')
     .boolean('quiet')
     .alias('q', 'quiet')
     .describe('quiet', 'do not show test passes on console, for CI')
@@ -65,6 +69,7 @@ let argv = require('yargs')
     .help('h')
     .alias('h', 'help')
     .strict()
+    .demand(1)
     .version()
     .argv;
 
@@ -301,9 +306,6 @@ function processPathSpec(pathspec, expectFailure) {
 
 process.exitCode = 1;
 console.log('Gathering...');
-if ((!argv._.length) && (!argv.fail)) {
-    argv._.push('../openapi-directory/APIs/');
-}
 for (let pathspec of argv._) {
     processPathSpec(pathspec, false);
 }

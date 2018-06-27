@@ -25,15 +25,15 @@ let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
 ajv.addMetaSchema(metaSchema);
 ajv._opts.defaultMeta = metaSchema.id;
 
-const common = require('openapi-kit-common');
+const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
 const clone = require('reftools/lib/clone.js').clone;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const isRef = require('reftools/lib/isref.js').isRef;
-const sw = require('openapi-schema-walker');
-const linter = require('openapi-linter');
-const resolver = require('openapi-resolver');
+const sw = require('oas-schema-walker');
+const linter = require('oas-linter');
+const resolver = require('oas-resolver');
 
 const jsonSchema = require('./schemas/json_v5.json');
 const validateMetaSchema = ajv.compile(jsonSchema);

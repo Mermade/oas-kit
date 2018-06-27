@@ -34,10 +34,10 @@
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",
     "node-readfiles": "^0.2.0",
-    "openapi-kit-common": "^1.0.0",
+    "oas-kit-common": "^1.0.0",
     "oas-validator": "^1.0.0",
-    "openapi-resolver": "^1.0.0",
-    "openapi-schema-walker": "^1.0.0",
+    "oas-resolver": "^1.0.0",
+    "oas-schema-walker": "^1.0.0",
     "reftools": "0.0.20",
     "yargs": "^11.0.0"
   },
