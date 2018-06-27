@@ -34,7 +34,7 @@
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",
     "node-readfiles": "^0.2.0",
-    "reftools": "0.0.20",
+    "reftools": "1.0.0",
     "should": "^13.0.1",
     "yargs": "^11.0.0"
   },
