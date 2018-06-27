@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mermade/reftools.git"
+    "url": "git+https://github.com/mermade/oas-kit.git"
   },
   "keywords": [
     "json-reference",
@@ -32,9 +32,9 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/mermade/reftools/issues"
+    "url": "https://github.com/mermade/oas-kit/issues"
   },
-  "homepage": "https://github.com/mermade/reftools#readme",
+  "homepage": "https://github.com/mermade/oas-kit#readme",
   "dependencies": {},
   "devDependencies": {
     "istanbul": "^0.4.5",
