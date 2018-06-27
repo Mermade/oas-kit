@@ -128,7 +128,7 @@ function finalise(err, options) {
         if ((options.file.indexOf('swagger.yaml') >= 0) && argv.output) {
             let outFile = options.file.replace('swagger.yaml', argv.output);
             let resultStr = yaml.safeDump(options.openapi, {lineWidth: -1});
-            fs.writeFile(outFile, resultStr, argv.encoding);
+            fs.writeFileSync(outFile, resultStr, argv.encoding);
         }
     }
     else {
