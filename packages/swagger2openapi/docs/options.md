@@ -15,6 +15,7 @@ externals|[Array](externals.md)|Output|Information required to unresolve a resol
 fail|Boolean|Input|Command-line flag used by `testRunner`
 fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
 file|String|Input|Used to pass filename back to `testRunner`
+filters|Array\[function\]|Input filters for the resolver (e.g. to convert JSON schema dialects)
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting

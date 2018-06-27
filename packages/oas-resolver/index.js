@@ -99,6 +99,14 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
     return obj;
 }
 
+function filterData(data, options) {
+    if (!options.filters || !options.filters.length) return data;
+    for (let filter of options.filters) {
+        data = filter(data, options);
+    }
+    return data;
+}
+
 function resolveExternal(root, pointer, options, callback) {
     var u = url.parse(options.source);
     var base = options.source.split('\\').join('/').split('/');
@@ -130,6 +138,7 @@ function resolveExternal(root, pointer, options, callback) {
             if (data === false) data = {}; // case:A(2) where the resolution fails
         }
         data = resolveAllInternal(data, context, pointer, fragment, target, options);
+        data = filterData(data, options);
         callback(clone(data), target, options);
         return Promise.resolve(data);
     }
@@ -139,6 +148,8 @@ function resolveExternal(root, pointer, options, callback) {
     if (options.handlers && options.handlers[effectiveProtocol]) {
         return options.handlers[effectiveProtocol](base, pointer, fragment, options)
             .then(function (data) {
+                data = filterData(data, options);
+                options.cache[target] = data;
                 callback(data, target, options);
                 return data;
             })
@@ -163,6 +174,7 @@ function resolveExternal(root, pointer, options, callback) {
                         if (data === false) data = {}; /* case:B(2) where the resolution fails */
                     }
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
+                    data = filterData(data, options);
                 }
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
@@ -191,6 +203,7 @@ function resolveExternal(root, pointer, options, callback) {
                         if (data === false) data = {}; /* case:C(2) where the resolution fails */
                     }
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
+                    data = filterData(data, options);
                 }
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
