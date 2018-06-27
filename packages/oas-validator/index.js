@@ -25,6 +25,8 @@ let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
 ajv.addMetaSchema(metaSchema);
 ajv._opts.defaultMeta = metaSchema.id;
 
+const bae = require('better-ajv-errors');
+
 const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
@@ -80,8 +82,13 @@ function validateSchema(schema, openapi, options) {
     validateMetaSchema(schema);
     let errors = validateSchema.errors;
     if (errors && errors.length) {
+        if (options.prettify) {
+            const errorStr = bae(schema, openapi, errors);
+            throw (new Error(errorStr));
+        }
         throw (new Error('Schema invalid: ' + util.inspect(errors)));
     }
+    options.schema = schema;
     return !(errors && errors.length);
 }
 
@@ -881,7 +888,7 @@ function validateSync(openapi, options, callback) {
     }
 
     if (options.validateSchema === 'first') {
-        schemaValidate(openapi);
+        schemaValidate(openapi, options);
     }
 
     should(openapi).be.an.Object();
@@ -1282,7 +1289,7 @@ function validateSync(openapi, options, callback) {
     }
 
     if (!options.validateSchema || (options.validateSchema === 'last')) {
-        schemaValidate(openapi);
+        schemaValidate(openapi, options);
     }
 
     options.valid = !options.expectFailure;
@@ -1291,10 +1298,14 @@ function validateSync(openapi, options, callback) {
     return options.valid;
 }
 
-function schemaValidate(openapi) {
+function schemaValidate(openapi, options) {
     validateOpenAPI3(openapi);
     let errors = validateOpenAPI3.errors;
     if (errors && errors.length) {
+        if (options.prettify) {
+            const errorStr = bae(options.schema, openapi, errors);
+            throw (new Error(errorStr));
+        }
         throw (new Error('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
     }
 }

@@ -31,11 +31,13 @@ original|Object|Bi-directional|Used by `testRunner` to round-trip the original d
 outfile|String|Input|The output file to write to
 output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml files
 patch|Boolean|Input|Flag to fix-up minor errors in the source definition before conversion
+prettify|Boolean|Input|Flag to validator to generate pretty (but potentially misleading) schema validation error reports
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
 refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
+schema|Object|Input|Temporarily holds JSON Schema during validation step
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Input|The source filename or url of the definition, used by the resolver
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
