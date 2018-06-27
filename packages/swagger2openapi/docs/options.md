@@ -26,7 +26,7 @@ mediatype|Boolean|Input|Flag to validation step to check media-type strings agai
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds
-origin|String|Input|The URL of the definition, set by convertUrl method
+origin|Boolean\|String|Input|`true` or a URL, to indicate an `x-origin` extension should be added to the converted output
 original|Object|Bi-directional|Used by `testRunner` to round-trip the original definition, set by non-object `ConvertXXX` methods
 outfile|String|Input|The output file to write to
 output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml files
@@ -37,7 +37,7 @@ refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
 stop|Boolean|Input|Command-line flag used by `testRunner`
-source|String|Output|The source filename or url of the definition
+source|String|Input|The source filename or url of the definition, used by the resolver
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
 url|String|Input|URL of the original definition, used when reading a file to create `x-origin` extension
 valid|Boolean|Output|The result of a validation step

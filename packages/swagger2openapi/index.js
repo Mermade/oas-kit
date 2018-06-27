@@ -1264,11 +1264,11 @@ function convertObj(swagger, options, callback) {
                 openapi["x-origin"] = [];
             }
             let origin = {};
-            origin.url = options.origin;
+            origin.url = options.source||options.origin;
             origin.format = 'swagger';
             origin.version = swagger.swagger;
             origin.converter = {};
-            origin.converter.url = 'https://github.com/mermade/swagger2openapi';
+            origin.converter.url = 'https://github.com/mermade/oas-kit';
             origin.converter.version = ourVersion();
             openapi["x-origin"].push(origin);
         }
@@ -1403,8 +1403,9 @@ function convertStr(str, options, callback) {
 
 function convertUrl(url, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
-        if (!options.origin) {
-            options.origin = url;
+        options.origin = true;
+        if (!options.source) {
+            options.source = url;
         }
         if (options.verbose) {
             console.log('GET ' + url);
