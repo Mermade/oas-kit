@@ -1,6 +1,6 @@
 {
   "name": "reftools",
-  "version": "0.0.21",
+  "version": "1.0.0",
   "description": "Utility functions to deal with references in objects",
   "main": "lib/recurse.js",
   "scripts": {
@@ -35,7 +35,6 @@
     "url": "https://github.com/mermade/oas-kit/issues"
   },
   "homepage": "https://github.com/mermade/oas-kit#readme",
-  "dependencies": {},
   "devDependencies": {
     "istanbul": "^0.4.5",
     "js-yaml": "^3.10.0",
