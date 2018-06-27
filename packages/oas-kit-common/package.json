@@ -1,6 +1,6 @@
 {
   "name": "oas-kit-common",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Common utility functions for oas-kit",
   "main": "index.js",
   "scripts": {
@@ -13,5 +13,6 @@
     "utility"
   ],
   "author": "Mike Ralphson",
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "gitHead": "30f0d70641ea710b25ca91ef8379d172704e691d"
 }

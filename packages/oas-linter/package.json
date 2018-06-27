@@ -1,6 +1,6 @@
 {
   "name": "oas-linter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Default linter plugin for oas-validator",
   "main": "index.js",
   "scripts": {
@@ -17,5 +17,6 @@
   "dependencies": {
     "js-yaml": "^3.11.0",
     "should": "^13.2.1"
-  }
+  },
+  "gitHead": "30f0d70641ea710b25ca91ef8379d172704e691d"
 }
