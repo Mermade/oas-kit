@@ -123,7 +123,7 @@ It is expected to be able to configure the process of specification-extension mo
 To run a test-suite:
 
 ```shell
-node testRunner [-f {path-to-expected-failures}]... [{path-to-APIs|single-file...}]
+node oas-validate [-f {path-to-expected-failures}]... [{path-to-APIs|single-file...}]
 ```
 
 The test harness currently expects files with a `.json` or `.yaml` extension, or a single named file, and has been tested on Node.js versions 4.x, 6.x and 8.x LTS (it is not recommended to run the test suite under Node.js versions >=7.0.0 and \<8.7.0 because of [this bug](https://github.com/nodejs/node/issues/13048)) against
