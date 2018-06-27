@@ -1,1 +1,1 @@
-# openapi-resolver
+# oas-resolver
