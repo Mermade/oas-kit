@@ -1,6 +1,6 @@
 {
   "name": "reftools",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Utility functions to deal with references in objects",
   "main": "lib/recurse.js",
   "scripts": {
