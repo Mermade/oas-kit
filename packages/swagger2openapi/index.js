@@ -828,6 +828,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         op.parameters = op.parameters.filter(deleteParameters);
                     }
                 }
+                if (op.parameters === null) delete op.parameters;
 
                 if (op.security) processSecurity(op.security);
 
@@ -945,6 +946,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
 
             }
         }
+        if (path.parameters === null) delete path.parameters;
         if (path.parameters) {
             for (let p2 in path.parameters) {
                 let param = path.parameters[p2];
