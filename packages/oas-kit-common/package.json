@@ -1,6 +1,6 @@
 {
   "name": "oas-kit-common",
-  "version": "1.0.0-0",
+  "version": "1.0.0",
   "description": "Common utility functions for oas-kit",
   "main": "index.js",
   "scripts": {
