@@ -132,28 +132,28 @@ function checkSubSchema(schema, parent, state) {
         }
     }
 
-    if (schema.multipleOf) {
-        schema.multipleOf.should.be.a.Number();
+    if (typeof schema.multipleOf !== 'undefined') {
+        schema.multipleOf.should.be.type('number','multipleOf must be a number');
         schema.multipleOf.should.be.greaterThan(0);
     }
-    if (schema.maximum) {
-        schema.maximum.should.be.a.Number();
+    if (typeof schema.maximum !== 'undefined') {
+        schema.maximum.should.be.type('number','maximum must be a number');
     }
-    if (schema.exclusiveMaximum) {
-        schema.exclusiveMaximum.should.be.a.Boolean();
+    if (typeof schema.exclusiveMaximum !== 'undefined') {
+        schema.exclusiveMaximum.should.be.type('boolean','exclusiveMaximum must be a boolean');
     }
-    if (schema.minimum) {
-        schema.minimum.should.be.a.Number();
+    if (typeof schema.minimum !== 'undefined') {
+        schema.minimum.should.be.type('number','minimum must be a number');
     }
-    if (schema.exclusiveMinimum) {
-        schema.exclusiveMinimum.should.be.a.Boolean();
+    if (typeof schema.exclusiveMinimum !== 'undefined') {
+        schema.exclusiveMinimum.should.be.type('boolean','exclusiveMinimum must be a boolean');
     }
-    if (schema.maxLength) {
-        schema.maxLength.should.be.a.Number();
+    if (typeof schema.maxLength !== 'undefined') {
+        schema.maxLength.should.be.type('number','maxLength must be a number');
         schema.maxLength.should.be.greaterThan(-1);
     }
-    if (schema.minLength) {
-        schema.minLength.should.be.a.Number();
+    if (typeof schema.minLength !== 'undefined') {
+        schema.minLength.should.be.type('number','minLength must be a number');
         schema.minLength.should.be.greaterThan(-1);
     }
     if (schema.pattern) {
@@ -184,23 +184,23 @@ function checkSubSchema(schema, parent, state) {
         }
         else should.fail(false,true,'additionalProperties must be a boolean or schema');
     }
-    if (schema.maxItems) {
-        schema.maxItems.should.be.a.Number();
+    if (typeof schema.maxItems !== 'undefined') {
+        schema.maxItems.should.be.type('number','maxItems must be a number');
         schema.maxItems.should.be.greaterThan(-1);
     }
-    if (schema.minItems) {
-        schema.minItems.should.be.a.Number();
+    if (typeof schema.minItems !== 'undefined') {
+        schema.minItems.should.be.type('number','minItems must be a number');
         schema.minItems.should.be.greaterThan(-1);
     }
     if (typeof schema.uniqueItems !== 'undefined') {
-        schema.uniqueItems.should.be.a.Boolean();
+        schema.uniqueItems.should.be.type('boolean','uniqueItems must be a boolean');
     }
-    if (schema.maxProperties) {
-        schema.maxProperties.should.be.a.Number();
+    if (typeof schema.maxProperties !== 'undefined') {
+        schema.maxProperties.should.be.type('number','maxProperties must be a number');
         schema.maxProperties.should.be.greaterThan(-1);
     }
-    if (schema.minProperties) {
-        schema.minProperties.should.be.a.Number();
+    if (typeof schema.minProperties !== 'undefined') {
+        schema.minProperties.should.be.type('number','minProperties must be a number');
         schema.minProperties.should.be.greaterThan(-1);
     }
     if (typeof schema.required !== 'undefined') {
@@ -285,18 +285,18 @@ function checkSubSchema(schema, parent, state) {
     }
 
     if (typeof schema.nullable !== 'undefined') {
-        schema.nullable.should.be.a.Boolean();
+        schema.nullable.should.be.type('boolean','nullable must be a boolean');
     }
     if (typeof schema.readOnly !== 'undefined') {
-        schema.readOnly.should.be.a.Boolean();
+        schema.readOnly.should.be.type('boolean','readOnly must be a boolean');
         schema.should.not.have.property('writeOnly');
     }
     if (typeof schema.writeOnly !== 'undefined') {
-        schema.writeOnly.should.be.a.Boolean();
+        schema.writeOnly.should.be.type('boolean','writeOnly must be a boolean');
         schema.should.not.have.property('readOnly');
     }
     if (typeof schema.deprecated !== 'undefined') {
-        schema.deprecated.should.be.a.Boolean();
+        schema.deprecated.should.be.type('boolean','deprecated must be a boolean');
     }
     if (typeof schema.discriminator !== 'undefined') {
         schema.discriminator.should.be.an.Object();
