@@ -155,6 +155,7 @@ function resolveExternal(root, pointer, options, callback) {
             })
             .catch(function(ex){
                 if (options.verbose) console.warn(ex);
+                throw(ex);
             });
     }
     else if (effectiveProtocol.startsWith('http')) {
@@ -185,7 +186,8 @@ function resolveExternal(root, pointer, options, callback) {
             .catch(function (err) {
                 if (options.verbose) console.warn(err);
                 options.cache[target] = {};
-                if (options.promise && options.fatal) options.promise.reject(err);
+                if (options.promise && options.fatal) options.promise.reject(err)
+                else throw(err);
             });
     }
     else {
@@ -213,8 +215,8 @@ function resolveExternal(root, pointer, options, callback) {
             })
             .catch(function(err){
                 if (options.verbose) console.warn(err);
-                options.cache[target] = {};
-                if (options.promise && options.fatal) options.promise.reject(err);
+                if (options.promise && options.fatal) options.promise.reject(err)
+                else throw(err);
             });
     }
 }
@@ -323,6 +325,7 @@ function findExternalRefs(options) {
             })
             .catch(function(ex){
                 if (options.verbose) console.warn(ex);
+                rej(ex);
             });
 
         let result = {options:options};
@@ -359,10 +362,12 @@ function loopReferences(options, res, rej) {
                 })
                 .catch(function (ex) {
                     if (options.verbose) console.warn(ex);
+                    rej(ex);
                 });
         })
         .catch(function(ex){
             if (options.verbose) console.warn(ex);
+            rej(ex);
         });
 }
 
