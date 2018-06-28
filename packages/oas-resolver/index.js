@@ -158,7 +158,7 @@ function resolveExternal(root, pointer, options, callback) {
                 throw(ex);
             });
     }
-    else if (effectiveProtocol.startsWith('http')) {
+    else if (effectiveProtocol && effectiveProtocol.startsWith('http')) {
         return fetch(target, { agent: options.agent })
             .then(function (res) {
                 if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
