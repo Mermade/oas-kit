@@ -179,6 +179,8 @@ function resolveExternal(root, pointer, options, callback) {
                 }
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
+                    if (options.promise && options.fatal) options.promise.reject(err)
+                    else throw(err);
                 }
                 callback(data, target, options);
                 return data;
@@ -209,6 +211,8 @@ function resolveExternal(root, pointer, options, callback) {
                 }
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
+                    if (options.promise && options.fatal) options.promise.reject(err)
+                    else throw(err);
                 }
                 callback(data, target, options);
                 return data;
