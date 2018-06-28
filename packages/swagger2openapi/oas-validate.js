@@ -103,7 +103,7 @@ function finalise(err, options) {
                 warnings.push('Schema fallback '+options.file);
             }
         }
-        else if (err.stack && err.name !== 'AssertionError') {
+        else if (err.stack && err.name !== 'AssertionError' && err.name !== 'CLIError') {
             console.log(err.stack);
             warnings.push(err.name+' '+options.file);
         }
@@ -172,7 +172,7 @@ function handleResult(err, options) {
     catch (ex) {
         console.log(common.colour.normal + options.file);
         console.log(common.colour.red + options.context.pop() + '\n' + ex.message);
-        if (ex.stack && ex.name !== 'AssertionError') {
+        if (ex.stack && ex.name !== 'AssertionError' && ex.name !== 'CLIError') {
             console.log(ex.stack);
         }
         options.valid = !options.expectFailure;

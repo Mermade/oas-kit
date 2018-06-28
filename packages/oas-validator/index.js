@@ -27,6 +27,20 @@ ajv._opts.defaultMeta = metaSchema.id;
 
 const bae = require('better-ajv-errors');
 
+class JSONSchemaError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'JSONSchemaError';
+  }
+};
+
+class CLIError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'CLIError';
+  }
+};
+
 const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
@@ -84,9 +98,9 @@ function validateSchema(schema, openapi, options) {
     if (errors && errors.length) {
         if (options.prettify) {
             const errorStr = bae(schema, openapi, errors);
-            throw (new Error(errorStr));
+            throw (new CLIError(errorStr));
         }
-        throw (new Error('Schema invalid: ' + util.inspect(errors)));
+        throw (new JSONSchemaError('Schema invalid: ' + util.inspect(errors)));
     }
     options.schema = schema;
     return !(errors && errors.length);
@@ -1303,10 +1317,10 @@ function schemaValidate(openapi, options) {
     let errors = validateOpenAPI3.errors;
     if (errors && errors.length) {
         if (options.prettify) {
-            const errorStr = bae(options.schema, openapi, errors);
-            throw (new Error(errorStr));
+            const errorStr = bae(options.schema, openapi, errors, { indent: 2 });
+            throw (new CLIError(errorStr));
         }
-        throw (new Error('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
+        throw (new JSONSchemaError('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
     }
 }
 
@@ -1339,5 +1353,7 @@ function validate(openapi, options, callback) {
 
 module.exports = {
     validateSync: validateSync,
-    validate: validate
+    validate: validate,
+    JSONSchemaError: JSONSchemaError,
+    CLIError: CLIError
 }
