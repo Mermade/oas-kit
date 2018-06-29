@@ -16,8 +16,6 @@ The online version of the converter/validator runs on a [Linode](https://www.lin
 
 Currently tracking [v3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)
 
-**If you are using Node.js 4 - please use the --harmony flag**
-
 Usage:
 
 ```text
@@ -77,7 +75,7 @@ See [initial documentation](/docs/browser.md).
 
 ### OpenAPI 3.0.x validation
 
-`oas-validate` can be used as a validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/linter/rules.json). Contributions of rules and rule actions for the linter are very much appreciated.
+`oas-validate` can be used as a validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/packages/oas-linter/rules.json). Contributions of rules and rule actions for the linter are very much appreciated.
 
 ```text
 oas-validate.js [options] {path-to-specs}...
