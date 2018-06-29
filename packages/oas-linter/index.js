@@ -6,18 +6,23 @@ const path = require('path');
 const yaml = require('js-yaml');
 const should = require('should');
 
-let rules = {};
+let rules = [];
 
 function loadRules(s) {
     let data = fs.readFileSync(s,'utf8');
-    let obj = yaml.safeLoad(data,{json:true});
-    rules = Object.assign({},rules,obj);
-    for (let r in rules) {
-        let rule = rules[r];
+    let newRules = yaml.safeLoad(data,{json:true});
+
+    for (let rule of newRules) {
         if (!Array.isArray(rule.object)) rule.object = [ rule.object ];
         if (rule.truthy && !Array.isArray(rule.truthy)) rule.truthy = [ rule.truthy ];
-        if (!rule.enabled) delete rules[r];
     }
+    newRules = newRules.filter(function(e){ return !e.disabled; });
+
+    let hash = new Map();
+    rules.concat(newRules).forEach(function(rule) {
+        hash.set(rule.name, Object.assign(hash.get(rule.name) || {}, rule));
+    });
+    rules = Array.from(hash.values());
 }
 
 function lint(objectName,object,key,options) {
@@ -90,7 +95,7 @@ function lint(objectName,object,key,options) {
     delete options.lintRule;
 }
 
-loadRules(path.join(__dirname,'rules.json'));
+loadRules(path.join(__dirname,'rules.yaml'));
 
 module.exports = {
     lint : lint,
