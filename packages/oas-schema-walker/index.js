@@ -1,9 +1,27 @@
 'use strict';
 
+/**
+* functions to walk an OpenAPI schema object and traverse all subschemas
+* calling a callback function on each one
+*/
+
+/**
+* obtains the default starting state for the `state` object used
+* by walkSchema
+* @return the state object suitable for use in walkSchema
+*/
 function getDefaultState() {
     return { depth: 0, seen: new WeakMap(), top: true, combine: false };
 }
 
+/**
+* begins the walk of a schema object, or the `state` object used
+* by walkSchema
+* @param parent the parent schema, if any. Use empty object if none
+* @param state the initial starting state of the walker, usually obtained from `getDefaultState`
+* @param callback, a function taking a schema, parent and state to be called on this and all subschemas
+* @return the schema object
+*/
 function walkSchema(schema, parent, state, callback) {
 
     if (typeof state.depth === 'undefined') state = getDefaultState();
@@ -101,3 +119,4 @@ module.exports = {
     getDefaultState: getDefaultState,
     walkSchema: walkSchema
 };
+

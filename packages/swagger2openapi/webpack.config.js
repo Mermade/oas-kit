@@ -9,8 +9,7 @@ module.exports = {
         fs: "empty"
     },
     entry: {
-        Converter: './index.js',
-        Validator: './validate.js'
+        Converter: './index.js'
     },
     output: {
         filename: 'dist/[name].js', // Template based on keys in entry above

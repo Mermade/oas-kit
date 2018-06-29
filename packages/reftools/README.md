@@ -1,5 +1,3 @@
-# reftools
-[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/reftools.svg)](https://greenkeeper.io/)
 ## Functions
 
 <dl>
