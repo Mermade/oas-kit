@@ -34,7 +34,7 @@ rules:
 |truthy|string\|array|no|A property or list of properties which must be truthy (present with a non-false, non-null, non-empty value). Empty arrays are not considered truthy|
 |alphabetical|object|reserved|Not used by `oas-linter`. Structure: `{ properties: string, keyedBy: string }`|
 |or|array|no|An array of property names, one or more of which must be present|
-|maxLength|object|reserved|An object containing a `property` string name, and a ``value` (integer). The length of the `property` value must not be longer than `value`|
+|maxLength|object|reserved|An object containing a `property` string name, and a `value` (integer). The length of the `property` value must not be longer than `value`|
 |notContain|object|no|An object containing a `properties` array and a `value`. None of the `properties` must contain the `value`. Used with strings|
 |notEndWith|object|no|An object containing a `property` and a `value` string. The given `property` must not end with the given `value`. Used with strings|
 |pattern|object|no|An object containing a `property` name, an optional `split` string which is used to split the value being tested into individual components, an optional `omit` string (which is chopped off the front of each component being tested), and a `value` regex property which is used to test all components of the property value being tested|
