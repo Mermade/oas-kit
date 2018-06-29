@@ -19,6 +19,7 @@ filters|Array\[function\]|Input filters for the resolver (e.g. to convert JSON s
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting
+isCallback|Boolean|Input|Hint to the linter that we are within a `callback` object
 jsonschema|String|Input|Path to alternative JSON schema (in JSON or YAML) for validation
 laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs
