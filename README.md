@@ -10,6 +10,27 @@ This is the mono-repo for the following related projects
 * [oas-kit-common](packages/oas-kit-common/README.md)
 * [reftools](packages/reftools/README.md)
 
-# Supported Node.js versions
+## Documentation
+
+* [Main site](https://mermade.github.io/oas-kit)
+
+## Online converter/validator
+
+* [OpenAPI-webconverter](https://mermade.org.uk/openapi-converter)
+
+## Supported Node.js versions
 
 Any LTS version.
+
+## Development
+
+* clone the repository
+* `npm i` in the top level directory
+* `lerna bootstrap`
+
+Please try and keep commits related to a single package or piece of functionality. PR in the usual way.
+
+## Supporting development
+
+* [APIs.guru open-collective](https://opencollective.com/openapi-directory)
+* [Linode VPS referral link](https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa)
