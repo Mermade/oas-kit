@@ -13,9 +13,9 @@ This is the documentation site for OAS-Kit, a collection of packages which compr
 * [Specification extensions supported](extensions.md)
 * [Details on de-resolution information](externals.md)
 * [Details on custom protocol/scheme handlers](handlers.md)
+* [Linter rule DSL documentation](linter-rules.md)
 * [The options object](options.md)
 
 ## TODO (help wanted)
 
-* Linter rule DSL documentation
 * Documentation/example of custom resource filters
