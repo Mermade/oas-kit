@@ -1,3 +1,4 @@
+rules:
 - name: parameter-description
   object: parameter
   description: parameter objects should have a description

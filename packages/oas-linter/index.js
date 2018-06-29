@@ -10,7 +10,7 @@ let rules = [];
 
 function loadRules(s) {
     let data = fs.readFileSync(s,'utf8');
-    let newRules = yaml.safeLoad(data,{json:true});
+    let newRules = yaml.safeLoad(data,{json:true}).rules;
 
     for (let rule of newRules) {
         if (!Array.isArray(rule.object)) rule.object = [ rule.object ];
@@ -26,8 +26,7 @@ function loadRules(s) {
 }
 
 function lint(objectName,object,key,options) {
-    for (let r in rules) {
-        let rule = rules[r];
+    for (let rule of rules) {
         if ((rule.object[0] === '*') || (rule.object.indexOf(objectName)>=0)) {
             options.lintRule = rule;
             if (rule.skip && options[rule.skip]) {
@@ -89,7 +88,7 @@ function lint(objectName,object,key,options) {
                     object[property].should.not.endWith(rule.notEndWith.value);
                 }
             }
-            // speccy defines maxLength rule
+            // TODO speccy defines a maxLength rule { property: string, value: integer }
         }
     }
     delete options.lintRule;
