@@ -30,7 +30,7 @@ rules:
 |description|string|recommended|An optional description for the rule|
 |disabled|boolean|no|Set to `true` to temporarily disable a rule|
 |enabled|boolean|deprecated|No longer used by `oas-linter`|
-|object|string|array|no|The object(s) to act upon, may be `*` for all objects. E.g. `parameter`|
+|object|string\|array|no|The object(s) to act upon, may be `*` for all objects. E.g. `parameter`|
 |truthy|string\|array|no|A property or list of properties which must be truthy (present with a non-false, non-null, non-empty value). Empty arrays are not considered truthy|
 |alphabetical|object|reserved|Not used by `oas-linter`. Structure: `{ properties: string, keyedBy: string }`|
 |or|array|no|An array of property names, one or more of which must be present|
