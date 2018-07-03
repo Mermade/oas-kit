@@ -26,7 +26,7 @@ rules:
 
 |Property|Type|Required|Description|
 |---|---|---|---|
-|name|string|yes|The name/slug of the rule. Use hyphens. Used as the unique key. You can namespace your rules with any prefix and delimiter you wish, to avoid clashes with other people's and the the built-in rules|
+|name|string|yes|The name/slug of the rule. Use hyphens. Used as the unique key. You can namespace your rules with any prefix and delimiter you wish, to avoid clashes with other people's and the built-in rules|
 |description|string|recommended|An optional description for the rule|
 |disabled|boolean|no|Set to `true` to temporarily disable a rule|
 |enabled|boolean|deprecated|No longer used by `oas-linter`|
