@@ -224,7 +224,7 @@ function* check(file, force, expectFailure) {
         }
 
         options.original = src;
-        options.source = path.resolve(file);
+        options.source = file;
 
         if ((options.source.indexOf('!')>=0) && (options.source.indexOf('swagger.')>=0)) {
             expectFailure = true;
