@@ -268,69 +268,69 @@ function findExternalRefs(options) {
     return new Promise(function (res, rej) {
 
         scanExternalRefs(options)
-            .then(function (refs) {
-                for (let ref in refs) {
+        .then(function (refs) {
+            for (let ref in refs) {
 
-                    if (!refs[ref].resolved) {
-                        let depth = options.resolver.depth;
-                        if (depth>0) depth++;
-                        options.resolver.actions[depth].push(function () {
-                            return resolveExternal(options.openapi, ref, options, function (data, source, options) {
-                                if (!refs[ref].resolved) {
-                                    let external = {};
-                                    external.context = refs[ref];
-                                    external.$ref = ref;
-                                    external.original = clone(data);
-                                    external.updated = data;
-                                    external.source = source;
-                                    options.externals.push(external);
-                                    refs[ref].resolved = true;
-                                }
+                if (!refs[ref].resolved) {
+                    let depth = options.resolver.depth;
+                    if (depth>0) depth++;
+                    options.resolver.actions[depth].push(function () {
+                        return resolveExternal(options.openapi, ref, options, function (data, source, options) {
+                            if (!refs[ref].resolved) {
+                                let external = {};
+                                external.context = refs[ref];
+                                external.$ref = ref;
+                                external.original = clone(data);
+                                external.updated = data;
+                                external.source = source;
+                                options.externals.push(external);
+                                refs[ref].resolved = true;
+                            }
 
-                                let localOptions = Object.assign({}, options, { source: '',
-                                    resolver: {actions: options.resolver.actions,
-                                    depth: options.resolver.actions.length-1, base: options.resolver.base } });
-                                if (options.patch && refs[ref].description && !data.description &&
-                                    (typeof data === 'object')) {
-                                    data.description = refs[ref].description;
+                            let localOptions = Object.assign({}, options, { source: '',
+                                resolver: {actions: options.resolver.actions,
+                                depth: options.resolver.actions.length-1, base: options.resolver.base } });
+                            if (options.patch && refs[ref].description && !data.description &&
+                                (typeof data === 'object')) {
+                                data.description = refs[ref].description;
+                            }
+                            refs[ref].data = data;
+                            let pointers = unique(refs[ref].paths).sort(function(a,b){
+                                if (a.length < b.length) return -1;
+                                if (a.length > b.length) return +1;
+                                return 0;
+                            });
+                            for (let ptr of pointers) {
+                                // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
+                                if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
+                                    if (options.verbose>1) console.log('Creating pointer to data at', ptr);
+                                    jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt, 'x-miro': ref }); // resolutionCase:E (new object)
                                 }
-                                refs[ref].data = data;
-                                let pointers = unique(refs[ref].paths).sort(function(a,b){
-                                    if (a.length < b.length) return -1;
-                                    if (a.length > b.length) return +1;
-                                    return 0;
-                                });
-                                for (let ptr of pointers) {
-                                    // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
-                                    if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
-                                        if (options.verbose>1) console.log('Creating pointer to data at', ptr);
-                                        jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt, 'x-miro': ref }); // resolutionCase:E (new object)
+                                else {
+                                    if (refs[ref].resolvedAt) {
+                                        if (options.verbose>1) console.log('Avoiding circular reference');
                                     }
                                     else {
-                                        if (refs[ref].resolvedAt) {
-                                            if (options.verbose>1) console.log('Avoiding circular reference');
-                                        }
-                                        else {
-                                            refs[ref].resolvedAt = ptr;
-                                            if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
-                                        }
-                                        let cdata = clone(data);
-                                        jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
+                                        refs[ref].resolvedAt = ptr;
+                                        if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
                                     }
+                                    let cdata = clone(data);
+                                    jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
                                 }
-                                if (options.resolver.actions[localOptions.resolver.depth].length === 0) {
-                                    //options.resolver.actions[localOptions.resolver.depth].push(function () { return scanExternalRefs(localOptions) });
-                                    options.resolver.actions[localOptions.resolver.depth].push(function () { return findExternalRefs(localOptions) }); // findExternalRefs calls scanExternalRefs
-                                }
-                            });
+                            }
+                            if (options.resolver.actions[localOptions.resolver.depth].length === 0) {
+                                //options.resolver.actions[localOptions.resolver.depth].push(function () { return scanExternalRefs(localOptions) });
+                                options.resolver.actions[localOptions.resolver.depth].push(function () { return findExternalRefs(localOptions) }); // findExternalRefs calls scanExternalRefs
+                            }
                         });
-                    }
+                    });
                 }
-            })
-            .catch(function(ex){
-                if (options.verbose) console.warn(ex);
-                rej(ex);
-            });
+            }
+        })
+        .catch(function(ex){
+            if (options.verbose) console.warn(ex);
+            rej(ex);
+        });
 
         let result = {options:options};
         result.actions = options.resolver.actions[options.resolver.depth];
