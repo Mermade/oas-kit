@@ -1,25 +1,18 @@
 # Browser support
 
-## Webpack v3
+## Webpack v4
 
 Many thanks to @RomanGotsiy for getting these sizes down somewhat.
 
 ```shell
-$ webpack
+$ npx webpack -p
 $ ls -lh dist
-total 1.7M
--rw-r--r-- 1 b2b wheel 1.2M Nov 14 23:39 common.js
--rw-r--r-- 1 b2b wheel  76K Nov 14 23:39 Converter.js
--rw-r--r-- 1 b2b wheel 444K Nov 14 23:39 Validator.js
-```
-
-```shell
-$ webpack -p
-$ ls -lh dist
-total 844K
--rw-r--r-- 1 b2b wheel 594K Nov 14 23:36 common.js
--rw-r--r-- 1 b2b wheel  29K Nov 14 23:36 Converter.js
--rw-r--r-- 1 b2b wheel 214K Nov 14 23:36 Validator.js
+total 1.8M
+-rw-r--r-- 1 mike mike 421K Jul  4 13:43 converter.min.js
+-rw-r--r-- 1 mike mike 242K Jul  4 13:43 linter.min.js
+-rw-r--r-- 1 mike mike 226K Jul  4 13:43 resolver.min.js
+-rw-r--r-- 1 mike mike 922K Jul  4 13:43 validator.min.js
+-rw-r--r-- 1 mike mike 2.4K Jul  4 13:43 walker.min.js
 ```
 
 ## Browserify

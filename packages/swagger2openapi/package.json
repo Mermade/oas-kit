@@ -55,13 +55,9 @@
     "linter"
   ],
   "devDependencies": {
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.1.0",
-    "babel-preset-es2015": "^6.24.1",
     "coveralls": "^3.0.0",
     "eslint": "^4.18.2",
-    "mocha": "^5.0.0",
-    "webpack": "^3.5.6"
+    "mocha": "^5.0.0"
   },
   "gitHead": "5cbeab49334ebe18c117764d086e1cfe7d708e97"
 }
