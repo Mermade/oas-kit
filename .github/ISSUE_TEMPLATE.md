@@ -8,6 +8,8 @@
 - [ ] Conversion: On valid OpenAPI 2.0 input, the conversion looks wrong
 - [ ] Validation: I believe my source definition is valid OpenAPI 3.0.x but the validator complains
 - [ ] Validation: I believe my source definition is invalid OpenAPI 3.0.x but the validator does not complain
+- [ ] Linting issue
+- [ ] Resolver issue
 
 <!--
 For validating OpenAPI 2.0 definitions, we recommend the [bigstickcarpet swagger validator](http://bigstickcarpet.com/swagger-parser/www/index.html)
@@ -19,6 +21,6 @@ For validating OpenAPI 2.0 definitions, we recommend the [bigstickcarpet swagger
 
 #### Other stuff
 
-<!-- Please also let us know how you found out about swagger2openapi, and what version you are running -->
+<!-- Please also let us know how you found out about OAS-Kit, and what version you are running -->
 
 
