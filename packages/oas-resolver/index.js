@@ -378,7 +378,13 @@ function loopReferences(options, res, rej) {
 function setupOptions(options) {
     if (!options.cache) options.cache = {};
 
-    options.cache[options.source] = { '$ref': '#/' };
+    if (options.source) {
+        let srcUrl = url.parse(options.source);
+        if (!srcUrl.protocol) {
+            options.source = path.resolve(options.source);
+        }
+        options.cache[options.source] = { '$ref': '#/' };
+    }
 
     if (!options.externals) options.externals = [];
     if (!options.externalRefs) options.externalRefs = [];
