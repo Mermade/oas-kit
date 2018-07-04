@@ -5,6 +5,17 @@ const webpack = require('webpack');
 module.exports = {
     mode: 'production',
     performance: { hints: false },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
+    },
     node: {
         fs: 'empty'
     },

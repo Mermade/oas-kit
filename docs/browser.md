@@ -7,12 +7,13 @@ Many thanks to @RomanGotsiy for getting these sizes down somewhat.
 ```shell
 $ npx webpack -p
 $ ls -lh dist
-total 1.8M
--rw-r--r-- 1 mike mike 421K Jul  4 13:43 converter.min.js
--rw-r--r-- 1 mike mike 242K Jul  4 13:43 linter.min.js
--rw-r--r-- 1 mike mike 226K Jul  4 13:43 resolver.min.js
--rw-r--r-- 1 mike mike 922K Jul  4 13:43 validator.min.js
--rw-r--r-- 1 mike mike 2.4K Jul  4 13:43 walker.min.js
+total 1.2M
+-rw-r--r-- 1 mike mike   41K Jul  4 13:58 converter.min.js
+-rw-r--r-- 1 mike mike  3.0K Jul  4 13:58 linter.min.js
+-rw-r--r-- 1 mike mike   12K Jul  4 13:58 resolver.min.js
+-rw-r--r-- 1 mike mike   79K Jul  4 13:58 validator.min.js
+-rw-r--r-- 1 mike mike 1009K Jul  4 13:58 vendors.min.js
+-rw-r--r-- 1 mike mike  2.4K Jul  4 13:58 walker.min.js
 ```
 
 ## Browserify
