@@ -1,6 +1,6 @@
 {
   "name": "swagger2openapi",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Convert Swagger 2.0 definitions to OpenApi 3.0 and validate",
   "main": "index.js",
   "bin": {
@@ -35,10 +35,10 @@
     "node-fetch": "^2.0.0",
     "node-readfiles": "^0.2.0",
     "oas-kit-common": "^1.0.3",
-    "oas-resolver": "^1.0.7",
+    "oas-resolver": "^1.0.8",
     "oas-schema-walker": "^1.0.4",
-    "oas-validator": "^1.1.4",
-    "reftools": "^1.0.1",
+    "oas-validator": "^1.1.5",
+    "reftools": "^1.0.2",
     "yargs": "^11.0.0"
   },
   "keywords": [
