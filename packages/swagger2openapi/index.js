@@ -1270,7 +1270,7 @@ function convertObj(swagger, options, callback) {
             origin.version = swagger.swagger;
             origin.converter = {};
             origin.converter.url = 'https://github.com/mermade/oas-kit';
-            origin.converter.version = ourVersion();
+            origin.converter.version = ourVersion;
             openapi["x-origin"].push(origin);
         }
 
