@@ -1,0 +1,48 @@
+swagger: "2.0"
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /{p4}:
+    get:
+      parameters:
+      - name: p1
+        in: query
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      - name: p2
+        in: query
+        type: array
+        items:
+          type: string
+        collectionFormat: multi
+      - name: p3
+        in: header
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      - name: p4
+        in: path
+        required: true
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      - name: p5
+        in: query
+        type: array
+        items:
+          type: string
+        collectionFormat: ssv
+      - name: p6
+        in: query
+        type: array
+        items:
+          type: string
+        collectionFormat: pipes
+      responses:
+        default:
+          description: OK

@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: 1.0.0
+paths:
+  '/{p4}':
+    get:
+      parameters:
+        - name: p1
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p2
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p3
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p4
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p5
+          in: query
+          style: spaceDelimited
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p6
+          in: query
+          style: pipeDelimited
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        default:
+          description: OK
