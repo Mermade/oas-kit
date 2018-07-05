@@ -3,12 +3,12 @@
 ![logo](https://github.com/Mermade/oas-kit/blob/master/docs/logo.png?raw=true)
 
 [![OpenAPI Validation](https://mermade.org.uk/openapi-converter/api/v1/badge?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)](https://mermade.org.uk/openapi-converter/api/v1/validate?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)
-![Build](https://img.shields.io/travis/Mermade/swagger2openapi/master.svg)
+![Build](https://img.shields.io/travis/Mermade/oas-kit/master.svg)
 [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru)
 [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-34882-brightgreen.svg)](https://github.com/mermade/openapi-definitions)
 [![Coverage Status](https://coveralls.io/repos/github/Mermade/swagger2openapi/badge.svg?branch=master)](https://coveralls.io/github/Mermade/swagger2openapi?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/swagger2openapi/badge.svg)](https://snyk.io/test/npm/swagger2openapi)
-[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/swagger2openapi.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/oas-kit.svg)](https://greenkeeper.io/)
 
 Convert Swagger 2.0 definitions into OpenApi 3.0.x
 
@@ -39,7 +39,7 @@ Options:
   -y, --yaml        write YAML, default JSON (overridden by --outfile filepath extension)   [boolean]
 ```
 
-or use the APIs:
+or use the API:
 
 ```javascript
 var converter = require('swagger2openapi');
@@ -51,16 +51,6 @@ converter.convertObj(swagger, options, function(err, options){
 });
 // also available are asynchronous convertFile, convertUrl, convertStr and convertStream functions
 // if you omit the callback parameter, you will instead receive a Promise
-```
-
-```javascript
-var validator = require('swagger2openapi/validate.js');
-var options = {};
-validator.validate(openapi, options, function(err, options){
-  // options.valid contains the result of the validation
-  // options.context now contains a stack (array) of JSON-Pointer strings
-});
-// also available is a synchronous validateSync method which returns a boolean
 ```
 
 See here for complete [documentation](/docs/options.md) of the `options` object.
