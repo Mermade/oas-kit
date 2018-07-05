@@ -489,6 +489,7 @@ function processParameter(param, op, path, index, openapi, options) {
             }
             if ((param.collectionFormat === 'csv') && ((param.in === 'query') || (param.in === 'cookie'))) {
                 param.style = 'form';
+                param.explode = false;
             }
             if ((param.collectionFormat === 'csv') && ((param.in === 'path') || (param.in === 'header'))) {
                 param.style = 'simple';
