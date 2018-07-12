@@ -84,8 +84,11 @@ function lint(objectName,object,key,options) {
             }
             if (rule.notEndWith) {
                 let property = (rule.notEndWith.property === '$key') ? key : object[rule.notEndWith.property];
-                if (typeof object[property] === 'string') {
-                    object[property].should.not.endWith(rule.notEndWith.value);
+                if (typeof property === 'string') {
+                    if (rule.notEndWith.omit) {
+                        property = property.replace(rule.notEndWith.omit,'');
+                    }
+                    property.should.not.endWith(rule.notEndWith.value);
                 }
             }
             // TODO speccy defines a maxLength rule { property: string, value: integer }

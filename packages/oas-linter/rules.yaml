@@ -25,10 +25,11 @@ rules:
   truthy: tags
   skip: isCallback
 - name: path-keys-no-trailing-slash
-  object: openapi
+  object: paths
   notEndWith:
     property: $key
     value: /
+    omit: /
 - name: openapi-tags
   object: openapi
   description: openapi object should have non-empty tags array
