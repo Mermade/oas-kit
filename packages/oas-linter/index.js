@@ -98,5 +98,7 @@ loadRules(path.join(__dirname,'rules.yaml'));
 
 module.exports = {
     lint : lint,
-    loadRules : loadRules
+    loadRules : loadRules,
+    getRules : function() { return { rules: rules }; }
 };
+
