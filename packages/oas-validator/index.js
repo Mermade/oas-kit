@@ -114,7 +114,7 @@ function checkSubSchema(schema, parent, state) {
     schema.should.not.be.an.Array();
 
     if (typeof schema.$ref !== 'undefined') {
-        schema.$ref.should.be.a.String();
+        should(schema.$ref).be.a.String();
         if (state.options.lint) state.options.linter('reference',schema,'$ref',state.options);
         if (prop) state.options.context.pop();
         return; // all other properties SHALL be ignored
@@ -133,27 +133,27 @@ function checkSubSchema(schema, parent, state) {
     }
 
     if (typeof schema.multipleOf !== 'undefined') {
-        schema.multipleOf.should.be.type('number','multipleOf must be a number');
+        should(schema.multipleOf).be.type('number','multipleOf must be a number');
         schema.multipleOf.should.be.greaterThan(0);
     }
     if (typeof schema.maximum !== 'undefined') {
-        schema.maximum.should.be.type('number','maximum must be a number');
+        should(schema.maximum).be.type('number','maximum must be a number');
     }
     if (typeof schema.exclusiveMaximum !== 'undefined') {
-        schema.exclusiveMaximum.should.be.type('boolean','exclusiveMaximum must be a boolean');
+        should(schema.exclusiveMaximum).be.type('boolean','exclusiveMaximum must be a boolean');
     }
     if (typeof schema.minimum !== 'undefined') {
-        schema.minimum.should.be.type('number','minimum must be a number');
+        should(schema.minimum).be.type('number','minimum must be a number');
     }
     if (typeof schema.exclusiveMinimum !== 'undefined') {
-        schema.exclusiveMinimum.should.be.type('boolean','exclusiveMinimum must be a boolean');
+        should(schema.exclusiveMinimum).be.type('boolean','exclusiveMinimum must be a boolean');
     }
     if (typeof schema.maxLength !== 'undefined') {
-        schema.maxLength.should.be.type('number','maxLength must be a number');
+        should(schema.maxLength).be.type('number','maxLength must be a number');
         schema.maxLength.should.be.greaterThan(-1);
     }
     if (typeof schema.minLength !== 'undefined') {
-        schema.minLength.should.be.type('number','minLength must be a number');
+        should(schema.minLength).be.type('number','minLength must be a number');
         schema.minLength.should.be.greaterThan(-1);
     }
     if (schema.pattern) {
@@ -165,7 +165,7 @@ function checkSubSchema(schema, parent, state) {
         }
     }
     if (typeof schema.items !== 'undefined') {
-        schema.items.should.be.an.Object();
+        should(schema.items).be.an.Object();
         schema.items.should.not.be.an.Array();
     }
     if (schema.additionalItems) {
@@ -185,26 +185,26 @@ function checkSubSchema(schema, parent, state) {
         else should.fail(false,true,'additionalProperties must be a boolean or schema');
     }
     if (typeof schema.maxItems !== 'undefined') {
-        schema.maxItems.should.be.type('number','maxItems must be a number');
+        should(schema.maxItems).be.type('number','maxItems must be a number');
         schema.maxItems.should.be.greaterThan(-1);
     }
     if (typeof schema.minItems !== 'undefined') {
-        schema.minItems.should.be.type('number','minItems must be a number');
+        should(schema.minItems).be.type('number','minItems must be a number');
         schema.minItems.should.be.greaterThan(-1);
     }
     if (typeof schema.uniqueItems !== 'undefined') {
-        schema.uniqueItems.should.be.type('boolean','uniqueItems must be a boolean');
+        should(schema.uniqueItems).be.type('boolean','uniqueItems must be a boolean');
     }
     if (typeof schema.maxProperties !== 'undefined') {
-        schema.maxProperties.should.be.type('number','maxProperties must be a number');
+        should(schema.maxProperties).be.type('number','maxProperties must be a number');
         schema.maxProperties.should.be.greaterThan(-1);
     }
     if (typeof schema.minProperties !== 'undefined') {
-        schema.minProperties.should.be.type('number','minProperties must be a number');
+        should(schema.minProperties).be.type('number','minProperties must be a number');
         schema.minProperties.should.be.greaterThan(-1);
     }
     if (typeof schema.required !== 'undefined') {
-        schema.required.should.be.an.Array();
+        should(schema.required).be.an.Array();
         schema.required.should.not.be.empty();
         common.hasDuplicates(schema.required).should.be.exactly(false,'required items must be unique');
     }
@@ -225,12 +225,12 @@ function checkSubSchema(schema, parent, state) {
         }
     }*/
     if (typeof schema.enum !== 'undefined') {
-        schema.enum.should.be.an.Array();
+        should(schema.enum).be.an.Array();
         schema.enum.should.not.be.empty();
         // items only SHOULD be unique
     }
     if (typeof schema.type !== 'undefined') {
-        schema.type.should.be.a.String(); // not an array
+        should(schema.type).be.a.String(); // not an array
         schema.type.should.equalOneOf('integer','number','string','boolean','object','array'); // not null
         if (schema.type === 'array') {
             schema.should.have.property('items');
@@ -253,10 +253,10 @@ function checkSubSchema(schema, parent, state) {
         schema.not.should.not.be.an.Array();
     }
     if (typeof schema.title !== 'undefined') {
-        schema.title.should.be.a.String(); //?
+        should(schema.title).be.a.String();
     }
     if (typeof schema.description !== 'undefined') {
-        schema.description.should.be.a.String();
+        should(schema.description).be.a.String();
     }
     if (typeof schema.default !== 'undefined') {
         schema.should.have.property('type');
@@ -267,7 +267,7 @@ function checkSubSchema(schema, parent, state) {
         schemaType.should.equal(realType);
     }
     if (typeof schema.format !== 'undefined') {
-        schema.format.should.be.a.String();
+        should(schema.format).be.a.String();
         if (schema.type && ['date-time','email','hostname','ipv4','ipv6','uri','uriref',
             'byte','binary','date','password'].indexOf(schema.format) >= 0) {
             schema.type.should.equal('string',`Invalid type ${schema.type} for format ${schema.format}`);
@@ -285,21 +285,21 @@ function checkSubSchema(schema, parent, state) {
     }
 
     if (typeof schema.nullable !== 'undefined') {
-        schema.nullable.should.be.type('boolean','nullable must be a boolean');
+        should(schema.nullable).be.type('boolean','nullable must be a boolean');
     }
     if (typeof schema.readOnly !== 'undefined') {
-        schema.readOnly.should.be.type('boolean','readOnly must be a boolean');
+        should(schema.readOnly).be.type('boolean','readOnly must be a boolean');
         schema.should.not.have.property('writeOnly');
     }
     if (typeof schema.writeOnly !== 'undefined') {
-        schema.writeOnly.should.be.type('boolean','writeOnly must be a boolean');
+        should(schema.writeOnly).be.type('boolean','writeOnly must be a boolean');
         schema.should.not.have.property('readOnly');
     }
     if (typeof schema.deprecated !== 'undefined') {
-        schema.deprecated.should.be.type('boolean','deprecated must be a boolean');
+        should(schema.deprecated).be.type('boolean','deprecated must be a boolean');
     }
     if (typeof schema.discriminator !== 'undefined') {
-        schema.discriminator.should.be.an.Object();
+        should(schema.discriminator).be.an.Object();
         schema.discriminator.should.not.be.an.Array();
         schema.discriminator.should.have.property('propertyName');
         //"To avoid redundancy, the discriminator MAY be added to a parent schema definition..."
@@ -308,7 +308,7 @@ function checkSubSchema(schema, parent, state) {
         //}
     }
     if (typeof schema.xml !== 'undefined') {
-        schema.xml.should.be.an.Object();
+        should(schema.xml).be.an.Object();
         schema.xml.should.not.be.an.Array();
     }
     // example can be any type
@@ -336,10 +336,10 @@ function checkExample(ex, contextServers, openapi, options) {
     ex.should.be.an.Object();
     ex.should.not.be.an.Array();
     if (typeof ex.summary !== 'undefined') {
-        ex.summary.should.have.type('string');
+        should(ex.summary).have.type('string');
     }
     if (typeof ex.description !== 'undefined') {
-        ex.description.should.have.type('string');
+        should(ex.description).have.type('string');
     }
     if (typeof ex.value !== 'undefined') {
         ex.should.not.have.property('externalValue');
@@ -385,7 +385,7 @@ function checkContent(content, contextServers, openapi, options) {
         if (typeof contentType.examples !== 'undefined') {
             contextAppend(options, 'examples');
             contentType.should.not.have.property('example');
-            contentType.examples.should.be.an.Object();
+            should(contentType.examples).be.an.Object();
             contentType.examples.should.not.be.an.Array();
             for (let e in contentType.examples) {
                 let ex = contentType.examples[e];
@@ -490,7 +490,7 @@ function checkLink(link, openapi, options) {
         link.parameters.should.not.be.an.Array();
     }
     if (typeof link.description !== 'undefined') {
-        link.description.should.have.type('string');
+        should(link.description).have.type('string');
     }
     if (typeof link.server !== 'undefined') {
         checkServer(link.server, options);
@@ -515,14 +515,14 @@ function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.schema !== 'undefined') {
         header.should.not.have.property('content');
         if (typeof header.style !== 'undefined') {
-            header.style.should.be.type('string');
+            should(header.style).be.type('string');
             header.style.should.be.exactly('simple');
         }
         if (typeof header.explode !== 'undefined') {
-            header.explode.should.be.type('boolean');
+            should(header.explode).be.type('boolean');
         }
         if (typeof header.allowReserved !== 'undefined') {
-            header.allowReserved.should.be.type('boolean');
+            should(header.allowReserved).be.type('boolean');
         }
         checkSchema(header.schema, emptySchema, 'schema', openapi, options);
     }
@@ -615,12 +615,12 @@ function checkParam(param, index, path, contextServers, openapi, options) {
         param.description.should.have.type('string');
     }
     if (typeof param.deprecated !== 'undefined') {
-        param.deprecated.should.be.a.Boolean();
+        should(param.deprecated).be.a.Boolean();
     }
     if (typeof param.schema !== 'undefined') {
         param.should.not.have.property('content');
         if (typeof param.style !== 'undefined') {
-            param.style.should.be.type('string');
+            should(param.style).be.type('string');
             if (param.in === 'path') {
                 param.style.should.not.be.exactly('form');
                 param.style.should.not.be.exactly('spaceDelimited');
@@ -640,10 +640,10 @@ function checkParam(param, index, path, contextServers, openapi, options) {
             }
         }
         if (typeof param.explode !== 'undefined') {
-            param.explode.should.be.type('boolean');
+            should(param.explode).be.type('boolean');
         }
         if (typeof param.allowReserved !== 'undefined') {
-            param.allowReserved.should.be.type('boolean');
+            should(param.allowReserved).be.type('boolean');
         }
         if (typeof param.example !== 'undefined') {
             param.should.not.have.key('examples');
@@ -651,7 +651,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
         if (typeof param.examples !== 'undefined') {
             contextAppend(options, 'examples');
             param.should.not.have.key('example');
-            param.examples.should.be.an.Object();
+            should(param.examples).be.an.Object();
             param.examples.should.not.be.an.Array();
             for (let e in param.examples) {
                 contextAppend(options, e);
@@ -767,7 +767,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 op.requestBody.should.be.an.Object();
                 op.requestBody.should.not.be.an.Array();
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
-                if (typeof op.requestBody.required !== 'undefined') op.requestBody.required.should.have.type('boolean');
+                if (typeof op.requestBody.required !== 'undefined') should(op.requestBody.required).have.type('boolean');
                 if (typeof op.requestBody.content !== 'undefined') {
                     checkContent(op.requestBody.content, contextServers, openapi, options);
                 }
@@ -811,7 +811,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 options.context.pop();
             }
             if (typeof op.deprecated !== 'undefined') {
-                op.deprecated.should.be.a.Boolean();
+                should(op.deprecated).be.a.Boolean();
             }
             if (typeof op.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
@@ -1234,7 +1234,7 @@ function validateSync(openapi, options, callback) {
             let rb = openapi.components.requestBodies[r];
             rb.should.have.property('content');
             if (typeof rb.description !== 'undefined') should(rb.description).have.type('string');
-            if (typeof rb.required !== 'undefined') rb.required.should.have.type('boolean');
+            if (typeof rb.required !== 'undefined') should(rb.required).have.type('boolean');
             checkContent(rb.content, openapi.servers, openapi, options);
             options.context.pop();
         }
