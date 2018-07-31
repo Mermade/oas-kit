@@ -784,11 +784,11 @@ function checkPathItem(pathItem, path, openapi, options) {
                 }
             }
             options.context.pop();
+            let localPathParameters = clone(pathParameters);
 
+            let opParameters = {};
             if (typeof op.parameters !== 'undefined') {
                 should(op.parameters).be.an.Array();
-                let localPathParameters = clone(pathParameters);
-                let opParameters = {};
                 contextAppend(options, 'parameters');
                 for (let p in op.parameters) {
                     let param = checkParam(op.parameters[p], p, path, contextServers, openapi, options);
@@ -800,16 +800,16 @@ function checkPathItem(pathItem, path, openapi, options) {
                         delete localPathParameters[param.in+':'+param.name];
                     }
                 }
-
-                let contextParameters = Object.assign({},localPathParameters,opParameters);
-                path.replace(/\{(.+?)\}/g, function (match, group1) {
-                    if (!contextParameters['path:'+group1]) {
-                        should.fail(false,true,'Templated parameter '+group1+' not found');
-                    }
-                });
-
                 options.context.pop();
             }
+
+            let contextParameters = Object.assign({},localPathParameters,opParameters);
+            path.replace(/\{(.+?)\}/g, function (match, group1) {
+                if (!contextParameters['path:'+group1]) {
+                    should.fail(false,true,'Templated parameter '+group1+' not found');
+                }
+            });
+
             if (typeof op.deprecated !== 'undefined') {
                 should(op.deprecated).be.a.Boolean();
             }

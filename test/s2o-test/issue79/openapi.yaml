@@ -1,0 +1,27 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+paths:
+  '/v3/companies/{company_id}/seats/{uuid}':
+    parameters:
+      - name: company_id
+        in: path
+        description: Company UUID
+        example: 6bc8bb80-1e32-0136-eb32-0242ac11530c
+        schema:
+          type: string
+          format: UUID
+        required: true
+      - name: uuid
+        in: query
+        description: User UUID
+        example: '123456'
+        schema:
+          type: string
+          format: uuid
+        required: true
+    get:
+      responses:
+        '200':
+          description: OK
