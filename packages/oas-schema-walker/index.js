@@ -28,6 +28,9 @@ function walkSchema(schema, parent, state, callback) {
     if ((schema === null) || (typeof schema === 'undefined')) return schema;
     if (typeof schema.$ref !== 'undefined') {
         let temp = {$ref:schema.$ref};
+        if (schema.description) {
+            temp.description = schema.description;
+        }
         callback(temp,parent,state);
         return temp; // all other properties SHALL be ignored
     }
