@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const readfiles = require('node-readfiles');
+const should = require('should/as-function');
 const yaml = require('js-yaml');
 
 const validator = require('oas-validator');
@@ -163,8 +164,8 @@ function handleResult(err, options) {
         if (!options.yaml) {
             resultStr = yaml.safeDump(result, { lineWidth: -1 }); // should be representable safely in yaml
             let resultStr2 = yaml.safeDump(result, { lineWidth: -1, noRefs: true });
-            resultStr.should.not.be.exactly('{}','Result should not be empty');
-            resultStr.should.equal(resultStr2,'Result should have no object identity ref_s');
+            should(resultStr).not.be.exactly('{}','Result should not be empty');
+            should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
         }
 
         validator.validate(result, options, finalise);

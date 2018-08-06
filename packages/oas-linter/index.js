@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const yaml = require('js-yaml');
-const should = require('should');
+const should = require('should/as-function');
 
 let rules = [];
 
@@ -34,8 +34,8 @@ function lint(objectName,object,key,options) {
             }
             if (rule.truthy) {
                 for (let property of rule.truthy) {
-                    object.should.have.property(property);
-                    object[property].should.not.be.empty();
+                    should(object).have.property(property);
+                    should(object[property]).not.be.empty();
                 }
             }
             if (rule.properties) {
@@ -46,7 +46,7 @@ function lint(objectName,object,key,options) {
                 for (let property of rule.or) {
                     if (typeof object[property] !== 'undefined') found = true;
                 }
-                found.should.be.exactly(true,rule.description);
+                should(found).be.exactly(true,rule.description);
             }
             if (rule.xor) {
                 let found = false;
@@ -56,7 +56,7 @@ function lint(objectName,object,key,options) {
                         found = true;
                     }
                 }
-                found.should.be.exactly(true,rule.description);
+                should(found).be.exactly(true,rule.description);
             }
             if (rule.pattern) {
                 let components = [];
