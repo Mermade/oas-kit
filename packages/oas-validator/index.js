@@ -7,7 +7,7 @@ const URL = url.URL;
 const util = require('util');
 
 const yaml = require('js-yaml');
-const should = require('should');
+const should = require('should/as-function');
 let ajv = require('ajv')({
     allErrors: true,
     verbose: true,
@@ -67,8 +67,8 @@ function contextAppend(options, s) {
 
 function validateUrl(s, contextServers, context, options) {
     should(s).be.a.String();
-    s.should.not.be.Null();
-    if (!options.laxurls) s.should.not.be.exactly('', 'Invalid empty URL ' + context);
+    should(s).not.be.Null();
+    if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
     let base = options.origin || 'http://localhost/';
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
@@ -79,7 +79,7 @@ function validateUrl(s, contextServers, context, options) {
     if (s.indexOf('://') > 0) { // FIXME HACK
         base = undefined;
     }
-    //s.should.match(urlRegex); // doesn't allow for templated urls
+    // should(s).match(urlRegex); // doesn't allow for templated urls
     let u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
     return true; // if we haven't thrown
 }
@@ -110,8 +110,8 @@ function checkSubSchema(schema, parent, state) {
     let prop = state.property;
     if (prop) contextAppend(state.options, prop);
     if (state.options.lint) state.options.linter('schema',schema,'schema',state.options);
-    schema.should.be.an.Object();
-    schema.should.not.be.an.Array();
+    should(schema).be.an.Object();
+    should(schema).not.be.an.Array();
 
     if (typeof schema.$ref !== 'undefined') {
         should(schema.$ref).be.a.String();
@@ -134,7 +134,7 @@ function checkSubSchema(schema, parent, state) {
 
     if (typeof schema.multipleOf !== 'undefined') {
         should(schema.multipleOf).be.type('number','multipleOf must be a number');
-        schema.multipleOf.should.be.greaterThan(0);
+        should(schema.multipleOf).be.greaterThan(0);
     }
     if (typeof schema.maximum !== 'undefined') {
         should(schema.maximum).be.type('number','maximum must be a number');
@@ -150,11 +150,11 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.maxLength !== 'undefined') {
         should(schema.maxLength).be.type('number','maxLength must be a number');
-        schema.maxLength.should.be.greaterThan(-1);
+        should(schema.maxLength).be.greaterThan(-1);
     }
     if (typeof schema.minLength !== 'undefined') {
         should(schema.minLength).be.type('number','minLength must be a number');
-        schema.minLength.should.be.greaterThan(-1);
+        should(schema.minLength).be.greaterThan(-1);
     }
     if (schema.pattern) {
         try {
@@ -166,13 +166,13 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.items !== 'undefined') {
         should(schema.items).be.an.Object();
-        schema.items.should.not.be.an.Array();
+        should(schema.items).not.be.an.Array();
     }
     if (schema.additionalItems) {
         if (typeof schema.additionalItems === 'boolean') {
         }
         else if (typeof schema.additionalItems === 'object') {
-            schema.additionalItems.should.not.be.an.Array();
+            should(schema.additionalItems).not.be.an.Array();
         }
         else should.fail(false,true,'additionalItems must be a boolean or schema');
     }
@@ -180,41 +180,41 @@ function checkSubSchema(schema, parent, state) {
         if (typeof schema.additionalProperties === 'boolean') {
         }
         else if (typeof schema.additionalProperties === 'object') {
-            schema.additionalProperties.should.not.be.an.Array();
+            should(schema.additionalProperties).not.be.an.Array();
         }
         else should.fail(false,true,'additionalProperties must be a boolean or schema');
     }
     if (typeof schema.maxItems !== 'undefined') {
         should(schema.maxItems).be.type('number','maxItems must be a number');
-        schema.maxItems.should.be.greaterThan(-1);
+        should(schema.maxItems).be.greaterThan(-1);
     }
     if (typeof schema.minItems !== 'undefined') {
         should(schema.minItems).be.type('number','minItems must be a number');
-        schema.minItems.should.be.greaterThan(-1);
+        should(schema.minItems).be.greaterThan(-1);
     }
     if (typeof schema.uniqueItems !== 'undefined') {
         should(schema.uniqueItems).be.type('boolean','uniqueItems must be a boolean');
     }
     if (typeof schema.maxProperties !== 'undefined') {
         should(schema.maxProperties).be.type('number','maxProperties must be a number');
-        schema.maxProperties.should.be.greaterThan(-1);
+        should(schema.maxProperties).be.greaterThan(-1);
     }
     if (typeof schema.minProperties !== 'undefined') {
         should(schema.minProperties).be.type('number','minProperties must be a number');
-        schema.minProperties.should.be.greaterThan(-1);
+        should(schema.minProperties).be.greaterThan(-1);
     }
     if (typeof schema.required !== 'undefined') {
         should(schema.required).be.an.Array();
-        schema.required.should.not.be.empty();
-        common.hasDuplicates(schema.required).should.be.exactly(false,'required items must be unique');
+        should(schema.required).not.be.empty();
+        should(common.hasDuplicates(schema.required)).be.exactly(false,'required items must be unique');
     }
     if (schema.properties) {
-        schema.properties.should.be.an.Object();
-        schema.properties.should.not.be.an.Array();
+        should(schema.properties).be.an.Object();
+        should(schema.properties).not.be.an.Array();
     }
-    schema.should.not.have.property('patternProperties');
+    should(schema).not.have.property('patternProperties');
     /*if (schema.patternProperties) {
-        schema.patternProperties.should.be.an.Object();
+        should(schema.patternProperties).be.an.Object();
         for (let prop in schema.patternProperties) {
             try {
                 let regex = new RegExp(prop);
@@ -226,31 +226,31 @@ function checkSubSchema(schema, parent, state) {
     }*/
     if (typeof schema.enum !== 'undefined') {
         should(schema.enum).be.an.Array();
-        schema.enum.should.not.be.empty();
+        should(schema.enum).not.be.empty();
         // items only SHOULD be unique
     }
     if (typeof schema.type !== 'undefined') {
         should(schema.type).be.a.String(); // not an array
-        schema.type.should.equalOneOf('integer','number','string','boolean','object','array'); // not null
+        should(schema.type).equalOneOf('integer','number','string','boolean','object','array'); // not null
         if (schema.type === 'array') {
-            schema.should.have.property('items');
+            should(schema).have.property('items');
         }
     }
     if (schema.allOf) {
-        schema.allOf.should.be.an.Array();
-        schema.allOf.should.not.be.empty();
+        should(schema.allOf).be.an.Array();
+        should(schema.allOf).not.be.empty();
     }
     if (schema.anyOf) {
-        schema.anyOf.should.be.an.Array();
-        schema.anyOf.should.not.be.empty();
+        should(schema.anyOf).be.an.Array();
+        should(schema.anyOf).not.be.empty();
     }
     if (schema.oneOf) {
-        schema.oneOf.should.be.an.Array();
-        schema.oneOf.should.not.be.empty();
+        should(schema.oneOf).be.an.Array();
+        should(schema.oneOf).not.be.empty();
     }
     if (schema.not) {
-        schema.not.should.be.an.Object();
-        schema.not.should.not.be.an.Array();
+        should(schema.not).be.an.Object();
+        should(schema.not).not.be.an.Array();
     }
     if (typeof schema.title !== 'undefined') {
         should(schema.title).be.a.String();
@@ -259,27 +259,27 @@ function checkSubSchema(schema, parent, state) {
         should(schema.description).be.a.String();
     }
     if (typeof schema.default !== 'undefined') {
-        schema.should.have.property('type');
+        should(schema).have.property('type');
         let realType = typeof schema.default;
         let schemaType = schema.type;
         if (Array.isArray(schema.default)) realType = 'array';
         if (schemaType === 'integer') schemaType = 'number';
-        schemaType.should.equal(realType);
+        should(schemaType).equal(realType);
     }
     if (typeof schema.format !== 'undefined') {
         should(schema.format).be.a.String();
         if (schema.type && ['date-time','email','hostname','ipv4','ipv6','uri','uriref',
             'byte','binary','date','password'].indexOf(schema.format) >= 0) {
-            schema.type.should.equal('string',`Invalid type ${schema.type} for format ${schema.format}`);
+            should(schema.type).equal('string',`Invalid type ${schema.type} for format ${schema.format}`);
         }
         if (schema.type && ['int32','int64'].indexOf(schema.format) >= 0) {
             if (schema.type !== 'string' && schema.type !== 'number') { // common case - googleapis
-               schema.type.should.equal('integer',`Invalid type ${schema.type} for format ${schema.format}`);
+               should(schema.type).equal('integer',`Invalid type ${schema.type} for format ${schema.format}`);
             }
         }
         if (schema.type && ['float','double'].indexOf(schema.format) >= 0) {
             if (schema.type !== 'string') { // occasionally seen
-                schema.type.should.equal('number',`Invalid type ${schema.type} for format ${schema.format}`);
+                should(schema.type).equal('number',`Invalid type ${schema.type} for format ${schema.format}`);
             }
         }
     }
@@ -289,19 +289,19 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.readOnly !== 'undefined') {
         should(schema.readOnly).be.type('boolean','readOnly must be a boolean');
-        schema.should.not.have.property('writeOnly');
+        should(schema).not.have.property('writeOnly');
     }
     if (typeof schema.writeOnly !== 'undefined') {
         should(schema.writeOnly).be.type('boolean','writeOnly must be a boolean');
-        schema.should.not.have.property('readOnly');
+        should(schema).not.have.property('readOnly');
     }
     if (typeof schema.deprecated !== 'undefined') {
         should(schema.deprecated).be.type('boolean','deprecated must be a boolean');
     }
     if (typeof schema.discriminator !== 'undefined') {
         should(schema.discriminator).be.an.Object();
-        schema.discriminator.should.not.be.an.Array();
-        schema.discriminator.should.have.property('propertyName');
+        should(schema.discriminator).not.be.an.Array();
+        should(schema.discriminator).have.property('propertyName');
         //"To avoid redundancy, the discriminator MAY be added to a parent schema definition..."
         //if ((Object.keys(parent).length>0) && !(parent.oneOf || parent.anyOf || parent.allOf)) {
         //    should.fail(false,true,'discriminator requires oneOf, anyOf or allOf in parent schema');
@@ -309,14 +309,14 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.xml !== 'undefined') {
         should(schema.xml).be.an.Object();
-        schema.xml.should.not.be.an.Array();
+        should(schema.xml).not.be.an.Array();
     }
     // example can be any type
 
     if (typeof schema.externalDocs !== 'undefined') {
         should(schema.externalDocs).be.an.Object();
-        schema.externalDocs.should.not.be.an.Array();
-        schema.externalDocs.should.have.key('url');
+        should(schema.externalDocs).not.be.an.Array();
+        should(schema.externalDocs).have.key('url');
         should.doesNotThrow(function() { validateUrl(schema.externalDocs.url, [state.openapi.servers], 'externalDocs', state.options)}, 'Invalid externalDocs.url');
         if (state.options.lint) state.options.linter('externalDocs',schema.externalDocs,'externalDocs',state.options);
     }
@@ -333,8 +333,8 @@ function checkSchema(schema,parent,prop,openapi,options) {
 }
 
 function checkExample(ex, contextServers, openapi, options) {
-    ex.should.be.an.Object();
-    ex.should.not.be.an.Array();
+    should(ex).be.an.Object();
+    should(ex).not.be.an.Array();
     if (typeof ex.summary !== 'undefined') {
         should(ex.summary).have.type('string');
     }
@@ -342,17 +342,17 @@ function checkExample(ex, contextServers, openapi, options) {
         should(ex.description).have.type('string');
     }
     if (typeof ex.value !== 'undefined') {
-        ex.should.not.have.property('externalValue');
+        should(ex).not.have.property('externalValue');
     }
     //else { // not mandated by the spec. moved to linter rule
-    //    ex.should.have.property('externalValue');
+    //    should(ex).have.property('externalValue');
     //}
     if (typeof ex.externalValue !== 'undefined') {
-        ex.should.not.have.property('value');
+        should(ex).not.have.property('value');
         should.doesNotThrow(function () { validateUrl(ex.externalValue, contextServers, 'examples..externalValue', options) },'Invalid examples..externalValue');
     }
     //else { // not mandated by the spec. moved to linter rule
-    //    ex.should.have.property('value');
+    //    should(ex).have.property('value');
     //}
     for (let k in ex) {
         if (!k.startsWith('x-')) {
@@ -364,8 +364,8 @@ function checkExample(ex, contextServers, openapi, options) {
 
 function checkContent(content, contextServers, openapi, options) {
     contextAppend(options, 'content');
-    content.should.be.an.Object();
-    content.should.not.be.an.Array();
+    should(content).be.an.Object();
+    should(content).not.be.an.Array();
     for (let ct in content) {
         contextAppend(options, jptr.jpescape(ct));
         // validate ct against https://tools.ietf.org/html/rfc6838#section-4.2
@@ -380,13 +380,13 @@ function checkContent(content, contextServers, openapi, options) {
             checkSchema(contentType.schema,emptySchema,'schema',openapi,options);
         }
         if (typeof contentType.example !== 'undefined') {
-            contentType.should.not.have.property('examples');
+            should(contentType).not.have.property('examples');
         }
         if (typeof contentType.examples !== 'undefined') {
             contextAppend(options, 'examples');
-            contentType.should.not.have.property('example');
+            should(contentType).not.have.property('example');
             should(contentType.examples).be.an.Object();
-            contentType.examples.should.not.be.an.Array();
+            should(contentType.examples).not.be.an.Array();
             for (let e in contentType.examples) {
                 let ex = contentType.examples[e];
                 if (typeof ex.$ref !== 'undefined') {
@@ -410,7 +410,7 @@ function checkContent(content, contextServers, openapi, options) {
 }
 
 function checkServer(server, options) {
-    server.should.have.property('url');
+    should(server).have.property('url');
     should.doesNotThrow(function () { validateUrl(server.url, [], 'server.url', options) },'Invalid server.url');
     if (typeof server.description !== 'undefined') {
         should(server.description).be.a.String();
@@ -418,17 +418,17 @@ function checkServer(server, options) {
     let srvVars = 0;
     server.url.replace(/\{(.+?)\}/g, function (match, group1) {
         srvVars++;
-        server.should.have.key('variables');
-        server.variables.should.have.key(group1);
+        should(server).have.key('variables');
+        should(server.variables).have.key(group1);
     });
     if (typeof server.variables !== 'undefined') {
         contextAppend(options, 'variables');
         should(server.variables).be.an.Object();
-        server.variables.should.not.be.an.Array();
+        should(server.variables).not.be.an.Array();
         for (let v in server.variables) {
             contextAppend(options, v);
             should(server.variables[v]).be.an.Object();
-            server.variables[v].should.have.key('default');
+            should(server.variables[v]).have.key('default');
             should(server.variables[v].default).be.a.String();
             if (typeof server.variables[v].enum !== 'undefined') {
                 contextAppend(options, 'enum');
@@ -452,7 +452,7 @@ function checkServer(server, options) {
 
 function checkServers(servers, options) {
     should(servers).be.an.Array();
-    //common.distinctArray(servers).should.be.exactly(true,'servers array must be distinct'); // TODO move to linter
+    //should(common.distinctArray(servers)).be.exactly(true,'servers array must be distinct'); // TODO move to linter
     for (let s in servers) {
         contextAppend(options, s);
         let server = servers[s];
@@ -469,25 +469,25 @@ function checkLink(link, openapi, options) {
         link = resolveInternal(openapi, ref);
         should(link).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
-    link.should.be.type('object');
+    should(link).be.type('object');
     if (typeof link.operationRef === 'undefined') {
-        link.should.have.property('operationId');
+        should(link).have.property('operationId');
     }
     else {
-        link.operationRef.should.be.type('string');
-        link.should.not.have.property('operationId');
+        should(link.operationRef).be.type('string');
+        should(link).not.have.property('operationId');
     }
     if (typeof link.operationId === 'undefined') {
-        link.should.have.property('operationRef');
+        should(link).have.property('operationRef');
     }
     else {
-        link.operationId.should.be.type('string');
-        link.should.not.have.property('operationRef');
+        should(link.operationId).be.type('string');
+        should(link).not.have.property('operationRef');
         // validate operationId exists (external refs?)
     }
     if (typeof link.parameters != 'undefined') {
-        link.parameters.should.be.type('object');
-        link.parameters.should.not.be.an.Array();
+        should(link.parameters).be.type('object');
+        should(link.parameters).not.be.an.Array();
     }
     if (typeof link.description !== 'undefined') {
         should(link.description).have.type('string');
@@ -506,17 +506,17 @@ function checkHeader(header, contextServers, openapi, options) {
         header = resolveInternal(openapi, ref);
         should(header).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
-    header.should.not.have.property('name');
-    header.should.not.have.property('in');
-    header.should.not.have.property('type');
+    should(header).not.have.property('name');
+    should(header).not.have.property('in');
+    should(header).not.have.property('type');
     for (let prop of common.parameterTypeProperties) {
-        header.should.not.have.property(prop);
+        should(header).not.have.property(prop);
     }
     if (typeof header.schema !== 'undefined') {
-        header.should.not.have.property('content');
+        should(header).not.have.property('content');
         if (typeof header.style !== 'undefined') {
             should(header.style).be.type('string');
-            header.style.should.be.exactly('simple');
+            should(header.style).be.exactly('simple');
         }
         if (typeof header.explode !== 'undefined') {
             should(header.explode).be.type('boolean');
@@ -527,16 +527,16 @@ function checkHeader(header, contextServers, openapi, options) {
         checkSchema(header.schema, emptySchema, 'schema', openapi, options);
     }
     if (header.content) {
-        header.should.not.have.property('schema');
-        header.should.not.have.property('style');
-        header.should.not.have.property('explode');
-        header.should.not.have.property('allowReserved');
-        header.should.not.have.property('example');
-        header.should.not.have.property('examples');
+        should(header).not.have.property('schema');
+        should(header).not.have.property('style');
+        should(header).not.have.property('explode');
+        should(header).not.have.property('allowReserved');
+        should(header).not.have.property('example');
+        should(header).not.have.property('examples');
         checkContent(header.content, contextServers, openapi, options);
     }
     if (!header.schema && !header.content) {
-        header.should.have.property('schema', 'Header should have schema or content');
+        should(header).have.property('schema', 'Header should have schema or content');
     }
     if (options.lint) options.linter('header',header,'header',options);
 }
@@ -550,15 +550,15 @@ function checkResponse(response, contextServers, openapi, options) {
         response = resolveInternal(openapi, ref);
         should(response).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
-    response.should.have.property('description');
+    should(response).have.property('description');
     should(response.description).have.type('string', 'response description should be of type string');
-    response.should.not.have.property('examples');
-    response.should.not.have.property('schema');
+    should(response).not.have.property('examples');
+    should(response).not.have.property('schema');
     if (response.headers) {
         contextAppend(options, 'headers');
         for (let h in response.headers) {
             contextAppend(options, h);
-            validateHeaderName(h).should.be.equal(true, 'Header doesn\'t match RFC7230 pattern');
+            should(validateHeaderName(h)).be.equal(true, 'Header doesn\'t match RFC7230 pattern');
             checkHeader(response.headers[h], contextServers, openapi, options);
             options.context.pop();
         }
@@ -590,53 +590,53 @@ function checkParam(param, index, path, contextServers, openapi, options) {
         param = resolveInternal(openapi, ref);
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
-    param.should.have.property('name');
-    param.name.should.have.type('string');
-    param.should.have.property('in');
-    param.in.should.have.type('string');
-    param.in.should.equalOneOf('query', 'header', 'path', 'cookie');
+    should(param).have.property('name');
+    should(param.name).have.type('string');
+    should(param).have.property('in');
+    should(param.in).have.type('string');
+    should(param.in).equalOneOf('query', 'header', 'path', 'cookie');
     if (param.in === 'path') {
-        param.should.have.property('required');
-        param.required.should.be.exactly(true, 'Path parameters must have an explicit required:true');
+        should(param).have.property('required');
+        should(param.required).be.exactly(true, 'Path parameters must have an explicit required:true');
         if (path) { // if we're not looking at a param from #/components (checked when used)
             should(path.indexOf('{'+param.name+'}')).be.greaterThan(-1,'path parameters must appear in the path');
         }
     }
     if (typeof param.required !== 'undefined') should(param.required).have.type('boolean');
-    param.should.not.have.property('items');
-    param.should.not.have.property('collectionFormat');
-    param.should.not.have.property('type');
+    should(param).not.have.property('items');
+    should(param).not.have.property('collectionFormat');
+    should(param).not.have.property('type');
     for (let prop of common.parameterTypeProperties) {
-        param.should.not.have.property(prop);
+        should(param).not.have.property(prop);
     }
-    param.in.should.not.be.exactly('body', 'Parameter type body is no-longer valid');
-    param.in.should.not.be.exactly('formData', 'Parameter type formData is no-longer valid');
+    should(param.in).not.be.exactly('body', 'Parameter type body is no-longer valid');
+    should(param.in).not.be.exactly('formData', 'Parameter type formData is no-longer valid');
     if (param.description) {
-        param.description.should.have.type('string');
+        should(param.description).have.type('string');
     }
     if (typeof param.deprecated !== 'undefined') {
         should(param.deprecated).be.a.Boolean();
     }
     if (typeof param.schema !== 'undefined') {
-        param.should.not.have.property('content');
+        should(param).not.have.property('content');
         if (typeof param.style !== 'undefined') {
             should(param.style).be.type('string');
             if (param.in === 'path') {
-                param.style.should.not.be.exactly('form');
-                param.style.should.not.be.exactly('spaceDelimited');
-                param.style.should.not.be.exactly('pipeDelimited');
-                param.style.should.not.be.exactly('deepObject');
+                should(param.style).not.be.exactly('form');
+                should(param.style).not.be.exactly('spaceDelimited');
+                should(param.style).not.be.exactly('pipeDelimited');
+                should(param.style).not.be.exactly('deepObject');
             }
             if (param.in === 'query') {
-                param.style.should.not.be.exactly('matrix');
-                param.style.should.not.be.exactly('label');
-                param.style.should.not.be.exactly('simple');
+                should(param.style).not.be.exactly('matrix');
+                should(param.style).not.be.exactly('label');
+                should(param.style).not.be.exactly('simple');
             }
             if (param.in === 'header') {
-                param.style.should.be.exactly('simple');
+                should(param.style).be.exactly('simple');
             }
             if (param.in === 'cookie') {
-                param.style.should.be.exactly('form');
+                should(param.style).be.exactly('form');
             }
         }
         if (typeof param.explode !== 'undefined') {
@@ -646,13 +646,13 @@ function checkParam(param, index, path, contextServers, openapi, options) {
             should(param.allowReserved).be.type('boolean');
         }
         if (typeof param.example !== 'undefined') {
-            param.should.not.have.key('examples');
+            should(param).not.have.key('examples');
         }
         if (typeof param.examples !== 'undefined') {
             contextAppend(options, 'examples');
-            param.should.not.have.key('example');
+            should(param).not.have.key('example');
             should(param.examples).be.an.Object();
-            param.examples.should.not.be.an.Array();
+            should(param.examples).not.be.an.Array();
             for (let e in param.examples) {
                 contextAppend(options, e);
                 let example = param.examples[e];
@@ -664,17 +664,17 @@ function checkParam(param, index, path, contextServers, openapi, options) {
         checkSchema(param.schema, emptySchema, 'schema', openapi, options);
     }
     if (param.content) {
-        param.should.not.have.property('schema');
-        param.should.not.have.property('style');
-        param.should.not.have.property('explode');
-        param.should.not.have.property('allowReserved');
-        param.should.not.have.property('example');
-        param.should.not.have.property('examples');
+        should(param).not.have.property('schema');
+        should(param).not.have.property('style');
+        should(param).not.have.property('explode');
+        should(param).not.have.property('allowReserved');
+        should(param).not.have.property('example');
+        should(param).not.have.property('examples');
         should(Object.keys(param.content).length).be.exactly(1, 'Parameter content must have only one entry');
         checkContent(param.content, contextServers, openapi, options);
     }
     if (!param.schema && !param.content) {
-        param.should.have.property('schema', 'Parameter should have schema or content');
+        should(param).have.property('schema', 'Parameter should have schema or content');
     }
     if (options.lint) options.linter('parameter',param,index,options);
     options.context.pop();
@@ -684,7 +684,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
 function checkPathItem(pathItem, path, openapi, options) {
 
     should(pathItem).be.an.Object();
-    pathItem.should.not.be.an.Array();
+    should(pathItem).not.be.an.Array();
 
     let contextServers = [];
     contextServers.push(openapi.servers);
@@ -709,7 +709,7 @@ function checkPathItem(pathItem, path, openapi, options) {
         let op = pathItem[o];
         if (o === '$ref') {
             should(op).be.ok();
-            op.should.have.type('string');
+            should(op).have.type('string');
             should(op.startsWith('#/')).equal(false,'PathItem $refs must be external ('+op+')');
             if (options.lint) options.linter('reference',pathItem,'$ref',options);
         }
@@ -729,15 +729,15 @@ function checkPathItem(pathItem, path, openapi, options) {
         }
         else if (common.httpMethods.indexOf(o) >= 0) {
             should(op).be.an.Object();
-            op.should.not.be.an.Array();
-            op.should.not.have.property('consumes');
-            op.should.not.have.property('produces');
-            op.should.not.have.property('schemes');
-            op.should.have.property('responses');
+            should(op).not.be.an.Array();
+            should(op).not.have.property('consumes');
+            should(op).not.have.property('produces');
+            should(op).not.have.property('schemes');
+            should(op).have.property('responses');
             should(op.responses).be.an.Object();
-            op.responses.should.not.be.an.Array();
-            op.responses.should.not.be.empty();
-            if (op.summary) op.summary.should.have.type('string');
+            should(op.responses).not.be.an.Array();
+            should(op.responses).not.be.empty();
+            should(if (op.summary) op.summary).have.type('string');
             if (typeof op.description !== 'undefined') should(op.description).be.a.String();
             if (typeof op.operationId !== 'undefined') {
                 should(op.operationId).be.a.String();
@@ -756,7 +756,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 contextAppend(options, 'tags');
                 should(op.tags).be.an.Array();
                 for (let tag of op.tags) {
-                    tag.should.be.a.String();
+                    should(tag).be.a.String();
                 }
                 options.context.pop();
             }
@@ -764,8 +764,8 @@ function checkPathItem(pathItem, path, openapi, options) {
             if (typeof op.requestBody !== 'undefined') {
                 contextAppend(options, 'requestBody');
                 should(op.requestBody).not.be.null();
-                op.requestBody.should.be.an.Object();
-                op.requestBody.should.not.be.an.Array();
+                should(op.requestBody).be.an.Object();
+                should(op.requestBody).not.be.an.Array();
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
                 if (typeof op.requestBody.required !== 'undefined') should(op.requestBody.required).have.type('boolean');
                 if (typeof op.requestBody.content !== 'undefined') {
@@ -816,8 +816,8 @@ function checkPathItem(pathItem, path, openapi, options) {
             if (typeof op.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
                 should(op.externalDocs).be.an.Object();
-                op.externalDocs.should.not.be.an.Array();
-                op.externalDocs.should.have.key('url');
+                should(op.externalDocs).not.be.an.Array();
+                should(op.externalDocs).have.key('url');
                 if (typeof op.externalDocs.description !== 'undefined') {
                     should(op.externalDocs.description).be.a.String();
                 }
@@ -863,16 +863,16 @@ function checkPathItem(pathItem, path, openapi, options) {
 function checkSecurity(security,openapi,options) {
     contextAppend(options, 'security');
     should(security).be.an.Array();
-    //common.distinctArray(security).should.be.exactly(true,'security array should be distinct'); // TODO move to linter
+    //should(common.distinctArray(security)).be.exactly(true,'security array should be distinct'); // TODO move to linter
     for (let sr of security) {
-        sr.should.be.an.Object();
-        sr.should.not.be.an.Array();
+        should(sr).be.an.Object();
+        should(sr).not.be.an.Array();
         for (let i in sr) {
             should(sr[i]).be.an.Array();
             let sec = jptr.jptr(openapi,'#/components/securitySchemes/'+i);
-            sec.should.not.be.exactly(false,'Could not dereference securityScheme '+i);
+            should(sec).not.be.exactly(false,'Could not dereference securityScheme '+i);
             if (sec.type !== 'oauth2') {
-                sr[i].should.be.empty();
+                should(sr[i]).be.empty();
             }
             else if (sr[i].length) {
                 if (!options.allScopes[i]) {
@@ -883,7 +883,7 @@ function checkSecurity(security,openapi,options) {
                     if (sec.flows.clientCredentials) Object.assign(options.allScopes[i],sec.flows.clientCredentials.scopes);
                 }
                 for (let scope of sr[i]) {
-                    options.allScopes[i].should.have.property(scope);
+                    should(options.allScopes[i]).have.property(scope);
                 }
             }
         }
@@ -907,21 +907,21 @@ function validateSync(openapi, options, callback) {
     }
 
     should(openapi).be.an.Object();
-    openapi.should.not.have.key('swagger');
-    openapi.should.have.key('openapi');
-    openapi.openapi.should.have.type('string');
+    should(openapi).not.have.key('swagger');
+    should(openapi).have.key('openapi');
+    should(openapi.openapi).have.type('string');
     should.ok(openapi.openapi.startsWith('3.0.'), 'Must be an OpenAPI 3.0.x document');
-    openapi.should.not.have.key('host');
-    openapi.should.not.have.key('basePath');
-    openapi.should.not.have.key('schemes');
-    openapi.should.have.key('paths');
+    should(openapi).not.have.key('host');
+    should(openapi).not.have.key('basePath');
+    should(openapi).not.have.key('schemes');
+    should(openapi).have.key('paths');
     should(openapi.paths).be.an.Object();
-    openapi.should.not.have.key('definitions');
-    openapi.should.not.have.key('parameters');
-    openapi.should.not.have.key('responses');
-    openapi.should.not.have.key('securityDefinitions');
-    openapi.should.not.have.key('produces');
-    openapi.should.not.have.key('consumes');
+    should(openapi).not.have.key('definitions');
+    should(openapi).not.have.key('parameters');
+    should(openapi).not.have.key('responses');
+    should(openapi).not.have.key('securityDefinitions');
+    should(openapi).not.have.key('produces');
+    should(openapi).not.have.key('consumes');
 
     for (let k in openapi) {
         if (!k.startsWith('x-')) {
@@ -929,13 +929,13 @@ function validateSync(openapi, options, callback) {
         }
     }
 
-    openapi.should.have.key('info');
+    should(openapi).have.key('info');
     should(openapi.info).be.an.Object();
-    openapi.info.should.not.be.an.Array();
+    should(openapi.info).not.be.an.Array();
     contextAppend(options, 'info');
-    openapi.info.should.have.key('title');
+    should(openapi.info).have.key('title');
     should(openapi.info.title).be.type('string', 'title should be of type string');
-    openapi.info.should.have.key('version');
+    should(openapi.info).have.key('version');
     should(openapi.info.version).be.type('string', 'version should be of type string');
     if (typeof openapi.servers !== 'undefined') {
         should(openapi.servers).be.an.Object();
@@ -946,9 +946,9 @@ function validateSync(openapi, options, callback) {
     }
     if (typeof openapi.info.license !== 'undefined') {
         should(openapi.info.license).be.an.Object();
-        openapi.info.license.should.not.be.an.Array();
+        should(openapi.info.license).not.be.an.Array();
         contextAppend(options, 'license');
-        openapi.info.license.should.have.key('name');
+        should(openapi.info.license).have.key('name');
         should(openapi.info.license.name).have.type('string');
         if (typeof openapi.info.license.url !== 'undefined') {
             should.doesNotThrow(function () { validateUrl(openapi.info.license.url, contextServers, 'license.url', options) },'Invalid license.url');
@@ -992,7 +992,7 @@ function validateSync(openapi, options, callback) {
     if (typeof openapi.externalDocs !== 'undefined') {
         should(openapi.externalDocs).be.an.Object();
         contextAppend(options, 'externalDocs');
-        openapi.externalDocs.should.have.key('url');
+        should(openapi.externalDocs).have.key('url');
         if (typeof openapi.externalDocs.description !== 'undefined') {
             should(openapi.externalDocs.description).be.a.String();
         }
@@ -1006,19 +1006,19 @@ function validateSync(openapi, options, callback) {
         contextAppend(options, 'tags');
         let tagsSeen = new Map();
         for (let tag of openapi.tags) {
-            tag.should.have.property('name');
+            should(tag).have.property('name');
             contextAppend(options, tag.name);
             should(tag.name).be.a.String();
-            tagsSeen.has(tag.name).should.be.exactly(false,'Tag names must be unique');
+            should(tagsSeen.has(tag.name)).be.exactly(false,'Tag names must be unique');
             tagsSeen.set(tag.name,true);
             if (typeof tag.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
                 should(tag.externalDocs).be.an.Object();
-                tag.externalDocs.should.not.be.an.Array();
+                should(tag.externalDocs).not.be.an.Array();
                 if (typeof tag.externalDocs.description !== 'undefined') {
                     should(tag.externalDocs.description).be.a.String();
                 }
-                tag.externalDocs.should.have.key('url');
+                should(tag.externalDocs).have.key('url');
                 should.doesNotThrow(function () { validateUrl(tag.externalDocs.url, contextServers, 'tag.externalDocs', options) },'Invalid externalDocs.url');
                 if (options.lint) options.linter('externalDocs',tag.externalDocs,'externalDocs',options);
                 options.context.pop();
@@ -1039,7 +1039,7 @@ function validateSync(openapi, options, callback) {
     if (typeof openapi.components !== 'undefined') {
         options.context.push('#/components');
         should(openapi.components).be.an.Object();
-        openapi.components.should.not.be.an.Array();
+        should(openapi.components).not.be.an.Array();
         if (options.lint) options.linter('components',openapi.components,'components',options);
         options.context.pop();
     }
@@ -1047,76 +1047,76 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.securitySchemes !== 'undefined')) {
         options.context.push('#/components/securitySchemes');
         should(openapi.components.securitySchemes).be.an.Object();
-        openapi.components.securitySchemes.should.not.be.an.Array();
+        should(openapi.components.securitySchemes).not.be.an.Array();
         for (let s in openapi.components.securitySchemes) {
             options.context.push('#/components/securitySchemes/' + s);
-            validateComponentName(s).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(s)).be.equal(true, 'component name invalid');
             let scheme = openapi.components.securitySchemes[s];
-            scheme.should.have.property('type');
-            scheme.type.should.have.type('string');
-            scheme.type.should.not.be.exactly('basic', 'Security scheme basic should be http with scheme basic');
-            scheme.type.should.equalOneOf('apiKey', 'http', 'oauth2', 'openIdConnect');
+            should(scheme).have.property('type');
+            should(scheme.type).have.type('string');
+            should(scheme.type).not.be.exactly('basic', 'Security scheme basic should be http with scheme basic');
+            should(scheme.type).equalOneOf('apiKey', 'http', 'oauth2', 'openIdConnect');
             if (scheme.type === 'http') {
-                scheme.should.have.property('scheme');
-                scheme.scheme.should.have.type('string');
+                should(scheme).have.property('scheme');
+                should(scheme.scheme).have.type('string');
                 if (scheme.scheme != 'bearer') {
-                    scheme.should.not.have.property('bearerFormat');
+                    should(scheme).not.have.property('bearerFormat');
                 }
             }
             else {
-                scheme.should.not.have.property('scheme');
-                scheme.should.not.have.property('bearerFormat');
+                should(scheme).not.have.property('scheme');
+                should(scheme).not.have.property('bearerFormat');
             }
             if (scheme.type === 'apiKey') {
-                scheme.should.have.property('name');
-                scheme.name.should.have.type('string');
-                scheme.should.have.property('in');
-                scheme.in.should.have.type('string');
-                scheme.in.should.equalOneOf('query', 'header', 'cookie');
+                should(scheme).have.property('name');
+                should(scheme.name).have.type('string');
+                should(scheme).have.property('in');
+                should(scheme.in).have.type('string');
+                should(scheme.in).equalOneOf('query', 'header', 'cookie');
             }
             else {
-                scheme.should.not.have.property('name');
-                scheme.should.not.have.property('in');
+                should(scheme).not.have.property('name');
+                should(scheme).not.have.property('in');
             }
             if (scheme.type === 'oauth2') {
-                scheme.should.not.have.property('flow');
-                scheme.should.have.property('flows');
+                should(scheme).not.have.property('flow');
+                should(scheme).have.property('flows');
                 for (let f in scheme.flows) {
                     let flow = scheme.flows[f];
                     should(['implicit','password','authorizationCode','clientCredentials'].indexOf(f)).be.greaterThan(-1,'Unknown flow type: '+f);
 
                     if ((f === 'implicit') || (f === 'authorizationCode')) {
-                        flow.should.have.property('authorizationUrl');
+                        should(flow).have.property('authorizationUrl');
                         should.doesNotThrow(function () { validateUrl(flow.authorizationUrl, contextServers, 'authorizationUrl', options) },'Invalid authorizationUrl');
                     }
                     else {
-                        flow.should.not.have.property('authorizationUrl');
+                        should(flow).not.have.property('authorizationUrl');
                     }
                     if ((f === 'password') || (f === 'clientCredentials') ||
                         (f === 'authorizationCode')) {
-                        flow.should.have.property('tokenUrl');
+                        should(flow).have.property('tokenUrl');
                         should.doesNotThrow(function () { validateUrl(flow.tokenUrl, contextServers, 'tokenUrl', options) },'Invalid tokenUrl');
                     }
                     else {
-                        flow.should.not.have.property('tokenUrl');
+                        should(flow).not.have.property('tokenUrl');
                     }
                     if (typeof flow.refreshUrl !== 'undefined') {
                         should.doesNotThrow(function () { validateUrl(flow.refreshUrl, contextServers, 'refreshUrl', options) },'Invalid refreshUrl');
                     }
-                    flow.should.have.property('scopes');
-                    flow.scopes.should.be.an.Object();
-                    flow.scopes.should.not.be.an.Array();
+                    should(flow).have.property('scopes');
+                    should(flow.scopes).be.an.Object();
+                    should(flow.scopes).not.be.an.Array();
                 }
             }
             else {
-                scheme.should.not.have.property('flows');
+                should(scheme).not.have.property('flows');
             }
             if (scheme.type === 'openIdConnect') {
-                scheme.should.have.property('openIdConnectUrl');
+                should(scheme).have.property('openIdConnectUrl');
                 should.doesNotThrow(function () { validateUrl(scheme.openIdConnectUrl, contextServers, 'openIdConnectUrl', options) },'Invalid openIdConnectUrl');
             }
             else {
-                scheme.should.not.have.property('openIdConnectUrl');
+                should(scheme).not.have.property('openIdConnectUrl');
             }
             options.context.pop();
         }
@@ -1126,7 +1126,7 @@ function validateSync(openapi, options, callback) {
     recurse(openapi, null, function (obj, key, state) {
         if (isRef(obj,key)) {
             options.context.push(state.path);
-            obj[key].should.not.startWith('#/definitions/');
+            should(obj[key]).not.startWith('#/definitions/');
             let refUrl = url.parse(obj[key]);
             if (!refUrl.protocol && !refUrl.path) {
                 should(obj[key]+'/%24ref').not.be.equal(state.path,'Circular reference');
@@ -1141,7 +1141,7 @@ function validateSync(openapi, options, callback) {
     for (let p in openapi.paths) {
         options.context.push('#/paths/' + jptr.jpescape(p));
         if (!p.startsWith('x-')) {
-            p.should.startWith('/');
+            should(p).startWith('/');
             let pCount = 0;
             let template = p.replace(/\{(.+?)\}/g, function (match, group1) {
                 return '{'+(pCount++)+'}';
@@ -1164,7 +1164,7 @@ function validateSync(openapi, options, callback) {
     if (openapi["x-ms-paths"]) {
         for (let p in openapi["x-ms-paths"]) {
             options.context.push('#/x-ms-paths/' + jptr.jpescape(p));
-            p.should.startWith('/');
+            should(p).startWith('/');
             checkPathItem(openapi["x-ms-paths"][p], p, openapi, options);
             options.context.pop();
         }
@@ -1173,11 +1173,11 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.parameters !== 'undefined')) {
         options.context.push('#/components/parameters/');
         should(openapi.components.parameters).be.an.Object();
-        openapi.components.parameters.should.not.be.an.Array();
+        should(openapi.components.parameters).not.be.an.Array();
         for (let p in openapi.components.parameters) {
             checkParam(openapi.components.parameters[p], p, '', contextServers, openapi, options);
             contextAppend(options, p);
-            validateComponentName(p).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(p)).be.equal(true, 'component name invalid');
             options.context.pop();
         }
         options.context.pop();
@@ -1186,10 +1186,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.schemas !== 'undefined')) {
         options.context.push('#/components/schemas');
         should(openapi.components.schemas).be.an.Object();
-        openapi.components.schemas.should.not.be.an.Array();
+        should(openapi.components.schemas).not.be.an.Array();
         for (let s in openapi.components.schemas) {
             options.context.push('#/components/schemas/' + s);
-            validateComponentName(s).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(s)).be.equal(true, 'component name invalid');
             checkSchema(openapi.components.schemas[s], dummySchema, '', openapi, options);
             options.context.pop();
         }
@@ -1199,10 +1199,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.responses !== 'undefined')) {
         options.context.push('#/components/responses');
         should(openapi.components.responses).be.an.Object();
-        openapi.components.responses.should.not.be.an.Array();
+        should(openapi.components.responses).not.be.an.Array();
         for (let r in openapi.components.responses) {
             options.context.push('#/components/responses/' + r);
-            validateComponentName(r).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(r)).be.equal(true, 'component name invalid');
             checkResponse(openapi.components.responses[r], contextServers, openapi, options);
             options.context.pop();
         }
@@ -1212,10 +1212,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.headers !== 'undefined')) {
         options.context.push('#/components/headers');
         should(openapi.components.headers).be.an.Object();
-        openapi.components.headers.should.not.be.an.Array();
+        should(openapi.components.headers).not.be.an.Array();
         for (let h in openapi.components.headers) {
             options.context.push('#/components/headers/' + h);
-            validateComponentName(h).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(h)).be.equal(true, 'component name invalid');
             checkHeader(openapi.components.headers[h], contextServers, openapi, options);
             options.context.pop();
         }
@@ -1225,15 +1225,15 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.requestBodies !== 'undefined')) {
         options.context.push('#/components/requestBodies');
         should(openapi.components.requestBodies).be.an.Object();
-        openapi.components.requestBodies.should.not.be.an.Array();
+        should(openapi.components.requestBodies).not.be.an.Array();
         for (let r in openapi.components.requestBodies) {
             options.context.push('#/components/requestBodies/' + r);
-            validateComponentName(r).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(r)).be.equal(true, 'component name invalid');
             if (r.startsWith('requestBody')) {
                 options.warnings.push('Anonymous requestBody: ' + r);
             }
             let rb = openapi.components.requestBodies[r];
-            rb.should.have.property('content');
+            should(rb).have.property('content');
             if (typeof rb.description !== 'undefined') should(rb.description).have.type('string');
             if (typeof rb.required !== 'undefined') should(rb.required).have.type('boolean');
             checkContent(rb.content, openapi.servers, openapi, options);
@@ -1245,10 +1245,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.examples !== 'undefined')) {
         options.context.push('#/components/examples');
         should(openapi.components.examples).be.an.Object();
-        openapi.components.examples.should.not.be.an.Array();
+        should(openapi.components.examples).not.be.an.Array();
         for (let e in openapi.components.examples) {
             options.context.push('#/components/examples/' + e);
-            validateComponentName(e).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(e)).be.equal(true, 'component name invalid');
             let ex = openapi.components.examples[e];
             if (typeof ex.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',ex,'$ref',options);
@@ -1263,10 +1263,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.callbacks !== 'undefined')) {
         options.context.push('#/components/callbacks');
         should(openapi.components.callbacks).be.an.Object();
-        openapi.components.callbacks.should.not.be.an.Array();
+        should(openapi.components.callbacks).not.be.an.Array();
         for (let c in openapi.components.callbacks) {
             options.context.push('#/components/callbacks/' + c);
-            validateComponentName(c).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(c)).be.equal(true, 'component name invalid');
             let cb = openapi.components.callbacks[c];
             if (typeof cb.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',cb,'$ref',options);
@@ -1287,10 +1287,10 @@ function validateSync(openapi, options, callback) {
     if (openapi.components && (typeof openapi.components.links !== 'undefined')) {
         options.context.push('#/components/links');
         should(openapi.components.links).be.type('object');
-        openapi.components.links.should.not.be.an.Array();
+        should(openapi.components.links).not.be.an.Array();
         for (let l in openapi.components.links) {
             options.context.push('#/components/links/' + l);
-            validateComponentName(l).should.be.equal(true, 'component name invalid');
+            should(validateComponentName(l)).be.equal(true, 'component name invalid');
             let link = openapi.components.links[l];
             if (typeof link.$ref !== 'undefined') {
                 if (options.lint) options.linter('reference',link,'$ref',options);
