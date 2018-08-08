@@ -737,7 +737,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             should(op.responses).be.an.Object();
             should(op.responses).not.be.an.Array();
             should(op.responses).not.be.empty();
-            should(if (op.summary) op.summary).have.type('string');
+            if (typeof op.summary !== 'undefined') should(op.summary).have.type('string');
             if (typeof op.description !== 'undefined') should(op.description).be.a.String();
             if (typeof op.operationId !== 'undefined') {
                 should(op.operationId).be.a.String();
