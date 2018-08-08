@@ -11,7 +11,7 @@
 * @return the state object suitable for use in walkSchema
 */
 function getDefaultState() {
-    return { depth: 0, seen: new WeakMap(), top: true, combine: false };
+    return { depth: 0, seen: new WeakMap(), top: true, combine: false, allowRefSiblings: false };
 }
 
 /**
@@ -28,7 +28,7 @@ function walkSchema(schema, parent, state, callback) {
     if ((schema === null) || (typeof schema === 'undefined')) return schema;
     if (typeof schema.$ref !== 'undefined') {
         let temp = {$ref:schema.$ref};
-        if (schema.description) {
+        if (state.allowRefSiblings && schema.description) {
             temp.description = schema.description;
         }
         callback(temp,parent,state);
