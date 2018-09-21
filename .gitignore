@@ -1,4 +1,5 @@
 *.log
 node_modules/
+in/
 dist/
 test/s2o-test/_*/
