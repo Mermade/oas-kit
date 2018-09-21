@@ -1,6 +1,6 @@
 {
   "name": "oas-validator",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
   "scripts": {
