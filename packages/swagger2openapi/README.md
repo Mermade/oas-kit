@@ -16,7 +16,15 @@ The online version of the converter/validator runs on a [Linode](https://www.lin
 
 Currently tracking [v3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)
 
-Usage:
+## Installation:
+This is a node.js module, which you can run on the command line. First ensure you have npm installed (tested on version 6.1+), and then install as follows:
+```
+$ npm install -g swagger2openapi
+```
+Or, add it to your node.js projects as shown below in option B.
+
+## Usage:
+### A. Command line:
 
 ```text
 swagger2openapi [options] [filename|url]
@@ -39,7 +47,7 @@ Options:
   -y, --yaml        write YAML, default JSON (overridden by --outfile filepath extension)   [boolean]
 ```
 
-or use the API:
+### B. Node.js API:
 
 ```javascript
 var converter = require('swagger2openapi');
@@ -55,9 +63,11 @@ converter.convertObj(swagger, options, function(err, options){
 
 See here for complete [documentation](/docs/options.md) of the `options` object.
 
+### C. Browser:
+
 Or use the [online version](https://mermade.org.uk/openapi-converter) which also includes its own [API](http://petstore.swagger.io/?url=https://mermade.org.uk/openapi-converter/contract/swagger.json).
 
-### Browser Support
+#### Browser Support
 
 See [initial documentation](/docs/browser.md).
 
