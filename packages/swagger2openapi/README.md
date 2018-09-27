@@ -50,8 +50,8 @@ Options:
 ### B. Node.js API:
 
 ```javascript
-var converter = require('swagger2openapi');
-var options = {};
+const converter = require('swagger2openapi');
+let options = {};
 //options.patch = true; // fix up small errors in the source definition
 //options.warnOnly = true; // Do not throw on non-patchable errors
 converter.convertObj(swagger, options, function(err, options){
