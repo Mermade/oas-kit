@@ -871,19 +871,23 @@ function checkSecurity(security,openapi,options) {
             should(sr[i]).be.an.Array();
             let sec = jptr.jptr(openapi,'#/components/securitySchemes/'+i);
             should(sec).not.be.exactly(false,'Could not dereference securityScheme '+i);
-            if (sec.type !== 'oauth2') {
-                should(sr[i]).be.empty();
-            }
-            else if (sr[i].length) {
-                if (!options.allScopes[i]) {
-                    options.allScopes[i] = {};
-                    if (sec.flows.password) Object.assign(options.allScopes[i],sec.flows.password.scopes);
-                    if (sec.flows.implicit) Object.assign(options.allScopes[i],sec.flows.implicit.scopes);
-                    if (sec.flows.authorizationCode) Object.assign(options.allScopes[i],sec.flows.authorizationCode.scopes);
-                    if (sec.flows.clientCredentials) Object.assign(options.allScopes[i],sec.flows.clientCredentials.scopes);
+            if (sec.type !== 'openIdConnect') {
+                if (sec.type !== 'oauth2') {
+                    should(sr[i]).be.empty();
                 }
-                for (let scope of sr[i]) {
-                    should(options.allScopes[i]).have.property(scope);
+                else if (sr[i].length) {
+                    if (!options.allScopes[i]) {
+                        options.allScopes[i] = {};
+                        if (sec.flows) {
+                            if (sec.flows.password) Object.assign(options.allScopes[i],sec.flows.password.scopes);
+                            if (sec.flows.implicit) Object.assign(options.allScopes[i],sec.flows.implicit.scopes);
+                            if (sec.flows.authorizationCode) Object.assign(options.allScopes[i],sec.flows.authorizationCode.scopes);
+                            if (sec.flows.clientCredentials) Object.assign(options.allScopes[i],sec.flows.clientCredentials.scopes);
+                        }
+                    }
+                    for (let scope of sr[i]) {
+                        should(options.allScopes[i]).have.property(scope);
+                    }
                 }
             }
         }
