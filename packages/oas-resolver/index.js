@@ -123,7 +123,13 @@ function resolveExternal(root, pointer, options, callback) {
     let u2 = url.parse(pointer);
     let effectiveProtocol = (u2.protocol ? u2.protocol : (u.protocol ? u.protocol : 'file:'));
 
-    let target = url.resolve(base ? base + '/' : '', pointer)
+    let target;
+    if (effectiveProtocol === 'file:') {
+        target = path.resolve(base ? base + '/' : '', pointer);
+    }
+    else {
+        target = url.resolve(base ? base + '/' : '', pointer);
+    }
 
     if (options.cache[target]) {
         if (options.verbose) console.log('CACHED', target, fragment);
