@@ -52,6 +52,11 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                         */
                         if (target === false) {
                             state.parent[state.pkey] = {}; /* case:A(2) where the resolution fails */
+                            if (options.fatal) {
+                                let ex = new Error('Internal $ref resolution failed '+obj[key]);
+                                if (options.promise) options.promise.reject(ex)
+                                else throw(ex);
+                            }
                         }
                         else {
                             changes++;
@@ -141,7 +146,14 @@ function resolveExternal(root, pointer, options, callback) {
         let data = context;
         if (fragment) {
             data = jptr(data, fragment);
-            if (data === false) data = {}; // case:A(2) where the resolution fails
+            if (data === false) {
+                data = {}; // case:A(2) where the resolution fails
+                if (options.fatal) {
+                    let ex = new Error('Cached $ref resolution failed '+target+fragment);
+                    if (options.promise) options.promise.reject(ex)
+                    else throw(ex);
+                }
+            }
         }
         data = resolveAllInternal(data, context, pointer, fragment, target, options);
         data = filterData(data, options);
@@ -178,7 +190,14 @@ function resolveExternal(root, pointer, options, callback) {
                     /* resolutionSource:B, from the network, data is fresh, but we clone it into the cache */
                     if (fragment) {
                         data = jptr(data, fragment);
-                        if (data === false) data = {}; /* case:B(2) where the resolution fails */
+                        if (data === false) {
+                            data = {}; /* case:B(2) where the resolution fails */
+                            if (options.fatal) {
+                                let ex = new Error('Remote $ref resolution failed '+target+fragment);
+                                if (options.promise) options.promise.reject(ex)
+                                else throw(ex);
+                            }
+                        }
                     }
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
                     data = filterData(data, options);
@@ -210,7 +229,14 @@ function resolveExternal(root, pointer, options, callback) {
                     options.cache[target] = clone(data);
                     if (fragment) {
                         data = jptr(data, fragment);
-                        if (data === false) data = {}; /* case:C(2) where the resolution fails */
+                        if (data === false) {
+                            data = {}; /* case:C(2) where the resolution fails */
+                            if (options.fatal) {
+                                let ex = new Error('File $ref resolution failed '+target+fragment);
+                                if (options.promise) options.promise.reject(ex)
+                                else throw(ex);
+                            }
+                        }
                     }
                     data = resolveAllInternal(data, context, pointer, fragment, target, options);
                     data = filterData(data, options);
@@ -389,7 +415,6 @@ function setupOptions(options) {
         if (!srcUrl.protocol) {
             options.source = path.resolve(options.source);
         }
-        options.cache[options.source] = { '$ref': '#/' };
     }
 
     if (!options.externals) options.externals = [];

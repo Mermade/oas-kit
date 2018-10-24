@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+paths:
+    /ping:
+       $ref: "endpoints/ping.yaml#/paths/~1ping"
+components:
+    schemas:
+        ping:
+            $ref: 'schemas/ping.json'

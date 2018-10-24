@@ -1,0 +1,10 @@
+paths:
+    '/ping':
+        get:
+          responses:
+            '200':
+              description: OK
+              content:
+                application/json:
+                    schema:
+                        $ref: '../openapi.yaml#/components/schemas/ping'
