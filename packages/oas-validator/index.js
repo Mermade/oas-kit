@@ -207,6 +207,7 @@ function checkSubSchema(schema, parent, state) {
         should(schema.required).be.an.Array();
         should(schema.required).not.be.empty();
         should(common.hasDuplicates(schema.required)).be.exactly(false,'required items must be unique');
+        // nb: required array can include (for example) specific properties which match patternProperties
     }
     if (schema.properties) {
         should(schema.properties).be.an.Object();
