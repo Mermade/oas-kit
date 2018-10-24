@@ -1148,6 +1148,8 @@ function validateSync(openapi, options, callback) {
         options.context.push('#/paths/' + jptr.jpescape(p));
         if (!p.startsWith('x-')) {
             should(p).startWith('/');
+            should(p).not.containEql('?');
+            //should(p).not.containEql('#');
             let pCount = 0;
             let template = p.replace(/\{(.+?)\}/g, function (match, group1) {
                 return '{'+(pCount++)+'}';
@@ -1171,6 +1173,8 @@ function validateSync(openapi, options, callback) {
         for (let p in openapi["x-ms-paths"]) {
             options.context.push('#/x-ms-paths/' + jptr.jpescape(p));
             should(p).startWith('/');
+            should(p).not.containEql('?');
+            //should(p).not.containEql('#');
             checkPathItem(openapi["x-ms-paths"][p], p, openapi, options);
             options.context.pop();
         }
