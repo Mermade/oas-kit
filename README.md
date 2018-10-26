@@ -26,7 +26,7 @@ Any LTS version.
 
 * clone the repository
 * `npm i` in the top level directory
-* `lerna bootstrap`
+* `lerna bootstrap` or `npx lerna bootstrap`
 
 Please try and keep commits related to a single package or piece of functionality. PR in the usual way.
 
