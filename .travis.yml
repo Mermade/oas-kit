@@ -3,14 +3,12 @@ node_js:
   - "10"
   - "8"
   - "6"
-install:
-  - npm i
 before_script:
   - . ./bin/setflags.sh
   - git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
   - git clone --depth 1 https://github.com/mermade/openapi-definitions.git
   - git clone --depth 1 https://github.com/mermade/openapi3-examples.git
-  - node node_modules/.bin/lerna bootstrap
+  - node node_modules/.bin/lerna bootstrap --no-ci
 script:
   - node node_modules/.bin/mocha $nflags
 #  - node node_modules/.bin/eslint *.js linter/*.js
