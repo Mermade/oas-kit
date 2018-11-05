@@ -1228,6 +1228,7 @@ function convertObj(swagger, options, callback) {
         options.externals = [];
         options.externalRefs = {};
         options.rewriteRefs = true; // avoids stack explosions
+        options.preserveMiro = true;
         options.promise = {};
         options.promise.resolve = resolve;
         options.promise.reject = reject;

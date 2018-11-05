@@ -96,7 +96,8 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
 
     recurse(obj,{},function(obj,key,state){
         if (isRef(obj, key)) {
-            if (obj.$fixed) delete obj.$fixed;
+            if (typeof obj.$fixed !== 'undefined') delete obj.$fixed;
+            if (!options.preserveMiro) delete obj['x-miro'];
         }
     });
 
