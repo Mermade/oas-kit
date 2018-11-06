@@ -328,6 +328,7 @@ function findExternalRefs(options) {
                                 data.description = refs[ref].description;
                             }
                             refs[ref].data = data;
+                            // sort $refs by length
                             let pointers = unique(refs[ref].paths).sort(function(a,b){
                                 if (a.length < b.length) return -1;
                                 if (a.length > b.length) return +1;
