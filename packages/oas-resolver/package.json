@@ -19,7 +19,7 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "js-yaml": "^3.11.0",
+    "js-yaml": "^3.12.0",
     "node-fetch": "^2.1.1",
     "oas-kit-common": "^1.0.3",
     "reftools": "^1.0.2",

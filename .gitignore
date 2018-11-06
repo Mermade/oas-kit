@@ -3,3 +3,4 @@ node_modules/
 in/
 dist/
 test/s2o-test/_*/
+.vscode

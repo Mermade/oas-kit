@@ -1,5 +1,7 @@
 'use strict';
 
+const yaml = require('js-yaml');
+
 const colour = process.env.NODE_DISABLE_COLORS ?
     { red: '', yellow: '', green: '', normal: '' } :
     { red: '\x1b[31m', yellow: '\x1b[33;1m', green: '\x1b[32m', normal: '\x1b[0m' };
@@ -18,8 +20,7 @@ function allSame(array) {
 
 function deepEquals(obj1, obj2) {
     function _equals(obj1, obj2) {
-        return JSON.stringify(obj1)
-            === JSON.stringify(Object.assign({}, obj1, obj2));
+        return yaml.dump(obj1) === yaml.dump(Object.assign({}, obj1, obj2));
     }
     return _equals(obj1, obj2) && _equals(obj2, obj1);
 }

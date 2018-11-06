@@ -13,6 +13,7 @@ const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
 const isRef = require('reftools/lib/isref.js').isRef;
 const clone = require('reftools/lib/clone.js').clone;
+const cclone = require('reftools/lib/clone.js').circularClone;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const resolver = require('oas-resolver');
 const sw = require('oas-schema-walker');
@@ -1234,7 +1235,7 @@ function convertObj(swagger, options, callback) {
         options.promise.reject = reject;
         if (!options.cache) options.cache = {};
         if (swagger.openapi && (typeof swagger.openapi === 'string') && swagger.openapi.startsWith('3.')) {
-            options.openapi = clone(swagger);
+            options.openapi = cclone(swagger);
             fixInfo(options.openapi, options, reject);
             fixPaths(options.openapi, options, reject);
 
@@ -1276,7 +1277,7 @@ function convertObj(swagger, options, callback) {
         }
 
         // we want the new and existing properties to appear in a sensible order. Not guaranteed
-        openapi = Object.assign(openapi, clone(swagger));
+        openapi = Object.assign(openapi, cclone(swagger));
         delete openapi.swagger;
 
         if (swagger.host) {

@@ -73,11 +73,17 @@ function processResult(err, options) {
     }
 
     let s;
-    if (options.yaml) {
-        s = options.debug ? yaml.dump(options.openapi) : yaml.safeDump(options.openapi);
+    try {
+        if (options.yaml) {
+            s = options.debug ? yaml.dump(options.openapi) : yaml.safeDump(options.openapi, {noRefs:true});
+        }
+        else {
+            s = JSON.stringify(options.openapi, null, options.indent||4);
+        }
     }
-    else {
-        s = JSON.stringify(options.openapi, null, options.indent||4);
+    catch (ex) {
+        console.warn('The result cannot be represented safely in the chosen output format');
+        s = '{}';
     }
 
     if (argv.outfile) {

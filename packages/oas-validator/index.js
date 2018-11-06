@@ -1130,7 +1130,7 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
-    recurse(openapi, null, function (obj, key, state) {
+    recurse(openapi, {identityDetection:true}, function (obj, key, state) {
         if (isRef(obj,key)) {
             options.context.push(state.path);
             should(obj[key]).not.startWith('#/definitions/');

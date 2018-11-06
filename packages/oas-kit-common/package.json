@@ -13,6 +13,9 @@
     "utility"
   ],
   "author": "Mike Ralphson",
+  "dependencies": {
+    "js-yaml": "^3.12.0"
+  },
   "license": "BSD-3-Clause",
   "gitHead": "da527220c78530e836c33f77178493aab93d385c"
 }

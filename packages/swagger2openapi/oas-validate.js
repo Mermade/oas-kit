@@ -12,7 +12,7 @@ const yaml = require('js-yaml');
 
 const validator = require('oas-validator');
 const common = require('oas-kit-common');
-const clone = require('reftools/lib/clone.js').clone;
+const clone = require('reftools/lib/clone.js').circularClone;
 
 const swagger2openapi = require('./index.js');
 
@@ -89,6 +89,7 @@ let genStack = [];
 let options = argv;
 options.patch = !argv.nopatch;
 options.fatal = true;
+if (options.verbose) Error.stackTraceLimit = Infinity;
 
 function finalise(err, options) {
     if (!argv.quiet || err) {
@@ -158,23 +159,28 @@ function handleResult(err, options) {
     else {
         result = options.openapi;
     }
-    let resultStr = JSON.stringify(result);
+    let resultStr = yaml.dump(result);
 
     if (typeof result !== 'boolean') try {
         if (!options.yaml) {
-            resultStr = yaml.safeDump(result, { lineWidth: -1 }); // should be representable safely in yaml
-            let resultStr2 = yaml.safeDump(result, { lineWidth: -1, noRefs: true });
-            should(resultStr).not.be.exactly('{}','Result should not be empty');
-            should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
+            try {
+                resultStr = yaml.safeDump(result, { lineWidth: -1 }); // should be representable safely in yaml
+                let resultStr2 = yaml.safeDump(result, { lineWidth: -1, noRefs: true });
+                should(resultStr).not.be.exactly('{}','Result should not be empty');
+                should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
+            }
+            catch (ex) {
+                should.fail(false,true,'Result cannot be represented safely in YAML');
+            }
         }
 
         validator.validate(result, options, finalise);
     }
     catch (ex) {
         console.log(common.colour.normal + options.file);
-        console.log(common.colour.red + options.context.pop() + '\n' + ex.message);
+        console.warn(common.colour.red + (options.context.length ? options.context.pop() : 'No context')+ '\n' + ex.message);
         if (ex.stack && ex.name !== 'AssertionError' && ex.name !== 'CLIError') {
-            console.log(ex.stack);
+            console.warn(ex.stack);
         }
         options.valid = !options.expectFailure;
         finalise(ex, options);
@@ -256,6 +262,7 @@ function* check(file, force, expectFailure) {
             })
             .catch(function(ex){
                 console.warn(common.colour.red+ex,common.colour.normal);
+                console.warn(ex.stack);
                 if (expectFailure) {
                     warnings.push('Converter failed ' + options.source);
                 }
