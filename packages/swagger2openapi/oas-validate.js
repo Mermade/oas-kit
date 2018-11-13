@@ -112,7 +112,7 @@ function finalise(err, options) {
         if (options.lintRule && options.lintRule.description !== err.message) {
             console.warn(options.lintRule.description);
         }
-        options.valid = !!options.expectFailure;
+        options.valid = (!!options.expectFailure || options.allowFailure);
     }
     if (options.warnings) {
         for (let warning of options.warnings) {
@@ -232,10 +232,20 @@ function* check(file, force, expectFailure) {
 
         options.original = src;
         options.source = file;
+        options.expectFailure = false;
+        options.allowFailure = false;
 
         if ((options.source.indexOf('!')>=0) && (options.source.indexOf('swagger.')>=0)) {
             expectFailure = true;
+            options.expectFailure = true;
+            options.allowFailure = true;
         }
+        if ((options.source.indexOf('!')>=0) && (options.source.indexOf('openapi.')>=0)) {
+            expectFailure = true;
+            options.expectFailure = false; // because some things are corrected
+            options.allowFailure = true;
+        }
+
 
         if (file.startsWith('http')) {
             swagger2openapi.convertUrl(file, clone(options))
