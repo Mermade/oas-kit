@@ -30,6 +30,9 @@ const obj = {
         },
         '-': {
             value: true
+        },
+        'With Space': {
+            value: true
         }
     }
 };
@@ -62,6 +65,9 @@ should(jptr(obj,'#/children/-','baby')).be.equal('baby');
 should(jptr(obj,'#/children/2')).be.equal('baby');
 should(jptr(obj,'#/400WithDocument')).be.equal(true);
 should(jptr(obj,'#/definitions/-/value')).be.equal(true);
+
+should(jptr(obj,'#/definitions/With%20Space/value')).be.equal(true);
+should(jptr(obj,'#/definitions/With+Space/value')).be.equal(true);
 
 should(jptr(obj,'#/not/there/yet','hello')).be.equal('hello');
 should(jptr(obj,'#/not/there/yet')).be.equal('hello');

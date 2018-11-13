@@ -41,7 +41,7 @@ function jptr(obj, prop, newValue) {
         let uri = parts[0];
         if (uri) return false; // we do internal resolution only
         prop = parts[1];
-        prop = decodeURIComponent(prop.slice(1));
+        prop = decodeURIComponent(prop.slice(1)).split('+').join(' ');
     }
     if (prop.startsWith('/')) prop = prop.slice(1);
 
