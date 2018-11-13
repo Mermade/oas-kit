@@ -108,3 +108,11 @@ rules:
   object: tag
   description: tag object should have a description
   truthy: description
+- name: schema-properties-type
+  object: schema
+  description: "schema objects containing properties should have type: object"
+  if:
+    property: properties
+    then:
+      property: type
+      value: object
