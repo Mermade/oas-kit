@@ -11,7 +11,7 @@ before_script:
   - node node_modules/.bin/lerna bootstrap --no-ci
 script:
   - node node_modules/.bin/mocha $nflags
-  - npx eslint packages/*/*.js
+  - node node_modules/.bin/eslint packages/*/*.js
 #  - travis_wait node $nflags packages/swagger2openapi/oas-validate -q -l openapi-directory/APIs/
   - travis_wait node $nflags packages/swagger2openapi/oas-validate -q openapi-definitions/
   - travis_wait node $nflags packages/swagger2openapi/oas-validate -q -n openapi3-examples/pass
