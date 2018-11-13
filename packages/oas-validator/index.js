@@ -32,14 +32,14 @@ class JSONSchemaError extends Error {
     super(message);
     this.name = 'JSONSchemaError';
   }
-};
+}
 
 class CLIError extends Error {
   constructor(message) {
     super(message);
     this.name = 'CLIError';
   }
-};
+}
 
 const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
@@ -390,11 +390,11 @@ function checkContent(content, contextServers, openapi, options) {
             should(contentType.examples).not.be.an.Array();
             for (let e in contentType.examples) {
                 let ex = contentType.examples[e];
-                if (typeof ex.$ref !== 'undefined') {
-                    if (options.lint) options.linter('reference',ex,'$ref',options);
+                if (typeof ex.$ref === 'undefined') {
+                    checkExample(ex, contextServers, openapi, options);
                 }
                 else {
-                    checkExample(ex, contextServers, openapi, options);
+                    if (options.lint) options.linter('reference',ex,'$ref',options);
                 }
             }
             options.context.pop();
@@ -1261,11 +1261,11 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/examples/' + e);
             should(validateComponentName(e)).be.equal(true, 'component name invalid');
             let ex = openapi.components.examples[e];
-            if (typeof ex.$ref !== 'undefined') {
-                if (options.lint) options.linter('reference',ex,'$ref',options);
+            if (typeof ex.$ref === 'undefined') {
+                checkExample(ex, openapi.servers, openapi, options);
             }
             else {
-                checkExample(ex, openapi.servers, openapi, options);
+                if (options.lint) options.linter('reference',ex,'$ref',options);
             }
         }
         options.context.pop();
@@ -1279,16 +1279,16 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/callbacks/' + c);
             should(validateComponentName(c)).be.equal(true, 'component name invalid');
             let cb = openapi.components.callbacks[c];
-            if (typeof cb.$ref !== 'undefined') {
-                if (options.lint) options.linter('reference',cb,'$ref',options);
-            }
-            else {
+            if (typeof cb.$ref === 'undefined') {
                 for (let exp in cb) {
                     let cbPi = cb[exp];
                     options.isCallback = true;
                     checkPathItem(cbPi, exp, openapi, options);
                     options.isCallback = false;
                 }
+                if (options.lint) options.linter('reference',cb,'$ref',options);
+            }
+            else {
             }
             options.context.pop();
         }
@@ -1303,11 +1303,11 @@ function validateSync(openapi, options, callback) {
             options.context.push('#/components/links/' + l);
             should(validateComponentName(l)).be.equal(true, 'component name invalid');
             let link = openapi.components.links[l];
-            if (typeof link.$ref !== 'undefined') {
-                if (options.lint) options.linter('reference',link,'$ref',options);
+            if (typeof link.$ref === 'undefined') {
+                checkLink(link, openapi, options);
             }
             else {
-                checkLink(link, openapi, options);
+                if (options.lint) options.linter('reference',link,'$ref',options);
             }
             options.context.pop();
         }
