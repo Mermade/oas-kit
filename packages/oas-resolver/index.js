@@ -328,8 +328,10 @@ function findExternalRefs(options) {
                                 data.description = refs[ref].description;
                             }
                             refs[ref].data = data;
-                            // sort $refs by length
+
+                            // sorting $refs by length causes bugs (due to overlapping regions?)
                             let pointers = unique(refs[ref].paths);
+
                             for (let ptr of pointers) {
                                 // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
                                 if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
