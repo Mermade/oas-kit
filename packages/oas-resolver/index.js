@@ -329,11 +329,7 @@ function findExternalRefs(options) {
                             }
                             refs[ref].data = data;
                             // sort $refs by length
-                            let pointers = unique(refs[ref].paths).sort(function(a,b){
-                                if (a.length < b.length) return -1;
-                                if (a.length > b.length) return +1;
-                                return 0;
-                            });
+                            let pointers = unique(refs[ref].paths);
                             for (let ptr of pointers) {
                                 // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
                                 if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
