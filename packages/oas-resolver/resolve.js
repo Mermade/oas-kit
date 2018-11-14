@@ -31,6 +31,7 @@ let options = {resolve: true};
 
 options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
+options.fatal = true;
 
 function main(str,source,options){
     let input = yaml.safeLoad(str,{json:true});
