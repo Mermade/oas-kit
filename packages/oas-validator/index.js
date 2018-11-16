@@ -742,7 +742,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             if (typeof op.description !== 'undefined') should(op.description).be.a.String();
             if (typeof op.operationId !== 'undefined') {
                 should(op.operationId).be.a.String();
-                should(options.operationIds.indexOf(op.operationId)).be.exactly(-1,'operationIds must be unique');
+                should(options.operationIds.indexOf(op.operationId)).be.exactly(-1,'operationIds must be unique ['+op.operationId+']');
                 options.operationIds.push(op.operationId);
             }
 
@@ -1016,7 +1016,7 @@ function validateSync(openapi, options, callback) {
             should(tag).have.property('name');
             contextAppend(options, tag.name);
             should(tag.name).be.a.String();
-            should(tagsSeen.has(tag.name)).be.exactly(false,'Tag names must be unique');
+            should(tagsSeen.has(tag.name)).be.exactly(false,'Tag names must be unique ['+tag.name+']');
             tagsSeen.set(tag.name,true);
             if (typeof tag.externalDocs !== 'undefined') {
                 contextAppend(options, 'externalDocs');
