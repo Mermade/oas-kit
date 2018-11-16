@@ -13,6 +13,7 @@ const yaml = require('js-yaml');
 const validator = require('oas-validator');
 const common = require('oas-kit-common');
 const clone = require('reftools/lib/clone.js').circularClone;
+const reref = require('reftools/lib/reref.js').reref;
 
 const swagger2openapi = require('./index.js');
 
@@ -170,6 +171,12 @@ function handleResult(err, options) {
                 should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
             }
             catch (ex) {
+                if (options.verbose>1) {
+                    fs.writeFileSync('./debug.yaml',resultStr,'utf8');
+                    console.warn('Result dumped to debug.yaml fixed.yaml');
+                    let fix = reref(result);
+                    fs.writeFileSync('./fixed.yaml',yaml.safeDump(fix, { lineWidth: -1 }),'utf8');
+                }
                 should.fail(false,true,'Result cannot be represented safely in YAML');
             }
         }
