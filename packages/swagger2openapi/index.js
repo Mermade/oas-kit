@@ -28,8 +28,15 @@ const ourVersion = require('./package.json').version;
 const targetVersion = '3.0.0';
 let componentNames; // initialised in main
 
+class S2OError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'S2OError';
+  }
+}
+
 function throwError(message, options) {
-    let err = new Error(message);
+    let err = new S2OError(message);
     err.options = options;
     if (options.promise) {
         options.promise.reject(err);
@@ -337,8 +344,8 @@ function processSecurityScheme(scheme, options) {
     }
 }
 
-function deleteParameters(value) {
-    return !value["x-s2o-delete"];
+function keepParameters(value) {
+    return (value && !value["x-s2o-delete"]);
 }
 
 function processHeader(header, options) {
@@ -419,6 +426,14 @@ function processParameter(param, op, path, index, openapi, options) {
     let singularRequestBody = true;
     let originalType;
 
+    if (op && op.consumes && (typeof op.consumes === 'string')) {
+        if (options.patch) {
+            op.consumes = [op.consumes];
+        }
+        else {
+            throwError('(Patchable) operation.consumes must be an array', options);
+        }
+    }
     let consumes = ((op && op.consumes) || (openapi.consumes || [])).filter(common.uniqueOnly);
 
     if (param && param.$ref && (typeof param.$ref === 'string')) {
@@ -701,17 +716,19 @@ function processParameter(param, op, path, index, openapi, options) {
     }
 
     // tidy up
-    if (param) delete param.type;
-    for (let prop of common.parameterTypeProperties) {
-        delete param[prop];
-    }
-
-    if ((param.in === 'path') && ((typeof param.required === 'undefined') || (param.required !== true))) {
-        if (options.patch) {
-            param.required = true;
+    if (param) {
+        delete param.type;
+        for (let prop of common.parameterTypeProperties) {
+            delete param[prop];
         }
-        else {
-            throwError('(Patchable) path parameters must be required:true', options);
+
+        if ((param.in === 'path') && ((typeof param.required === 'undefined') || (param.required !== true))) {
+            if (options.patch) {
+                param.required = true;
+            }
+            else {
+                throwError('(Patchable) path parameters must be required:true', options);
+            }
         }
     }
 
@@ -760,6 +777,15 @@ function processResponse(response, name, op, openapi, options) {
 
             if (response.schema.$ref && (typeof response.schema.$ref === 'string') && response.schema.$ref.startsWith('#/responses/')) {
                 response.schema.$ref = '#/components/responses/' + common.sanitise(decodeURIComponent(response.schema.$ref.replace('#/responses/', '')));
+            }
+
+            if (op && op.produces && (typeof op.produces === 'string')) {
+                if (options.patch) {
+                    op.produces = [op.produces];
+                }
+                else {
+                    throwError('(Patchable) operation.produces must be an array', options);
+                }
             }
 
             let produces = ((op && op.produces) || (openapi.produces || [])).filter(common.uniqueOnly);
@@ -854,7 +880,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         processParameter(param, op, path, method + ':' + p, openapi, options);
                     }
                     if (!options.debug) {
-                        op.parameters = op.parameters.filter(deleteParameters);
+                        op.parameters = op.parameters.filter(keepParameters);
                     }
                 }
                 if (op && op.parameters === null) delete op.parameters;
@@ -879,7 +905,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                 if (op && (op['x-servers']) && (Array.isArray(op['x-servers']))) {
                     op.servers = op['x-servers'];
                     delete op['x-servers'];
-                } else if (op.schemes && op.schemes.length) {
+                } else if (op && op.schemes && op.schemes.length) {
                     for (let scheme of op.schemes) {
                         if ((!openapi.schemes) || (openapi.schemes.indexOf(scheme) < 0)) {
                             if (!op.servers) {
@@ -902,79 +928,80 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                     op["x-s2o-consumes"] = op.consumes || [];
                     op["x-s2o-produces"] = op.produces || [];
                 }
-                delete op.consumes;
-                delete op.produces;
-                delete op.schemes;
+                if (op) {
+                    delete op.consumes;
+                    delete op.produces;
+                    delete op.schemes;
 
-                if (op["x-ms-examples"]) {
-                    for (let e in op["x-ms-examples"]) {
-                        let example = op["x-ms-examples"][e];
-                        let se = common.sanitiseAll(e);
-                        if (example.parameters) {
-                            for (let p in example.parameters) {
-                                let value = example.parameters[p];
-                                for (let param of (op.parameters||[]).concat(path.parameters||[])) {
-                                    if (param.$ref) {
-                                        param = jptr.jptr(openapi,param.$ref);
-                                    }
-                                    if ((param.name === p) && (!param.example)) {
-                                        if (!param.examples) {
-                                            param.examples = {};
+                    if (op["x-ms-examples"]) {
+                        for (let e in op["x-ms-examples"]) {
+                            let example = op["x-ms-examples"][e];
+                            let se = common.sanitiseAll(e);
+                            if (example.parameters) {
+                                for (let p in example.parameters) {
+                                    let value = example.parameters[p];
+                                    for (let param of (op.parameters||[]).concat(path.parameters||[])) {
+                                        if (param.$ref) {
+                                            param = jptr.jptr(openapi,param.$ref);
                                         }
-                                        param.examples[e] = {value: value};
+                                        if ((param.name === p) && (!param.example)) {
+                                            if (!param.examples) {
+                                                param.examples = {};
+                                            }
+                                            param.examples[e] = {value: value};
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (example.responses) {
-                            for (let r in example.responses) {
-                                if (example.responses[r].headers) {
-                                    for (let h in example.responses[r].headers) {
-                                        let value = example.responses[r].headers[h];
-                                        for (let rh in op.responses[r].headers) {
-                                            if (rh === h) {
-                                                let header = op.responses[r].headers[rh];
-                                                header.example = value;
+                            if (example.responses) {
+                                for (let r in example.responses) {
+                                    if (example.responses[r].headers) {
+                                        for (let h in example.responses[r].headers) {
+                                            let value = example.responses[r].headers[h];
+                                            for (let rh in op.responses[r].headers) {
+                                                if (rh === h) {
+                                                    let header = op.responses[r].headers[rh];
+                                                    header.example = value;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                if (example.responses[r].body) {
-                                    openapi.components.examples[se] = { value: clone(example.responses[r].body) };
-                                    if (op.responses[r] && op.responses[r].content) {
-                                        for (let ct in op.responses[r].content) {
-                                            let contentType = op.responses[r].content[ct];
-                                            if (!contentType.examples) {
-                                                contentType.examples = {};
+                                    if (example.responses[r].body) {
+                                        openapi.components.examples[se] = { value: clone(example.responses[r].body) };
+                                        if (op.responses[r] && op.responses[r].content) {
+                                            for (let ct in op.responses[r].content) {
+                                                let contentType = op.responses[r].content[ct];
+                                                if (!contentType.examples) {
+                                                    contentType.examples = {};
+                                                }
+                                                contentType.examples[e] = { $ref: '#/components/examples/'+se };
                                             }
-                                            contentType.examples[e] = { $ref: '#/components/examples/'+se };
                                         }
                                     }
-                                }
 
+                                }
                             }
                         }
+                        delete op["x-ms-examples"];
                     }
-                    delete op["x-ms-examples"];
-                }
 
-                if (op.parameters && op.parameters.length === 0) delete op.parameters;
-
-                if (op.requestBody) {
-                    let effectiveOperationId = op.operationId ? common.sanitiseAll(op.operationId) : common.sanitiseAll(method + p).toCamelCase();
-                    let rbName = common.sanitise(op.requestBody['x-s2o-name'] || effectiveOperationId || '');
-                    delete op.requestBody['x-s2o-name'];
-                    let rbStr = JSON.stringify(op.requestBody);
-                    let rbHash = common.hash(rbStr);
-                    if (!requestBodyCache[rbHash]) {
-                        let entry = {};
-                        entry.name = rbName;
-                        entry.body = op.requestBody;
-                        entry.refs = [];
-                        requestBodyCache[rbHash] = entry;
+                    if (op.parameters && op.parameters.length === 0) delete op.parameters;
+                    if (op.requestBody) {
+                        let effectiveOperationId = op.operationId ? common.sanitiseAll(op.operationId) : common.sanitiseAll(method + p).toCamelCase();
+                        let rbName = common.sanitise(op.requestBody['x-s2o-name'] || effectiveOperationId || '');
+                        delete op.requestBody['x-s2o-name'];
+                        let rbStr = JSON.stringify(op.requestBody);
+                        let rbHash = common.hash(rbStr);
+                        if (!requestBodyCache[rbHash]) {
+                            let entry = {};
+                            entry.name = rbName;
+                            entry.body = op.requestBody;
+                            entry.refs = [];
+                            requestBodyCache[rbHash] = entry;
+                        }
+                        let ptr = '#/'+containerName+'/'+encodeURIComponent(jptr.jpescape(p))+'/'+method+'/requestBody';
+                        requestBodyCache[rbHash].refs.push(ptr);
                     }
-                    let ptr = '#/'+containerName+'/'+encodeURIComponent(jptr.jpescape(p))+'/'+method+'/requestBody';
-                    requestBodyCache[rbHash].refs.push(ptr);
                 }
 
             }
@@ -986,7 +1013,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                 processParameter(param, null, path, p, openapi, options); // index here is the path string
             }
             if (!options.debug && Array.isArray(path.parameters)) {
-                path.parameters = path.parameters.filter(deleteParameters);
+                path.parameters = path.parameters.filter(keepParameters);
             }
         }
     }
@@ -1164,6 +1191,7 @@ function main(openapi, options) {
 }
 
 function extractServerParameters(server) {
+    if (!server || !server.url || (typeof server.url !== 'string')) return server;
     server.url = server.url.split('{{').join('{');
     server.url = server.url.split('}}').join('}');
     server.url.replace(/\{(.+?)\}/g, function (match, group1) { // TODO extend to :parameters (not port)?
@@ -1172,6 +1200,7 @@ function extractServerParameters(server) {
         }
         server.variables[group1] = { default: 'unknown' };
     });
+    return server;
 }
 
 function fixInfo(openapi, options, reject) {
@@ -1180,18 +1209,18 @@ function fixInfo(openapi, options, reject) {
             openapi.info = { version: '', title: '' };
         }
         else {
-            return reject(new Error('(Patchable) info object is mandatory'));
+            return reject(new S2OError('(Patchable) info object is mandatory'));
         }
     }
     if ((typeof openapi.info !== 'object') || (Array.isArray(openapi.info))) {
-        return reject(new Error('info must be an object'));
+        return reject(new S2OError('info must be an object'));
     }
     if ((typeof openapi.info.title === 'undefined') || (openapi.info.title === null)) {
         if (options.patch) {
             openapi.info.title = '';
         }
         else {
-            return reject(new Error('(Patchable) info.title cannot be null'));
+            return reject(new S2OError('(Patchable) info.title cannot be null'));
         }
     }
     if ((typeof openapi.info.version === 'undefined') || (openapi.info.version === null)) {
@@ -1199,7 +1228,7 @@ function fixInfo(openapi, options, reject) {
             openapi.info.version = '';
         }
         else {
-            return reject(new Error('(Patchable) info.version cannot be null'));
+            return reject(new S2OError('(Patchable) info.version cannot be null'));
         }
     }
     if (typeof openapi.info.version !== 'string') {
@@ -1207,7 +1236,7 @@ function fixInfo(openapi, options, reject) {
             openapi.info.version = openapi.info.version.toString();
         }
         else {
-            return reject(new Error('(Patchable) info.version must be a string'));
+            return reject(new S2OError('(Patchable) info.version must be a string'));
         }
     }
     if (typeof openapi.info.logo !== 'undefined') {
@@ -1215,7 +1244,7 @@ function fixInfo(openapi, options, reject) {
             openapi.info['x-logo'] = openapi.info.logo;
             delete openapi.info.logo;
         }
-        else return reject(new Error('(Patchable) info should not have logo property'));
+        else return reject(new S2OError('(Patchable) info should not have logo property'));
     }
     if (typeof openapi.info.termsOfService !== 'undefined') {
         if (openapi.info.termsOfService === null) {
@@ -1223,7 +1252,7 @@ function fixInfo(openapi, options, reject) {
                 openapi.info.termsOfService = '';
             }
             else {
-                return reject(new Error('(Patchable) info.termsOfService cannot be null'));
+                return reject(new S2OError('(Patchable) info.termsOfService cannot be null'));
             }
         }
         if (url.URL && options.whatwg) {
@@ -1234,7 +1263,7 @@ function fixInfo(openapi, options, reject) {
                 if (options.patch) {
                     delete openapi.info.termsOfService;
                 }
-                else return reject(new Error('(Patchable) info.termsOfService must be a URL'));
+                else return reject(new S2OError('(Patchable) info.termsOfService must be a URL'));
             }
         }
     }
@@ -1246,7 +1275,7 @@ function fixPaths(openapi, options, reject) {
             openapi.paths = {};
         }
         else {
-            return reject(new Error('(Patchable) paths object is mandatory'));
+            return reject(new S2OError('(Patchable) paths object is mandatory'));
         }
     }
 }
@@ -1283,7 +1312,7 @@ function convertObj(swagger, options, callback) {
         }
 
         if ((!swagger.swagger) || (swagger.swagger != "2.0")) {
-            return reject(new Error('Unsupported swagger/OpenAPI version: ' + (swagger.openapi ? swagger.openapi : swagger.swagger)));
+            return reject(new S2OError('Unsupported swagger/OpenAPI version: ' + (swagger.openapi ? swagger.openapi : swagger.swagger)));
         }
 
         let openapi = options.openapi = {};
@@ -1426,7 +1455,7 @@ function convertStr(str, options, callback) {
             .catch(ex => reject(ex));
         }
         else {
-            reject(new Error('Could not parse string'));
+            reject(new S2OError('Could not parse string'));
         }
     }));
 }
@@ -1441,7 +1470,7 @@ function convertUrl(url, options, callback) {
             console.log('GET ' + url);
         }
         fetch(url, {agent:options.agent}).then(function (res) {
-            if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
+            if (res.status !== 200) throw new S2OError(`Received status code ${res.status}`);
             return res.text();
         }).then(function (body) {
             convertStr(body, options)
@@ -1484,6 +1513,7 @@ function convertStream(readable, options, callback) {
 }
 
 module.exports = {
+    S2OError: S2OError,
     targetVersion: targetVersion,
     convert: convertObj,
     convertObj: convertObj,
