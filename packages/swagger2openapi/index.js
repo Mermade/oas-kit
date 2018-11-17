@@ -1353,7 +1353,7 @@ function convertObj(swagger, options, callback) {
         openapi = Object.assign(openapi, cclone(swagger));
         delete openapi.swagger;
         recurse(openapi, {}, function(obj, key, state){
-            if (obj[key] === null) delete obj[key]; // this saves *so* much grief later
+            if ((obj[key] === null) && (!key.startsWith('x-'))) delete obj[key]; // this saves *so* much grief later
         });
 
         if (swagger.host) {
