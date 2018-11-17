@@ -452,6 +452,7 @@ function processParameter(param, op, path, index, openapi, options) {
             return throwError('(Patchable) operation.consumes must be an array', options);
         }
     }
+    if (!Array.isArray(openapi.consumes)) delete openapi.consumes;
     let consumes = ((op ? op.consumes : null) || (openapi.consumes || [])).filter(common.uniqueOnly);
 
     if (param && param.$ref && (typeof param.$ref === 'string')) {
@@ -908,7 +909,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                 //don't need to remove requestBody for non-supported ops as they "SHALL be ignored"
 
                 // responses
-                if (op) {
+                if (typeof op === 'object') {
                     if (!op.responses) {
                         let defaultResp = {};
                         defaultResp.description = 'Default response';
@@ -1299,6 +1300,7 @@ function fixPaths(openapi, options, reject) {
 
 function convertObj(swagger, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
+        if (!swagger) swagger = {};
         options.externals = [];
         options.externalRefs = {};
         options.rewriteRefs = true; // avoids stack explosions
@@ -1357,12 +1359,14 @@ function convertObj(swagger, options, callback) {
         });
 
         if (swagger.host) {
-            for (let s of swagger.schemes || ['']) {
-                let server = {};
-                server.url = (s ? s+':' : '') + '//' + swagger.host + (swagger.basePath ? swagger.basePath : '');
-                extractServerParameters(server);
-                if (!openapi.servers) openapi.servers = [];
-                openapi.servers.push(server);
+            if (Array.isArray(swagger.schemes)) {
+                for (let s of swagger.schemes || ['']) {
+                    let server = {};
+                    server.url = (s ? s+':' : '') + '//' + swagger.host + (swagger.basePath ? swagger.basePath : '');
+                    extractServerParameters(server);
+                    if (!openapi.servers) openapi.servers = [];
+                    openapi.servers.push(server);
+                }
             }
         }
         else if (swagger.basePath) {
@@ -1415,6 +1419,13 @@ function convertObj(swagger, options, callback) {
 
         fixInfo(openapi, options, reject);
         fixPaths(openapi, options, reject);
+
+        if (typeof openapi.consumes === 'string') {
+            openapi.consumes = [openapi.consumes];
+        }
+        if (typeof openapi.produces === 'string') {
+            openapi.produces = [openapi.produces];
+        }
 
         openapi.components = {};
         if (openapi['x-callbacks']) {
