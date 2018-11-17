@@ -199,6 +199,16 @@ function fixupRefs(obj, key, state) {
         if (obj[key].startsWith('#/components/')) {
             // nop
         }
+        else if (obj[key] === '#/consumes') {
+            // people are *so* creative
+            delete obj[key];
+            state.parent[pkey] = clone(options.openapi.consumes);
+        }
+        else if (obj[key] === '#/produces') {
+            // and by creative, I mean devious
+            delete obj[key];
+            state.parent[state.pkey] = clone(options.openapi.produces);
+        }
         else if (obj[key].startsWith('#/definitions/')) {
             //only the first part of a schema component name must be sanitised
             let keys = obj[key].replace('#/definitions/', '').split('/');
@@ -277,6 +287,14 @@ function fixupRefs(obj, key, state) {
                 }
             }
         }
+
+        // do this last
+        if (Object.keys(obj).length > 1) {
+            let tmp = obj[key];
+            delete obj[key];
+            state.parent[state.pkey] = { allOf: [ { $ref: tmp }, obj ]};
+        }
+
     }
     delete obj['x-miro'];
     if ((key === 'x-ms-odata') && (typeof obj[key] === 'string') && (obj[key].startsWith('#/'))) {
@@ -683,7 +701,7 @@ function processParameter(param, op, path, index, openapi, options) {
             else {
                 op.requestBody = Object.assign({}, op.requestBody); // make sure we have one
                 if ((op.requestBody.content && op.requestBody.content["multipart/form-data"])
-                    && (result.content["multipart/form-data"])) {
+                    && (op.requestBody.content["multipart/form-data"].schema) && (op.requestBody.content["multipart/form-data"].schema.properties) && (result.content["multipart/form-data"]) && (result.content["multipart/form-data"].schema) && (result.content["multipart/form-data"].schema.properties)) {
                     op.requestBody.content["multipart/form-data"].schema.properties =
                         Object.assign(op.requestBody.content["multipart/form-data"].schema.properties, result.content["multipart/form-data"].schema.properties);
                     op.requestBody.content["multipart/form-data"].schema.required = (op.requestBody.content["multipart/form-data"].schema.required || []).concat(result.content["multipart/form-data"].schema.required||[]);
@@ -787,6 +805,7 @@ function processResponse(response, name, op, openapi, options) {
                     throwError('(Patchable) operation.produces must be an array', options);
                 }
             }
+            if (openapi.produces && !Array.isArray(openapi.produces)) delete openapi.produces;
 
             let produces = ((op && op.produces) || (openapi.produces || [])).filter(common.uniqueOnly);
             if (!produces.length) produces.push('*/*'); // TODO verify default
@@ -883,7 +902,6 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         op.parameters = op.parameters.filter(keepParameters);
                     }
                 }
-                if (op && op.parameters === null) delete op.parameters;
 
                 if (op && op.security) processSecurity(op.security);
 
@@ -1006,7 +1024,6 @@ function processPaths(container, containerName, options, requestBodyCache, opena
 
             }
         }
-        if (path && path.parameters === null) delete path.parameters;
         if (path && path.parameters) {
             for (let p2 in path.parameters) {
                 let param = path.parameters[p2];
@@ -1335,6 +1352,9 @@ function convertObj(swagger, options, callback) {
         // we want the new and existing properties to appear in a sensible order. Not guaranteed
         openapi = Object.assign(openapi, cclone(swagger));
         delete openapi.swagger;
+        recurse(openapi, {}, function(obj, key, state){
+            if (obj[key] === null) delete obj[key]; // this saves *so* much grief later
+        });
 
         if (swagger.host) {
             for (let s of swagger.schemes || ['']) {
