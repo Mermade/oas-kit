@@ -288,6 +288,7 @@ function fixupRefs(obj, key, state) {
             }
         }
 
+        delete obj['x-miro'];
         // do this last
         if (Object.keys(obj).length > 1) {
             let tmp = obj[key];
@@ -296,7 +297,6 @@ function fixupRefs(obj, key, state) {
         }
 
     }
-    delete obj['x-miro'];
     if ((key === 'x-ms-odata') && (typeof obj[key] === 'string') && (obj[key].startsWith('#/'))) {
         let keys = obj[key].replace('#/definitions/', '').replace('#/components/schemas/','').split('/');
         let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
