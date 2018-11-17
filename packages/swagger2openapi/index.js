@@ -449,10 +449,10 @@ function processParameter(param, op, path, index, openapi, options) {
             op.consumes = [op.consumes];
         }
         else {
-            throwError('(Patchable) operation.consumes must be an array', options);
+            return throwError('(Patchable) operation.consumes must be an array', options);
         }
     }
-    let consumes = ((op && op.consumes) || (openapi.consumes || [])).filter(common.uniqueOnly);
+    let consumes = ((op ? op.consumes : null) || (openapi.consumes || [])).filter(common.uniqueOnly);
 
     if (param && param.$ref && (typeof param.$ref === 'string')) {
         // if we still have a ref here, it must be an internal one
@@ -709,8 +709,8 @@ function processParameter(param, op, path, index, openapi, options) {
                         delete op.requestBody.content["multipart/form-data"].schema.required;
                     }
                 }
-                else if ((op.requestBody.content && op.requestBody.content["application/x-www-form-urlencoded"])
-                    && (result.content["application/x-www-form-urlencoded"])) {
+                else if ((op.requestBody.content && op.requestBody.content["application/x-www-form-urlencoded"] && op.requestBody.content["application/x-www-form-urlencoded"].schema && op.requestBody.content["application/x-www-form-urlencoded"].schema.properties)
+                    && result.content["application/x-www-form-urlencoded"] && result.content["application/x-www-form-urlencoded"].schema && result.content["application/x-www-form-urlencoded"].schema.properties) {
                     op.requestBody.content["application/x-www-form-urlencoded"].schema.properties =
                         Object.assign(op.requestBody.content["application/x-www-form-urlencoded"].schema.properties, result.content["application/x-www-form-urlencoded"].schema.properties);
                     op.requestBody.content["application/x-www-form-urlencoded"].schema.required = (op.requestBody.content["application/x-www-form-urlencoded"].schema.required || []).concat(result.content["application/x-www-form-urlencoded"].schema.required||[]);
@@ -802,12 +802,12 @@ function processResponse(response, name, op, openapi, options) {
                     op.produces = [op.produces];
                 }
                 else {
-                    throwError('(Patchable) operation.produces must be an array', options);
+                    return throwError('(Patchable) operation.produces must be an array', options);
                 }
             }
             if (openapi.produces && !Array.isArray(openapi.produces)) delete openapi.produces;
 
-            let produces = ((op && op.produces) || (openapi.produces || [])).filter(common.uniqueOnly);
+            let produces = ((op ? op.produces : null) || (openapi.produces || [])).filter(common.uniqueOnly);
             if (!produces.length) produces.push('*/*'); // TODO verify default
 
             response.content = {};
