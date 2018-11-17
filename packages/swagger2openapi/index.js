@@ -1359,14 +1359,12 @@ function convertObj(swagger, options, callback) {
         });
 
         if (swagger.host) {
-            if (Array.isArray(swagger.schemes)) {
-                for (let s of swagger.schemes || ['']) {
-                    let server = {};
-                    server.url = (s ? s+':' : '') + '//' + swagger.host + (swagger.basePath ? swagger.basePath : '');
-                    extractServerParameters(server);
-                    if (!openapi.servers) openapi.servers = [];
-                    openapi.servers.push(server);
-                }
+            for (let s of (Array.isArray(swagger.schemes) ? swagger.schemes : [''])) {
+                let server = {};
+                server.url = (s ? s+':' : '') + '//' + swagger.host + (swagger.basePath ? swagger.basePath : '');
+                extractServerParameters(server);
+                if (!openapi.servers) openapi.servers = [];
+                openapi.servers.push(server);
             }
         }
         else if (swagger.basePath) {
