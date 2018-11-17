@@ -202,7 +202,7 @@ function fixupRefs(obj, key, state) {
         else if (obj[key] === '#/consumes') {
             // people are *so* creative
             delete obj[key];
-            state.parent[pkey] = clone(options.openapi.consumes);
+            state.parent[state.pkey] = clone(options.openapi.consumes);
         }
         else if (obj[key] === '#/produces') {
             // and by creative, I mean devious
