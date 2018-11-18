@@ -5,7 +5,7 @@
 [![OpenAPI Validation](https://mermade.org.uk/openapi-converter/api/v1/badge?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)](https://mermade.org.uk/openapi-converter/api/v1/validate?url=https://mermade.org.uk/openapi-converter/examples/openapi.json)
 ![Build](https://img.shields.io/travis/Mermade/oas-kit/master.svg)
 [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru)
-[![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-34882-brightgreen.svg)](https://github.com/mermade/openapi-definitions)
+[![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Docs-74426-brightgreen.svg)](https://github.com/mermade/openapi-definitions)
 [![Coverage Status](https://coveralls.io/repos/github/Mermade/swagger2openapi/badge.svg?branch=master)](https://coveralls.io/github/Mermade/swagger2openapi?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/swagger2openapi/badge.svg)](https://snyk.io/test/npm/swagger2openapi)
 [![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/oas-kit.svg)](https://greenkeeper.io/)
@@ -78,7 +78,7 @@ See [initial documentation](/docs/browser.md).
 `oas-validate` can be used as a validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/packages/oas-linter/rules.yaml). Contributions of rules and rule actions for the linter are very much appreciated.
 
 ```text
-oas-validate.js [options] {path-to-specs}...
+oas-validate.js [options] {path-to-docs}...
 
 Options:
   --lint            lint the definition                                [boolean]
@@ -87,7 +87,7 @@ Options:
   -h, --help        Show help                                          [boolean]
   --version         Show version number                                [boolean]
   -e, --encoding    encoding for input/output files   [string] [default: "utf8"]
-  -f, --fail        path to specs expected to fail                      [string]
+  -f, --fail        path to docs expected to fail                       [string]
   -j, --jsonschema  path to alternative JSON schema                     [string]
   -l, --laxurls     lax checking of empty urls                         [boolean]
   -m, --mediatype   check media-types against RFC pattern              [boolean]
@@ -131,7 +131,7 @@ The test harness currently expects files with a `.json` or `.yaml` extension, or
 * [OpenAPI3-Examples (pass/fail)](https://github.com/mermade/openapi3-examples)
 * [SOM-Research collection](https://github.com/SOM-Research/hapi)
 
-Additionally swagger2openapi has been tested on a corpus of 34,679 real-world valid Swagger 2.0 definitions from GitHub and [SwaggerHub](https://swaggerhub.com/). However, if you have a definition which causes errors in the converter or does not pass validation, please do not hesitate to [raise an issue](https://github.com/Mermade/swagger2openapi/issues).
+Additionally swagger2openapi has been tested on a corpus of 74,426 real-world valid Swagger 2.0 definitions from GitHub and [SwaggerHub](https://swaggerhub.com/). However, if you have a definition which causes errors in the converter or does not pass validation, please do not hesitate to [raise an issue](https://github.com/Mermade/swagger2openapi/issues).
 
 ### Regression tests
 

@@ -23,13 +23,13 @@ const baseName = path.basename(process.argv[1]);
 
 const yargs = require('yargs');
 let argv = yargs
-    .usage(baseName+' [options] {path-to-specs}...')
+    .usage(baseName+' [options] {path-to-docs}...')
     .string('encoding')
     .alias('e', 'encoding')
     .default('encoding', 'utf8')
     .describe('encoding', 'encoding for input/output files')
     .string('fail')
-    .describe('fail', 'path to specs expected to fail')
+    .describe('fail', 'path to docs expected to fail')
     .alias('f', 'fail')
     .string('jsonschema')
     .alias('j', 'jsonschema')
