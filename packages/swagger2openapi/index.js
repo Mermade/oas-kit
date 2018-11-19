@@ -779,11 +779,8 @@ function processResponse(response, name, op, openapi, options) {
         if ((typeof response.description === 'undefined') || (response.description === null)
             || ((response.description === '') && options.patch)) {
             if (options.patch) {
-                let sc = statusCodes.find(function (e) {
-                    return e.code === name;
-                });
                 if ((typeof response === 'object') && (!Array.isArray(response))) {
-                    response.description = (sc ? sc.phrase : '');
+                    response.description = (statusCodes[response] || '');
                 }
             }
             else {
