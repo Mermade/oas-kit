@@ -4,9 +4,11 @@
 
 const fs = require('fs');
 const util = require('util');
+const http = require('http');
+const https = require('https');
 
 const yaml = require('js-yaml');
-const fetch = require('node-fetch');
+const fetch = require('node-fetch-h2');
 
 const resolver = require('./index.js');
 
@@ -33,14 +35,24 @@ options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 options.fatal = true;
 
+if (filespec.startsWith('https')) options.agent = new https.Agent({ keepAlive: true, keepAliveMsecs: 1500 })
+else if (filespec.startsWith('http')) options.agent = new http.Agent({ keepAlive: true });
+
 function main(str,source,options){
     let input = yaml.safeLoad(str,{json:true});
     resolver.resolve(input,source,options)
     .then(function(options){
+        if (options.agent) {
+            options.agent.destroy();
+        }
         fs.writeFileSync(argv.output,yaml.safeDump(options.openapi,{lineWidth:-1}),'utf8');
+        //console.log(util.inspect(process._getActiveRequests()));
+        //console.log(util.inspect(process._getActiveHandles()));
+        //process.exit(0); // ensure we exit even if http2-client sitting about
     })
     .catch(function(err){
         console.warn(err);
+        process.exit(1); // ensure we exit even if http2-client sitting about
     });
 }
 
