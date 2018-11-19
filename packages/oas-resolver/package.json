@@ -20,7 +20,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "js-yaml": "^3.12.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch-h2": "^2.3.0",
     "oas-kit-common": "^1.0.4",
     "reftools": "^1.0.3",
     "yargs": "^12.0.2"
