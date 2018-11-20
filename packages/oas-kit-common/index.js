@@ -40,6 +40,12 @@ function distinctArray(arr) {
     return (arr.length === compressArray(arr).length);
 }
 
+function firstDupe(arr) {
+    return arr.find(function(e,i,a){
+        return arr.indexOf(e)<i;
+    });
+}
+
 /**
  * simple hash implementation based on https://stackoverflow.com/a/7616484/1749888
  * @param {string} s - string to hash
@@ -119,6 +125,7 @@ module.exports = {
     hasDuplicates: hasDuplicates,
     allSame: allSame,
     distinctArray: distinctArray,
+    firstDupe: firstDupe,
     hash: hash,
     parameterTypeProperties: parameterTypeProperties,
     arrayProperties: arrayProperties,
