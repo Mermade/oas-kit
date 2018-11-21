@@ -1334,7 +1334,7 @@ function convertObj(swagger, options, callback) {
         }
 
         let openapi = options.openapi = {};
-        openapi.openapi = targetVersion; // semver
+        openapi.openapi = (typeof options.targetVersion === 'string' && options.targetVersion.startsWith('3.')) ? options.targetVersion : targetVersion; // semver
 
         if (options.origin) {
             if (!openapi["x-origin"]) {

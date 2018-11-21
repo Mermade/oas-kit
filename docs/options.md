@@ -44,6 +44,7 @@ skip|Boolean|Reserved|Used by tools such as Speccy to skip linter rules
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Input|The source filename or url of the definition, used by the resolver
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
+targetVersion|String|Input|Used to override the default target OpenAPI version of `3.0.0`
 url|String|Input|URL of the original definition, used when reading a file to create `x-origin` extension
 valid|Boolean|Output|The result of a validation step
 validateSchema|String|Input|Set to 'first', 'last' or 'never' to control ordering of validation strategies
