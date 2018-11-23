@@ -365,5 +365,5 @@ process.on('exit', function () {
     }
     console.log(common.colour.normal);
     console.log('Tests: %s passing, %s failing, %s warnings', pass, fail, warnings.length);
-    process.exitCode = ((fail === 0) && (pass > 0)) ? 0 : 1;
+    process.exitCode = ((fail === 0 || options.fail) && (pass > 0)) ? 0 : 1;
 });
