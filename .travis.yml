@@ -14,5 +14,5 @@ script:
   - node node_modules/.bin/eslint packages/*/*.js
 #  - travis_wait node $nflags packages/swagger2openapi/oas-validate -q -l openapi-directory/APIs/
 #  - travis_wait node $nflags packages/swagger2openapi/oas-validate -q openapi-definitions/
-  - travis_wait node $nflags packages/swagger3openapi/oas-validate -q -r -n -f openapi3-examples/fail openapi3-examples/pass
+  - travis_wait node $nflags packages/swagger2openapi/oas-validate -q -r -n -f openapi3-examples/fail openapi3-examples/pass
   - node $nflags packages/swagger2openapi/oas-validate -q -r test/s2o-test
