@@ -1,0 +1,29 @@
+{
+  "name": "oas-overlay",
+  "version": "1.0.0",
+  "description": "OpenAPI overlay processor",
+  "keywords": [
+    "oas",
+    "openapi",
+    "overlay"
+  ],
+  "author": "Mike Ralphson <mike.ralphson@gmail.com>",
+  "homepage": "https://github.com/mermade/swagger2openapi/tree/master/packages/oas-overlay#readme",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mermade/oas-kit.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/mermade/oas-kit/issues"
+  },
+  "dependencies": {
+    "jmespath": "^0.15.0",
+    "js-yaml": "^3.12.0",
+    "reftools": "^1.0.3"
+  }
+}
