@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: API
+paths:
+  /posts:
+    get:
+      responses:
+        '200':
+          description: ''
+  /comments:
+    get:
+      responses:
+        '200':
+          description: ''

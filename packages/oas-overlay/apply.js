@@ -13,9 +13,9 @@ if (process.argv.length>=3) {
     if (overlay.overlay) {
         if (overlay.overlay.description) {
             console.log('# Applied:',overlay.overlay.description);
-            const result = applicator.apply(overlay,openapi,{});
-            console.log(yaml.safeDump(result));
         }
+        const result = applicator.apply(overlay,openapi,{});
+        console.log(yaml.safeDump(result));
     }
     else {
         console.warn(process.argv[2],'does not seem to be a valid overlay document');

@@ -1,0 +1,10 @@
+overlay:
+  description: A test
+  updates:
+  - target: info
+    value:
+      description: Hello sailor
+  - target: "paths.*.*.responses"
+    value: 
+      '200':
+        description: OK
