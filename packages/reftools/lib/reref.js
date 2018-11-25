@@ -16,12 +16,20 @@ function reref(obj,options) {
     recurse(obj,{identityDetection:true},function(obj,key,state){
         if (state.identity) {
             let replacement = jptr(master,state.identityPath);
-            // ensure it's still there and we've not reffed it away
             let newRef = state.identityPath;
             if (state.identityPath !== state.path) {
                 if (options && options.prefix) newRef = newRef.replace('#/',options.prefix);
-                if (replacement !== false) obj[key] = { $ref: newRef }
-                else if (options && options.verbose) console.warn(state.identityPath,'gone away at',state.path);
+                if (state.path.startsWith('#/components/') || state.path.startsWith('#/definitions/')) {
+                    // swap the $refs around!
+                    newRef = state.path;
+                    jptr(master,state.path,jptr(master,state.identityPath));
+                    jptr(master,state.identityPath,{$ref: newRef});
+                }
+                else {
+                    // ensure it's still there and we've not reffed it away
+                    if (replacement !== false) obj[key] = { $ref: newRef }
+                    else if (options && options.verbose) console.warn(state.identityPath,'gone away at',state.path);
+                }
             }
         }
     });
