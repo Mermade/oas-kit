@@ -5,7 +5,7 @@ overlay:
     value:
       description: Hello sailor
   - target: "paths.*.*.responses"
-    value: 
+    value:
       '200':
         description: OK
   - target: tags

@@ -1,0 +1,5 @@
+overlay:
+  updates:
+  - target: paths."/".get.responses."200".content."application/json".schema
+    value:
+      title: Hello
