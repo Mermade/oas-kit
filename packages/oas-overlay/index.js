@@ -37,7 +37,20 @@ function apply(overlay,openapi,options){
                 Object.assign(result,update.value);
             }
             else if (rtype === 'array') {
-                process(result,src,update,options);
+                const present = findObj(src,result);
+                if (present) {
+                    if (Array.isArray(update.value)) {
+                        for (let value of update.value) {
+                            result.push(value);
+                        }
+                    }
+                    else {
+                        result.push(update.value);
+                    }
+                }
+                else {
+                    process(result,src,update,options);
+                }
             }
         }
         catch (ex) {

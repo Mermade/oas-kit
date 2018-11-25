@@ -8,3 +8,7 @@ overlay:
     value: 
       '200':
         description: OK
+  - target: tags
+    value:
+    - name: newposts
+    - name: newcomments
