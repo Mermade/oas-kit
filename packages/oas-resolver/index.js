@@ -331,6 +331,13 @@ function findExternalRefs(options) {
 
                             // sorting $refs by length causes bugs (due to overlapping regions?)
                             let pointers = unique(refs[ref].paths);
+                            pointers = pointers.sort(function(a,b){
+                                const aComp = (a.startsWith('#/components/') || a.startsWith('#/definitions/'));
+                                const bComp = (b.startsWith('#/components/') || b.startsWith('#/definitions/'));
+                                if (aComp && !bComp) return -1;
+                                if (bComp && !aComp) return +1;
+                                return 0;
+                            });
 
                             for (let ptr of pointers) {
                                 // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
