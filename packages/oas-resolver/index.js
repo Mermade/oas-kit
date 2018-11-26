@@ -264,9 +264,24 @@ function scanExternalRefs(options) {
         function inner(obj,key,state){
             if (obj[key] && isRef(obj[key],'$ref')) {
                 let $ref = obj[key].$ref;
-                if (!$ref.startsWith('#')) {
+                if (!$ref.startsWith('#')) { // is external
+
+                    let $extra = '';
+
                     if (!refs[$ref]) {
-                        refs[$ref] = { resolved: false, paths: [], description: obj[key].description };
+                        let potential = Object.keys(refs).find(function(e,i,a){
+                            return $ref.startsWith(e+'/');
+                        });
+                        if (potential) {
+                            if (options.verbose) console.warn('Found potential subschema at',potential);
+                            $extra = '/'+($ref.split('#')[1]||'').replace(potential.split('#')[1]||'');
+                            $extra = $extra.split('/undefined').join(''); // FIXME
+                            $ref = potential;
+                        }
+                    }
+
+                    if (!refs[$ref]) {
+                        refs[$ref] = { resolved: false, paths: [], extras:{}, description: obj[key].description };
                     }
                     if (refs[$ref].resolved) {
                         if (options.rewriteRefs) {
@@ -274,7 +289,7 @@ function scanExternalRefs(options) {
                             let newRef = refs[$ref].resolvedAt;
                             if (options.verbose>1) console.log('Rewriting ref', $ref, newRef);
                             obj[key]['x-miro'] = $ref;
-                            obj[key].$ref = newRef; // resolutionCase:C (new string)
+                            obj[key].$ref = newRef+$extra; // resolutionCase:C (new string)
                         }
                         else {
                             obj[key] = clone(refs[$ref].data); // resolutionCase:D (cloned:yes)
@@ -282,6 +297,7 @@ function scanExternalRefs(options) {
                     }
                     else {
                         refs[$ref].paths.push(state.path);
+                        refs[$ref].extras[state.path] = $extra;
                     }
                 }
             }
@@ -348,7 +364,7 @@ function findExternalRefs(options) {
                                 // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
                                 if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
                                     if (options.verbose>1) console.log('Creating pointer to data at', ptr);
-                                    jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt, 'x-miro': ref }); // resolutionCase:E (new object)
+                                    jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt+refs[ref].extras[ptr], 'x-miro': ref+refs[ref].extras[ptr] }); // resolutionCase:E (new object)
                                 }
                                 else {
                                     if (refs[ref].resolvedAt) {
