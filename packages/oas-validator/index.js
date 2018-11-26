@@ -1357,9 +1357,9 @@ function setupOptions(options,openapi) {
 function validate(openapi, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         setupOptions(options,openapi);
-    
+
         let actions = [];
-    
+
         resolver.optionalResolve(options)
         .then(function(){
             options.context = [];
