@@ -8,6 +8,7 @@ const util = require('util');
 
 const yaml = require('js-yaml');
 const should = require('should/as-function');
+const maybe = require('call-me-maybe');
 let ajv = require('ajv')({
     allErrors: true,
     verbose: true,
@@ -900,6 +901,8 @@ function checkSecurity(security,openapi,options) {
 }
 
 function validateSync(openapi, options, callback) {
+    return maybe(callback, new Promise(function (resolve, reject) {
+    try {
     setupOptions(options,openapi);
     let contextServers = [];
 
@@ -1320,8 +1323,12 @@ function validateSync(openapi, options, callback) {
 
     options.valid = !options.expectFailure;
     if (options.lint) options.linter('openapi',openapi,'',options);
-    if (callback) callback(null, options);
-    return options.valid;
+    resolve(options.valid);
+    }
+    catch (ex) {
+        reject(ex);
+    }
+    }));
 }
 
 function schemaValidate(openapi, options) {
@@ -1348,19 +1355,21 @@ function setupOptions(options,openapi) {
 }
 
 function validate(openapi, options, callback) {
-    setupOptions(options,openapi);
-
-    let actions = [];
-
-    resolver.optionalResolve(options)
-    .then(function(){
-        options.context = [];
-        validateSync(openapi, options, callback);
-    })
-    .catch(function (err) {
-        callback(err,options);
-        return false;
-    });
+    return maybe(callback, new Promise(function (resolve, reject) {
+        setupOptions(options,openapi);
+    
+        let actions = [];
+    
+        resolver.optionalResolve(options)
+        .then(function(){
+            options.context = [];
+            validateSync(openapi, options);
+            resolve(options);
+        })
+        .catch(function (err) {
+            reject(err);
+        });
+    }));
 }
 
 module.exports = {
