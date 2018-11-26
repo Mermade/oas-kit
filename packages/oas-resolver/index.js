@@ -260,14 +260,8 @@ function resolveExternal(root, pointer, options, callback) {
 
 function scanExternalRefs(options) {
     return new Promise(function (res, rej) {
-        let refs = options.externalRefs;
 
-        if ((options.resolver.depth>0) && (options.source === options.resolver.base)) {
-            // we only need to do any of this when called directly on pass #1
-            return res(refs);
-        }
-
-        recurse(options.openapi, {identityDetection: true}, function (obj, key, state) {
+        function inner(obj,key,state){
             if (obj[key] && isRef(obj[key],'$ref')) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) {
@@ -291,7 +285,18 @@ function scanExternalRefs(options) {
                     }
                 }
             }
-        });
+        }
+
+        let refs = options.externalRefs;
+
+        if ((options.resolver.depth>0) && (options.source === options.resolver.base)) {
+            // we only need to do any of this when called directly on pass #1
+            return res(refs);
+        }
+
+        recurse(options.openapi.definitions, {identityDetection: true, path: '#/definitions'}, inner);
+        recurse(options.openapi.components, {identityDetection: true, path: '#/components'}, inner);
+        recurse(options.openapi, {identityDetection: true}, inner);
 
         res(refs);
     });
