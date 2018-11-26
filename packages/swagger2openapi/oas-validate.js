@@ -181,7 +181,13 @@ function handleResult(err, options) {
             }
         }
 
-        validator.validate(result, options, finalise);
+        validator.validate(result, options)
+        .then(function(options){
+            finalise(null,options);
+        })
+        .catch(function(ex){
+            finalise(ex,options);
+        });
     }
     catch (ex) {
         console.log(common.colour.normal + options.file);
@@ -329,7 +335,8 @@ function processPathSpec(pathspec, expectFailure) {
             genStackNext();
         })
         .catch(err => {
-            console.log(util.inspect(err));
+            //console.log(util.inspect(err));
+            handleResult(err,options);
         });
     }
 }
@@ -346,7 +353,7 @@ if (argv.fail) {
     }
 }
 
-process.on('unhandledRejection', r => console.warn(r));
+process.on('unhandledRejection', r => console.warn('UPR',r));
 
 process.on('exit', function () {
     if (warnings.length) {

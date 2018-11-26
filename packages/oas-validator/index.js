@@ -1326,6 +1326,8 @@ function validateSync(openapi, options, callback) {
     resolve(options.valid);
     }
     catch (ex) {
+        //resolve(!(options.expectFailure||options.allowFailure));
+        ex.options = options;
         reject(ex);
     }
     }));
@@ -1363,11 +1365,18 @@ function validate(openapi, options, callback) {
         resolver.optionalResolve(options)
         .then(function(){
             options.context = [];
-            validateSync(openapi, options);
-            resolve(options);
+            validateSync(openapi, options)
+            .then(function(){
+                return resolve(options);
+            })
+            .catch(function(err){
+                err.options = options;
+                return reject(err);
+            });
         })
         .catch(function (err) {
-            reject(err);
+            //return resolve(!options.valid);
+            return reject(options);
         });
     }));
 }
