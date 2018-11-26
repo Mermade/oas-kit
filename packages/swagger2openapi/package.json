@@ -27,6 +27,9 @@
     "url": "https://github.com/Mermade/oas-kit.git",
     "type": "git"
   },
+  "bugs": {
+    "url": "https://github.com/mermade/oas-kit/issues"
+  },
   "author": "Mike Ralphson <mike.ralphson@gmail.com>",
   "license": "BSD-3-Clause",
   "dependencies": {

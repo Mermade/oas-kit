@@ -26,5 +26,12 @@
     "reftools": "^1.0.3",
     "should": "^13.2.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mermade/oas-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mermade/oas-kit/issues"
+  },
   "gitHead": "5cbeab49334ebe18c117764d086e1cfe7d708e97"
 }
