@@ -30,7 +30,7 @@ function process(result,src,update,options){
 
 function apply(overlay,openapi,options){
     const src = deref(clone(openapi));
-    for (let update of overlay.overlay.updates) {
+    for (let update of overlay.updates||overlay.overlay.updates) {
         try {
             const result = jmespath.search(src,update.target);
             const rtype = truetype(result);

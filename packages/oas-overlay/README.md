@@ -8,7 +8,7 @@ const applicator = require('oas-overlay');
 applicator.apply(overlayObject,openAPIObject,options);
 ```
 
-`options` is just a place-holder for now.
+`options`: only `verbose` is used so far.
 
 ## CLI
 
