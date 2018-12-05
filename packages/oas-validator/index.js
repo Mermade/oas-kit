@@ -1323,6 +1323,19 @@ function validateSync(openapi, options, callback) {
 
     options.valid = !options.expectFailure;
     if (options.lint) options.linter('openapi',openapi,'',options);
+
+    options.warnings = options.warnings.filter(common.uniqueOnly);
+
+    if (options.verbose > 1) {
+        for (let w=0;w<options.warnings.length && w<options.lintLimit;w++) {
+            let warning = options.warnings[w];
+            if (warning.pointer) console.warn(warning.pointer);
+            console.warn(warning.rule.name,warning.rule.description);
+        }
+    }
+
+    should (options.warnings.length).be.equal(0,`There were ${options.warnings.length} lint rule violations${options.warnings.length > options.lintLimit ? `, showing first ${options.lintLimit}` : ''}`);
+
     resolve(options.valid);
     }
     catch (ex) {
@@ -1349,6 +1362,8 @@ function setupOptions(options,openapi) {
     options.valid = false;
     options.context = [ '#/' ];
     options.warnings = [];
+    options.lintLimit = 5;
+    if (!options.lintSkip) options.lintSkip = [];
     options.operationIds = [];
     options.allScopes = {};
     options.openapi = openapi;

@@ -18,6 +18,9 @@ let argv = require('yargs')
     .boolean('lint')
     .describe('lint','also lint the document')
     .alias('l','lint')
+    .array('lintSkip')
+    .describe('lintSkip','linter rule name(s) to skip')
+    .alias('s','lintSkip')
     .count('quiet')
     .alias('q','quiet')
     .describe('quiet','reduce verbosity')
@@ -46,6 +49,11 @@ function main(){
         }
         catch (ex) {
             console.warn(ex);
+            if (options.verbose > 1) console.warn(ex.stack);
+            if (options.context) {
+                let path = options.context.pop();
+                console.warn(path);
+            }
             reject(ex);
         }
         if (options.sourceYaml) {

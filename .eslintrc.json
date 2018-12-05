@@ -62,7 +62,7 @@
         ],
         "eol-last": "error",
         "eqeqeq": "off",
-        "func-call-spacing": "error",
+        "func-call-spacing": "off",
         "func-name-matching": "off",
         "func-names": "off",
         "func-style": [
@@ -175,7 +175,7 @@
         "no-sequences": "error",
         "no-shadow": "off",
         "no-shadow-restricted-names": "error",
-        "no-spaced-func": "error",
+        "no-spaced-func": "off",
         "no-sync": "off",
         "no-tabs": "off",
         "no-template-curly-in-string": "error",

@@ -24,6 +24,8 @@ jsonschema|String|Input|Path to alternative JSON schema (in JSON or YAML) for va
 laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs
 mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
+lintLimit|Integer|Input|Controls how many linter warnings are logged in verbose mode
+lintSkip|Array|Input|A list of lint rule names which will not be tested
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds

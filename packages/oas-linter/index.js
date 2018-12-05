@@ -7,10 +7,22 @@ const yaml = require('js-yaml');
 const should = require('should/as-function');
 
 let rules = [];
+let results = [];
 
 function loadRules(s) {
     let data = fs.readFileSync(s,'utf8');
-    let newRules = yaml.safeLoad(data,{json:true}).rules;
+    let ruleData = yaml.safeLoad(data,{json:true});
+    if (ruleData.require) {
+        let newFile = ruleData.require;
+        if (path.extname(newFile) === '') {
+            newFile += path.extname(s);
+        }
+        if (path.dirname(newFile) === '') {
+            newFile = path.join(path.dirname(s),newFile);
+        }
+        loadRules(newFile);
+    }
+    let newRules = ruleData.rules;
 
     for (let rule of newRules) {
         if (!Array.isArray(rule.object)) rule.object = [ rule.object ];
@@ -23,42 +35,120 @@ function loadRules(s) {
         hash.set(rule.name, Object.assign(hash.get(rule.name) || {}, rule));
     });
     rules = Array.from(hash.values());
+    results = [];
 }
 
+const regexFromString = regex => new RegExp(regex.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"));
+
+const ensureRule = (context, rule, shouldAssertion) => {
+    try {
+        shouldAssertion();
+    }
+    catch (error) {
+        // rethrow when not a lint error
+        if (!error.name || error.name !== 'AssertionError') {
+            throw error;
+        }
+
+        const pointer = (context && context.length > 0 ? context[context.length-1] : null);
+        return { pointer, rule, error };
+    }
+};
+
 function lint(objectName,object,key,options) {
+
+    const ensure = (rule, func) => {
+        const result = ensureRule(options.context, rule, func);
+        if (result) results.push(result);
+    };
+
     for (let rule of rules) {
+        if (options.verbose > 2) console.warn('Linting',rule.name);
         if ((rule.object[0] === '*') || (rule.object.indexOf(objectName)>=0)) {
             options.lintRule = rule;
             if (rule.skip && options[rule.skip]) {
                 continue;
             }
+            if (options.lintSkip && options.lintSkip.indexOf(rule.name)>=0) {
+                continue;
+            }
+            let matched = false;
             if (rule.truthy) {
+                matched = true;
                 for (let property of rule.truthy) {
-                    should(object).have.property(property);
-                    should(object[property]).not.be.empty();
+                    ensure(rule, () => {
+                        should(object).have.property(property);
+                        should(object[property]).not.be.empty();
+                    });
+                }
+            }
+            if (rule.alphabetical) {
+                matched = true;
+                for (const property of rule.alphabetical.properties) {
+                    if (!object[property] || object[property].length < 2) {
+                        continue;
+                    }
+
+                    const arrayCopy = object[property].slice(0);
+
+                    // If we aren't expecting an object keyed by a specific property, then treat the
+                    // object as a simple array.
+                    if (rule.alphabetical.keyedBy) {
+                        const keyedBy = [rule.alphabetical.keyedBy];
+                        arrayCopy.sort(function (a, b) {
+                            if (a[keyedBy] < b[keyedBy]) {
+                                return -1;
+                            }
+                            else if (a[keyedBy] > b[keyedBy]) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+                    else {
+                        arrayCopy.sort()
+                    }
+                    ensure(rule, () => {
+                        should(object).have.property(property);
+                        should(object[property]).be.deepEqual(arrayCopy);
+                    });
                 }
             }
             if (rule.properties) {
-                should(Object.keys(object).length).be.exactly(rule.properties);
+                matched = true;
+                ensure(rule, () => {
+                    should(Object.keys(object).length).be.exactly(rule.properties);
+                });
             }
             if (rule.or) {
+                matched = true;
                 let found = false;
                 for (let property of rule.or) {
                     if (typeof object[property] !== 'undefined') found = true;
                 }
-                should(found).be.exactly(true,rule.description);
+                ensure(rule, () => {
+                    should(found).be.exactly(true,rule.description);
+                });
             }
             if (rule.xor) {
+                matched = true;
                 let found = false;
                 for (let property of rule.xor) {
                     if (typeof object[property] !== 'undefined') {
-                        if (found) should.fail(true,false,rule.description);
+                        if (found) {
+                            ensure(rule, () => {
+                                should.fail(true,false,rule.description);
+                            });
+                        }
                         found = true;
                     }
                 }
-                should(found).be.exactly(true,rule.description);
+                ensure(rule, () => {
+                    should(found).be.exactly(true,rule.description);
+                });
             }
             if (rule.pattern) {
+                matched = true;
                 let components = [];
                 if (rule.pattern.split) {
                     components = object[rule.pattern.property].split(rule.pattern.split);
@@ -70,38 +160,74 @@ function lint(objectName,object,key,options) {
                 for (let component of components) {
                     if (rule.pattern.omit) component = component.split(rule.pattern.omit).join('');
                     if (component) {
-                        should(re.test(component)).be.exactly(true,rule.description);
+                        ensure(rule, () => {
+                            should(re.test(component)).be.exactly(true,rule.description);
+                        });
                     }
                 }
             }
             if (rule.notContain) {
+                matched = true;
                 for (let property of rule.notContain.properties) {
-                    if (object[property] && (typeof object[property] === 'string') &&
-                        (object[property].indexOf(rule.notContain.value)>=0)) {
-                        should.fail(true,false,rule.description);
+                    let match;
+                    let pattern = rule.notContain.pattern;
+                    let value = pattern ? pattern.value : rule.notContain.value;
+                    match = regexFromString(value);
+                    if (typeof pattern !== 'undefined') {
+                        let flags = (pattern && typeof pattern.flags !== 'undefined') ? pattern.flags : '';
+                        match = new RegExp(pattern, flags);
+                    }
+                    if (typeof object[property] !== 'undefined') {
+                        ensure(rule, () => {
+                            should(object[property]).be.a.String().and.not.match(match, rule.description);
+                        });
                     }
                 }
             }
             if (rule.notEndWith) {
+                matched = true;
                 let property = (rule.notEndWith.property === '$key') ? key : object[rule.notEndWith.property];
                 if (typeof property === 'string') {
                     if (rule.notEndWith.omit) {
                         property = property.replace(rule.notEndWith.omit,'');
                     }
-                    should(property).not.endWith(rule.notEndWith.value);
+                    ensure(rule, () => {
+                        should(property).not.endWith(rule.notEndWith.value);
+                    });
                 }
             }
             if (rule.if) {
+                matched = true;
                 let property = (rule.if.property === '$key') ? key : object[rule.if.property];
                 if (property) {
                   let thenProp = (rule.if.then.property === '$key') ? key : object[rule.if.then.property];
-                  should(thenProp).equal(rule.if.then.value);
+                  ensure(rule, () => {
+                    should(thenProp).equal(rule.if.then.value,rule.name+' if.then test failed:'+thenProp+' != '+rule.if.then.value);
+                  });
+                }
+                else {
+                    if (rule.else) {
+                        let elseProp = (rule.if.else.property === '$key') ? key : object[rule.if.else.property];
+                        ensure(rule, () => {
+                            should(elseProp).equal(rule.if.else.value,rule.name+' if.else test failed:'+elseProp+' != '+rule.if.else.value);
+                        });
+                    }
                 }
             }
-            // TODO speccy defines a maxLength rule { property: string, value: integer }
+            if (rule.maxLength) {
+                matched = true;
+                const { value, property } = rule.maxLength;
+                if (object[property] && (typeof object[property] === 'string')) {
+                    ensure(rule, () => {
+                        should(object[property].length).be.belowOrEqual(value)
+                    });
+                }
+            }
+            if (!matched && options.verbose) console.warn('Linter rule did not match any known rule-types',rule.name);
         }
     }
     delete options.lintRule;
+    options.warnings = options.warnings.concat(results);
 }
 
 loadRules(path.join(__dirname,'rules.yaml'));
