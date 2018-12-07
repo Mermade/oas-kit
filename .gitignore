@@ -6,3 +6,4 @@ test/s2o-test/_*/
 .vscode
 utils/
 packages/oas-validator/schemas/henry*
+.project
