@@ -606,6 +606,9 @@ function processParameter(param, op, path, index, openapi, options) {
                 target.type = 'string';
                 target.format = 'binary';
             }
+
+            // Copy any extensions on the form param to the target schema property.
+            copyExtensions(param, target);
         }
     }
     else if (param.type === 'file') {
@@ -616,6 +619,7 @@ function processParameter(param, op, path, index, openapi, options) {
         result.content["application/octet-stream"].schema = {};
         result.content["application/octet-stream"].schema.type = 'string';
         result.content["application/octet-stream"].schema.format = 'binary';
+        copyExtensions(param, result);
     }
     if (param.in === 'body') {
         result.content = {};
@@ -623,6 +627,10 @@ function processParameter(param, op, path, index, openapi, options) {
         if (param.description) result.description = param.description;
         if (param.required) result.required = param.required;
 
+        // Set the "request body name" extension on the operation if requested.
+        if (op && options.rbname && param.name) {
+            op[options.rbname] = param.name;
+        }
         if (param.schema && param.schema.$ref) {
             result['x-s2o-name'] = decodeURIComponent(param.schema.$ref.replace('#/components/schemas/', ''));
         }
@@ -639,6 +647,9 @@ function processParameter(param, op, path, index, openapi, options) {
             result.content[mimetype].schema = clone(param.schema) || {};
             fixUpSchema(result.content[mimetype].schema,options);
         }
+
+        // Copy any extensions from the original parameter to the new requestBody
+        copyExtensions(param, result);
     }
 
     if (Object.keys(result).length > 0) {
@@ -702,6 +713,14 @@ function processParameter(param, op, path, index, openapi, options) {
     }
 
     return result;
+}
+
+function copyExtensions(src, tgt) {
+    for (let prop in src) {
+        if (prop.startsWith('x-') && !prop.startsWith('x-s2o')) {
+            tgt[prop] = src[prop];
+        }
+    }
 }
 
 function processResponse(response, name, op, openapi, options) {
