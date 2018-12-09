@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Issue 117 Test v1
+  description: 'This is a testcase re: referenced form params.'
+paths:
+  /v1/formtest1:
+    post:
+      operationId: formTest1
+      summary: Form parameter test 1
+      description: Form param is a referenced parameter.
+      responses:
+        '201':
+          description: Successful request.
+        '400':
+          description: Invalid request.
+      requestBody:
+        $ref: '#/components/requestBodies/formTest1'
+  /v1/formtest2:
+    post:
+      operationId: formTest2
+      summary: Form parameter test 2
+      description: Form param is another reference to the named parameter.
+      responses:
+        '201':
+          description: Successful request.
+        '400':
+          description: Invalid request.
+      requestBody:
+        $ref: '#/components/requestBodies/formTest1'
+  /v1/formtest3:
+    post:
+      operationId: formTest3
+      summary: Form parameter test 3
+      description: Form param is defined inline.
+      responses:
+        '201':
+          description: Successful request.
+        '400':
+          description: Invalid request.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                inline_form_param_1:
+                  description: A file transmitted via a mimepart within a multipart form.
+                  type: string
+                  format: binary
+                  x-file-content-types:
+                    - application/gzip
+                    - application/jpg
+                  x-include-filename: false
+                  x-alternate-name: filePart
+                inline_form_param_2:
+                  description: A string within a multipart form.
+                  type: string
+                  x-alternate-name: stringPart
+servers:
+  - url: /issue117/api
+components:
+  requestBodies:
+    formTest1:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              ref_form_param:
+                description: A file transmitted via a mimepart within a multipart form.
+                type: string
+                x-file-content-types:
+                  - application/zip
+                  - application/octet-stream
+                x-include-filename: true
+                x-alternate-name: filePart
