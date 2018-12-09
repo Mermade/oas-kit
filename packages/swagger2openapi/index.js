@@ -417,6 +417,7 @@ function fixParamRef(param, options) {
 function processParameter(param, op, path, index, openapi, options) {
     let result = {};
     let singularRequestBody = true;
+    let originalType;
 
     let consumes = ((op && op.consumes) || (openapi.consumes || [])).filter(common.uniqueOnly);
 
@@ -450,6 +451,7 @@ function processParameter(param, op, path, index, openapi, options) {
 
     if (param.name || param.in) { // if it's a real parameter OR we've dereferenced it
 
+
         if (typeof param['x-deprecated'] === 'boolean') {
             param.deprecated = param['x-deprecated'];
             delete param['x-deprecated'];
@@ -472,6 +474,7 @@ function processParameter(param, op, path, index, openapi, options) {
             // $ref anywhere sensibility
             param.type = resolveInternal(openapi, param.type.$ref);
         }
+        originalType = param.type;
         if (param.description && typeof param.description === 'object' && param.description.$ref) {
             // $ref anywhere sensibility
             param.description = resolveInternal(openapi, param.description.$ref);
@@ -597,12 +600,12 @@ function processParameter(param, op, path, index, openapi, options) {
             }
             if (typeof param.default !== 'undefined') target.default = param.default;
             if (target.properties) target.properties = param.properties;
-            if (param.allOf) target.allOf = param.allOf; // new are anyOf, oneOf, not, x- vendor extensions?
+            if (param.allOf) target.allOf = param.allOf; // new are anyOf, oneOf, not
             if ((param.type === 'array') && (param.items)) {
                 target.items = param.items;
                 if (target.items.collectionFormat) delete target.items.collectionFormat;
             }
-            if (param.type === 'file') {
+            if (originalType === 'file') {
                 target.type = 'string';
                 target.format = 'binary';
             }
