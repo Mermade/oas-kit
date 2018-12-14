@@ -9,14 +9,14 @@ const should = require('should/as-function');
 let rules = [];
 let results = [];
 
-function applyRules(ruleData) {
+function applyRules(ruleData,parent) {
     if (ruleData.require) {
         let newFile = ruleData.require;
         if (path.extname(newFile) === '') {
-            newFile += path.extname(s);
+            newFile += path.extname(parent);
         }
         if (path.dirname(newFile) === '') {
-            newFile = path.join(path.dirname(s),newFile);
+            newFile = path.join(path.dirname(parent),newFile);
         }
         loadRules(newFile);
     }
@@ -40,7 +40,7 @@ function applyRules(ruleData) {
 function loadRules(s) {
     let data = fs.readFileSync(s,'utf8');
     let ruleData = yaml.safeLoad(data,{json:true});
-    applyRules(ruleData);
+    applyRules(ruleData,s);
     return rules;
 }
 

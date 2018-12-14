@@ -20,7 +20,7 @@ This is the mono-repo for the following related projects
 
 ## Supported Node.js versions
 
-Any LTS version.
+Any LTS version from 8 onwards.
 
 ## Development
 
