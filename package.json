@@ -3,20 +3,22 @@
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
     "conventional-changelog-cli": "^2.0.11",
-    "cz-lerna-changelog": "^2.0.0",
+    "cz-lerna-changelog": "^2.0.1",
     "eslint": "^5.9.0",
     "js-yaml": "^3.12.0",
     "jsdoc-to-markdown": "^4.0.1",
-    "lerna": "^3.4.3",
+    "lerna": "^3.6.0",
     "mocha": "^5.2.0",
     "should": "^13.2.1",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8"
   },
   "name": "oas-kit",
-  "dependencies": {},
+  "dependencies": {
+    "node-fetch-h2": "^2.3.1-0"
+  },
   "description": "This is the mono-repo for swagger2openapi and related projects",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "main": "index.js",
   "directories": {
     "test": "test"
