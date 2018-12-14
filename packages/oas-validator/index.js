@@ -860,7 +860,7 @@ function checkPathItem(pathItem, path, openapi, options) {
         options.context.pop();
     }
     if (options.lint) options.linter('pathItem',pathItem,path,options);
-    if (options.lint) options.linter('paths',openapi.paths,path,options);
+    //if (options.lint) options.linter('paths',openapi.paths,path,options);
     return true;
 }
 
@@ -1010,7 +1010,12 @@ function validateSync(openapi, options, callback) {
         if (options.lint) options.linter('externalDocs',openapi.externalDocs,'externalDocs',options);
         options.context.pop();
     }
-
+        
+    if (typeof openapi.paths !== 'undefined'){
+        if (options.lint) options.linter('paths',openapi.paths,'paths',options);
+    }
+        
+        
     if (typeof openapi.tags !== 'undefined') {
         should(openapi.tags).be.an.Array();
         contextAppend(options, 'tags');
