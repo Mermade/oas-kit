@@ -9,9 +9,7 @@ const should = require('should/as-function');
 let rules = [];
 let results = [];
 
-function loadRules(s) {
-    let data = fs.readFileSync(s,'utf8');
-    let ruleData = yaml.safeLoad(data,{json:true});
+function applyRules(ruleData) {
     if (ruleData.require) {
         let newFile = ruleData.require;
         if (path.extname(newFile) === '') {
@@ -36,6 +34,14 @@ function loadRules(s) {
     });
     rules = Array.from(hash.values());
     results = [];
+    return rules;
+}
+
+function loadRules(s) {
+    let data = fs.readFileSync(s,'utf8');
+    let ruleData = yaml.safeLoad(data,{json:true});
+    applyRules(ruleData);
+    return rules;
 }
 
 const regexFromString = regex => new RegExp(regex.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"));
@@ -235,6 +241,7 @@ loadRules(path.join(__dirname,'rules.yaml'));
 module.exports = {
     lint : lint,
     loadRules : loadRules,
+    applyRules : applyRules,
     getRules : function() { return { rules: rules }; }
 };
 
