@@ -26,7 +26,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "echo If you need Linode hosting please use this referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\""
+    "audits": "npx lerna exec npm audit",
+    "postinstall": "echo If you need Linode hosting please use this referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\" Mike@oas-ki"
   },
   "repository": {
     "type": "git",
