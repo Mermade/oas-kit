@@ -7,7 +7,7 @@
 const fs = require('fs');
 
 const yaml = require('js-yaml');
-const fetch = require('node-fetch');
+const fetch = require('node-fetch-h2');
 
 const swagger2openapi = require('./index.js');
 const validator = require('oas-validator');
