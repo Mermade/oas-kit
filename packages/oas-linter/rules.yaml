@@ -8,7 +8,7 @@ rules:
   description: parameter names should match RFC6570
   pattern:
     property: name
-    value: '^[A-Za-z0-9?_()]+$'
+    value: '^[A-Za-z0-9?_\-()]+$'
 - name: operation-operationId
   object: operation
   description: operation should have an operationId

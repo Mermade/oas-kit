@@ -37,7 +37,7 @@ function applyRules(ruleData,parent) {
     return rules;
 }
 
-function loadRules(s) {
+function loadRules(s,schema,instance) {
     let data = fs.readFileSync(s,'utf8');
     let ruleData = yaml.safeLoad(data,{json:true});
     applyRules(ruleData,s);
@@ -57,7 +57,7 @@ const ensureRule = (context, rule, shouldAssertion) => {
         }
 
         const pointer = (context && context.length > 0 ? context[context.length-1] : null);
-        return { pointer, rule, error };
+        return { pointer, rule, error, dataPath: pointer, keyword: 'lint', message: rule.name };
     }
 };
 

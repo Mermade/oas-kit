@@ -1369,6 +1369,7 @@ function setupOptions(options,openapi) {
     options.openapi = openapi;
     if (options.lint && !options.linter) options.linter = linter.lint;
     if (!options.cache) options.cache = {};
+    options.schema = openapi3Schema;
 }
 
 function validate(openapi, options, callback) {

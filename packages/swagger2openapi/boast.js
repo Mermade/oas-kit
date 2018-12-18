@@ -5,9 +5,11 @@
 'use strict';
 
 const fs = require('fs');
+//const util = require('util');
 
 const yaml = require('js-yaml');
 const fetch = require('node-fetch-h2');
+//const bae = require('better-ajv-errors');
 
 const swagger2openapi = require('./index.js');
 const validator = require('oas-validator');
@@ -48,19 +50,28 @@ function main(){
             result = await validator.validateSync(options.openapi,options);
         }
         catch (ex) {
-            console.warn(ex);
+            console.warn(ex.message);
             if (options.verbose > 1) console.warn(ex.stack);
             if (options.context) {
                 let path = options.context.pop();
                 console.warn(path);
             }
+            if (options.warnings) {
+                for (let warning of options.warnings) {
+                    //const display = bae(options.schema,options.openapi,[warning]);
+                    //console.warn(display);
+                    console.warn(warning.message,warning.pointer);
+                }
+            }
             reject(ex);
         }
-        if (options.sourceYaml) {
-            console.log(yaml.safeDump(options.openapi));
-        }
-        else {
-            console.log(JSON.stringify(options.openapi,null,2));
+        if (result) {
+            if (options.sourceYaml) {
+                console.log(yaml.safeDump(options.openapi));
+            }
+            else {
+                console.log(JSON.stringify(options.openapi,null,2));
+            }
         }
         resolve(options.openapi);
     });
