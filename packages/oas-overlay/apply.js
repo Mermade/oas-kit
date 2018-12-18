@@ -21,7 +21,7 @@ if (argv._.length>=3) {
         }
         const result = applicator.apply(overlay,openapi,argv);
         if (json)
-            console.log(JSON.stringify(result,null,2))
+            console.log(JSON.stringify(result,null,2));
         else
             console.log(yaml.safeDump(result));
     }

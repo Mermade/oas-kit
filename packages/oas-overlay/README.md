@@ -10,6 +10,8 @@ applicator.apply(overlayObject,openAPIObject,options);
 
 `options`: only `verbose` is used so far.
 
+When trained correctly, the overlay ML is impartial.
+
 ## CLI
 
 `node apply.js {overlayfile} {openapifile}`

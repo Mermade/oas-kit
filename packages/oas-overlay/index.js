@@ -17,13 +17,18 @@ function process(result,src,update,options){
     for (let item of result) {
         const itype = truetype(item);
         if (options.verbose) {
-            console.warn('item',util.inspect({update:update,result:item,rtype:itype,locn:findObj(src,item)},{depth:null,colors:true}));
+            const present = findObj(src,item);
+            console.warn('item',util.inspect({update:update,result:item,rtype:itype,locn:present},{depth:null,colors:true}));
         }
         if (itype === 'array') {
+            if (update.concat) item = item.concat(update.concat);
+            if (update.splice) item.splice.apply(update,update.splice);
             process(item,src,update,options);
         }
         else {
-            Object.assign(item,update.value);
+            if (typeof update.value !== 'undefined') {
+                Object.assign(item,update.value);
+            }
        }
     }
 }
@@ -34,15 +39,15 @@ function apply(overlay,openapi,options){
         try {
             const result = jmespath.search(src,update.target);
             const rtype = truetype(result);
+            const present = findObj(src,result);
             if (options.verbose) {
-                console.warn('result',util.inspect({update:update,result:result,rtype:rtype,locn:findObj(src,result)},{depth:null,colors:true}));
+                console.warn('result',util.inspect({update:update,result:result,rtype:rtype,locn:present},{depth:Infinity,colors:true}));
             }
             if (rtype === 'object') {
                 Object.assign(result,update.value);
             }
             else if (rtype === 'array') {
-                const present = findObj(src,result).found;
-                if (present) {
+                if (present.found) {
                     if (Array.isArray(update.value)) {
                         for (let value of update.value) {
                             result.push(value);
@@ -57,7 +62,7 @@ function apply(overlay,openapi,options){
                 }
             }
             else {
-                console.warn(update.target,'cannot update immutable type',rtype);
+                console.warn(update.target,'cannot update immutable type',rtype+' (target parent node instead)');
             }
         }
         catch (ex) {

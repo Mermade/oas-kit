@@ -1,0 +1,220 @@
+overlay: 1.0.0
+info:
+  version: 1.0.0
+  title: HTTP Status Codes German translation
+  contact:
+    email: mike.ralphson@gmail.com
+    url: 'https://mermade.org.uk'
+    name: Mile Ralphson
+    x-twitter: PermittedSoc
+  license:
+    name: Apache-2.0
+    url: 'https://spdx.org/licenses/Apache-2.0.html'
+updates:
+  - target: paths.*.*.responses."100"
+    value:
+      description: Setzen Sie fort
+  - target: paths.*.*.responses."101"
+    value:
+      description: Schaltende Protokolle
+  - target: paths.*.*.responses."102"
+    value:
+      description: Verarbeitung
+  - target: paths.*.*.responses."103"
+    value:
+      description: Frühe Hinweise
+  - target: paths.*.*.responses."200"
+    value:
+      description: OK
+  - target: paths.*.*.responses."201"
+    value:
+      description: Geschaffen
+  - target: paths.*.*.responses."202"
+    value:
+      description: Akzeptiert
+  - target: paths.*.*.responses."203"
+    value:
+      description: Nichtherrische Information
+  - target: paths.*.*.responses."204"
+    value:
+      description: Kein Inhalt
+  - target: paths.*.*.responses."205"
+    value:
+      description: Neu gefasster Inhalt
+  - target: paths.*.*.responses."206"
+    value:
+      description: Partieller(Eingenommener) Inhalt
+  - target: paths.*.*.responses."207"
+    value:
+      description: Multistatus
+  - target: paths.*.*.responses."208"
+    value:
+      description: Bereits Berichtet
+  - target: paths.*.*.responses."226"
+    value:
+      description: IM Verwendet
+  - target: paths.*.*.responses."300"
+    value:
+      description: Mehrfache Wahlen(Möglichkeiten)
+  - target: paths.*.*.responses."301"
+    value:
+      description: Bewegt Permanent
+  - target: paths.*.*.responses."302"
+    value:
+      description: Gefunden
+  - target: paths.*.*.responses."303"
+    value:
+      description: Sieh Anderen
+  - target: paths.*.*.responses."304"
+    value:
+      description: Nicht Modifiziert
+  - target: paths.*.*.responses."305"
+    value:
+      description: Gebrauchen(Benutzen) Sie Vertretung
+  - target: paths.*.*.responses."307"
+    value:
+      description: Provisorisch(Vorläufig) Adressieren(Leiten)
+  - target: paths.*.*.responses."308"
+    value:
+      description: Permanent Adressieren(Leiten) Um
+  - target: paths.*.*.responses."400"
+    value:
+      description: Schlechter(Schlimmer) Antrag(Wunsch)
+  - target: paths.*.*.responses."401"
+    value:
+      description: Nicht bevollmächtigt(unerlaubt)
+  - target: paths.*.*.responses."402"
+    value:
+      description: Zahlung Erforderlich
+  - target: paths.*.*.responses."403"
+    value:
+      description: Verboten
+  - target: paths.*.*.responses."404"
+    value:
+      description: Nicht Gefunden
+  - target: paths.*.*.responses."405"
+    value:
+      description: Nicht Erlaubte Methode
+  - target: paths.*.*.responses."406"
+    value:
+      description: Nicht Annehmbar
+  - target: paths.*.*.responses."407"
+    value:
+      description: Erforderliche Proxybeglaubigung
+  - target: paths.*.*.responses."408"
+    value:
+      description: Antrag-Auszeit
+  - target: paths.*.*.responses."409"
+    value:
+      description: Konflikt
+  - target: paths.*.*.responses."410"
+    value:
+      description: Gegangen
+  - target: paths.*.*.responses."411"
+    value:
+      description: Länge Erforderlich
+  - target: paths.*.*.responses."412"
+    value:
+      description: Vorbedingung Versagte
+  - target: paths.*.*.responses."413"
+    value:
+      description: Zu Große Nutzlast
+  - target: paths.*.*.responses."414"
+    value:
+      description: URI Zu Lange
+  - target: paths.*.*.responses."415"
+    value:
+      description: Ununterstützte Mediagattung
+  - target: paths.*.*.responses."416"
+    value:
+      description: Reihe(Abstand) Nicht Satisfiable
+  - target: paths.*.*.responses."417"
+    value:
+      description: Erwartung Versagte
+  - target: paths.*.*.responses."418"
+    value:
+      description: Ich "m eine Teekanne
+  - target: paths.*.*.responses."421"
+    value:
+      description: Falsch belehrter Antrag(Wunsch)
+  - target: paths.*.*.responses."422"
+    value:
+      description: Unprocessable Rechtspersönlichkeit
+  - target: paths.*.*.responses."423"
+    value:
+      description: Geschlossen(eingesperrt)
+  - target: paths.*.*.responses."424"
+    value:
+      description: Versagte Abhängigkeit
+  - target: paths.*.*.responses."425"
+    value:
+      description: Unbestellte(Unbefohlene) Sammlung
+  - target: paths.*.*.responses."426"
+    value:
+      description: Aufrüstung Erforderlich
+  - target: paths.*.*.responses."428"
+    value:
+      description: Vorbedingung Erforderlich
+  - target: paths.*.*.responses."429"
+    value:
+      description: Zu viele Anträge(Wünsche)
+  - target: paths.*.*.responses."431"
+    value:
+      description: Zu Große Antrag-Kopfsprung-Felder
+  - target: paths.*.*.responses."451"
+    value:
+      description: Nicht verfügbar Aus Gesetzlichen Gründen
+  - target: paths.*.*.responses."500"
+    value:
+      description: Innerer Server-Fehler
+  - target: paths.*.*.responses."501"
+    value:
+      description: Nicht Durchgeführt
+  - target: paths.*.*.responses."502"
+    value:
+      description: Schlechter(Schlimmer) Torweg
+  - target: paths.*.*.responses."503"
+    value:
+      description: Bedienen Sie Nicht verfügbar
+  - target: paths.*.*.responses."504"
+    value:
+      description: Torweg-Auszeit
+  - target: paths.*.*.responses."505"
+    value:
+      description: HTTP Nicht Unterstützte Version
+  - target: paths.*.*.responses."506"
+    value:
+      description: Variante Auch Negotiates
+  - target: paths.*.*.responses."507"
+    value:
+      description: Unzulängliche(Untaugliche) Lagerung
+  - target: paths.*.*.responses."508"
+    value:
+      description: Schleife Entdeckt
+  - target: paths.*.*.responses."509"
+    value:
+      description: Bandbreite-Grenze Ragte
+  - target: paths.*.*.responses."510"
+    value:
+      description: Nicht Ausgedehnt
+  - target: paths.*.*.responses."511"
+    value:
+      description: Netzwerk-Beglaubigung Erforderlsich
+  - target: paths.*.*.responses."default"
+    value:
+      description: vorgegeben
+  - target: paths.*.*.responses."1XX"
+    value:
+      description: Informations-
+  - target: paths.*.*.responses."2XX"
+    value:
+      description: Erfolg
+  - target: paths.*.*.responses."3XX"
+    value:
+      description: Adressiert(leitet) um
+  - target: paths.*.*.responses."4XX"
+    value:
+      description: Klient-Fehler
+  - target: paths.*.*.responses."5XX"
+    value:
+      description: Server-Fehler

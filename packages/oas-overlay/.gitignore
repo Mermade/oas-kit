@@ -1,2 +1,4 @@
 node_modules/
-*.yaml
+./*.yaml
+t.js
+examples/*.json
