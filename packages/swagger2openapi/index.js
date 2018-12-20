@@ -485,7 +485,6 @@ function processParameter(param, op, path, index, openapi, options) {
 
     if (param && (param.name || param.in)) { // if it's a real parameter OR we've dereferenced it
 
-
         if (typeof param['x-deprecated'] === 'boolean') {
             param.deprecated = param['x-deprecated'];
             delete param['x-deprecated'];
@@ -508,7 +507,10 @@ function processParameter(param, op, path, index, openapi, options) {
             // $ref anywhere sensibility
             param.type = resolveInternal(openapi, param.type.$ref);
         }
-        originalType = param.type;
+        if (param.type === 'file') {
+            param['x-s2o-originalType'] = param.type;
+            originalType = param.type;
+        }
         if (param.description && typeof param.description === 'object' && param.description.$ref) {
             // $ref anywhere sensibility
             param.description = resolveInternal(openapi, param.description.$ref);
@@ -639,7 +641,7 @@ function processParameter(param, op, path, index, openapi, options) {
                 target.items = param.items;
                 if (target.items.collectionFormat) delete target.items.collectionFormat;
             }
-            if (originalType === 'file') {
+            if ((originalType === 'file') || (param['x-s2o-originalType'] === 'file')) {
                 target.type = 'string';
                 target.format = 'binary';
             }

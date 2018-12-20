@@ -61,6 +61,7 @@ paths:
                 form_part_1:
                   description: A file transmitted via a mimepart within a multipart form.
                   type: string
+                  format: binary
                   x-file-content-types:
                     - application/zip
                     - application/octet-stream
