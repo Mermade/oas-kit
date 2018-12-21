@@ -860,7 +860,6 @@ function checkPathItem(pathItem, path, openapi, options) {
         options.context.pop();
     }
     if (options.lint) options.linter('pathItem',pathItem,path,options);
-    //if (options.lint) options.linter('paths',openapi.paths,path,options);
     return true;
 }
 
