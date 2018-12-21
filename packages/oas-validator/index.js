@@ -1009,12 +1009,11 @@ function validateSync(openapi, options, callback) {
         if (options.lint) options.linter('externalDocs',openapi.externalDocs,'externalDocs',options);
         options.context.pop();
     }
-        
+
     if (typeof openapi.paths !== 'undefined'){
         if (options.lint) options.linter('paths',openapi.paths,'paths',options);
     }
-        
-        
+
     if (typeof openapi.tags !== 'undefined') {
         should(openapi.tags).be.an.Array();
         contextAppend(options, 'tags');
