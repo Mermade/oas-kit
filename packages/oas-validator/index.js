@@ -860,7 +860,6 @@ function checkPathItem(pathItem, path, openapi, options) {
         options.context.pop();
     }
     if (options.lint) options.linter('pathItem',pathItem,path,options);
-    if (options.lint) options.linter('paths',openapi.paths,path,options);
     return true;
 }
 
@@ -1009,6 +1008,10 @@ function validateSync(openapi, options, callback) {
         should.doesNotThrow(function () { validateUrl(openapi.externalDocs.url, contextServers, 'externalDocs', options) },'Invalid externalDocs.url');
         if (options.lint) options.linter('externalDocs',openapi.externalDocs,'externalDocs',options);
         options.context.pop();
+    }
+
+    if (typeof openapi.paths !== 'undefined'){
+        if (options.lint) options.linter('paths',openapi.paths,'paths',options);
     }
 
     if (typeof openapi.tags !== 'undefined') {
