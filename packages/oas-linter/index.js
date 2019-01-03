@@ -26,13 +26,12 @@ function applyRules(ruleData,parent) {
         if (!Array.isArray(rule.object)) rule.object = [ rule.object ];
         if (rule.truthy && !Array.isArray(rule.truthy)) rule.truthy = [ rule.truthy ];
     }
-    newRules = newRules.filter(function(e){ return !e.disabled; });
 
     let hash = new Map();
     rules.concat(newRules).forEach(function(rule) {
         hash.set(rule.name, Object.assign(hash.get(rule.name) || {}, rule));
     });
-    rules = Array.from(hash.values());
+    rules = Array.from(hash.values()).filter(function(e){ return !e.disabled; });
     results = [];
     return rules;
 }
