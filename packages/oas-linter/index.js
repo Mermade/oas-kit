@@ -155,11 +155,12 @@ function lint(objectName,object,key,options) {
             if (rule.pattern) {
                 matched = true;
                 let components = [];
+                const property = (rule.pattern.property === '$key') ? key : object[rule.pattern.property];
                 if (rule.pattern.split) {
-                    components = object[rule.pattern.property].split(rule.pattern.split);
+                    components = property.split(rule.pattern.split);
                 }
                 else {
-                    components.push(object[rule.pattern.property]);
+                    components.push(property);
                 }
                 let re = new RegExp(rule.pattern.value);
                 for (let component of components) {
