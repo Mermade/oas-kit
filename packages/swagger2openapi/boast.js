@@ -5,11 +5,10 @@
 'use strict';
 
 const fs = require('fs');
-//const util = require('util');
 
 const yaml = require('js-yaml');
 const fetch = require('node-fetch-h2');
-//const bae = require('better-ajv-errors');
+const bae = require('better-ajv-errors');
 
 const swagger2openapi = require('./index.js');
 const validator = require('oas-validator');
@@ -17,6 +16,9 @@ const validator = require('oas-validator');
 process.exitCode = 1;
 
 let argv = require('yargs')
+    .boolean('bae')
+    .alias('b','bae')
+    .describe('bae','enable better-ajv-errors')
     .boolean('lint')
     .describe('lint','also lint the document')
     .alias('l','lint')
@@ -38,6 +40,10 @@ function main(){
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
+        if (argv.bae) {
+            argv.validateSchema = 'first';
+            argv.prettify = true;
+        }
         let options;
         if (argv.source.startsWith('http')) {
             options = await swagger2openapi.convertUrl(argv.source,argv);
@@ -58,9 +64,13 @@ function main(){
             }
             if (options.warnings) {
                 for (let warning of options.warnings) {
-                    //const display = bae(options.schema,options.openapi,[warning]);
-                    //console.warn(display);
-                    console.warn(warning.message,warning.pointer);
+                    if (argv.bae) {
+                        const display = bae(options.schema,options.openapi,[warning]);
+                        console.warn(display);
+                    }
+                    else {
+                        console.warn(warning.message,warning.pointer);
+                    }
                 }
             }
             reject(ex);
