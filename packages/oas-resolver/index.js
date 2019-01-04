@@ -6,7 +6,7 @@ const url = require('url');
 const util = require('util');
 
 const fetch = require('node-fetch-h2');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 
 const jptr = require('reftools/lib/jptr.js').jptr;
 const recurse = require('reftools/lib/recurse.js').recurse;
@@ -185,7 +185,7 @@ function resolveExternal(root, pointer, options, callback) {
             })
             .then(function (data) {
                 try {
-                    let context = yaml.safeLoad(data, { json: true });
+                    let context = yaml.parse(data, { schema:'core' });
                     data = context;
                     options.cache[target] = clone(data);
                     /* resolutionSource:B, from the network, data is fresh, but we clone it into the cache */
@@ -222,7 +222,7 @@ function resolveExternal(root, pointer, options, callback) {
         return readFileAsync(target, options.encoding || 'utf8')
             .then(function (data) {
                 try {
-                    let context = yaml.safeLoad(data, { json: true });
+                    let context = yaml.parse(data, { schema:'core' });
                     data = context;
                     /*
                         resolutionSource:C from a file, data is fresh but we clone it into the cache

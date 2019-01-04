@@ -7,7 +7,7 @@ const fs = require('fs');
 const url = require('url');
 const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const converter = require('./index.js');
 
 // @ts-ignore
@@ -82,7 +82,7 @@ function processResult(err, options) {
     let s;
     try {
         if (options.yaml) {
-            s = options.debug ? yaml.dump(options.openapi) : yaml.safeDump(options.openapi, {noRefs:true});
+            s = options.debug ? yaml.stringify(options.openapi) : yaml.stringify(options.openapi, {noRefs:true});
         }
         else {
             s = JSON.stringify(options.openapi, null, options.indent||4);

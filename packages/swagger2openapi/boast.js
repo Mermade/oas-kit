@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch-h2');
 const bae = require('better-ajv-errors');
 
@@ -85,7 +85,7 @@ function main(){
         }
         if (result) {
             if (options.sourceYaml) {
-                console.log(yaml.safeDump(options.openapi));
+                console.log(yaml.stringify(options.openapi));
             }
             else {
                 console.log(JSON.stringify(options.openapi,null,2));

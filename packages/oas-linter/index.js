@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const should = require('should/as-function');
 
 let rules = [];
@@ -39,7 +39,7 @@ function applyRules(ruleData,parent) {
 
 function loadRules(s,schema,instance) {
     let data = fs.readFileSync(s,'utf8');
-    let ruleData = yaml.safeLoad(data,{json:true});
+    let ruleData = yaml.parse(data,{schema:'core'});
     applyRules(ruleData,s);
     return rules;
 }

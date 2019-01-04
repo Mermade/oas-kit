@@ -3,11 +3,10 @@
 'use strict';
 
 const fs = require('fs');
-const util = require('util');
 const http = require('http');
 const https = require('https');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch-h2');
 
 const resolver = require('./index.js');
@@ -39,16 +38,13 @@ if (filespec.startsWith('https')) options.agent = new https.Agent({ keepAlive: t
 else if (filespec.startsWith('http')) options.agent = new http.Agent({ keepAlive: true });
 
 function main(str,source,options){
-    let input = yaml.safeLoad(str,{json:true});
+    let input = yaml.parse(str,{schema:'core'});
     resolver.resolve(input,source,options)
     .then(function(options){
         if (options.agent) {
             options.agent.destroy();
         }
-        fs.writeFileSync(argv.output,yaml.safeDump(options.openapi,{lineWidth:-1}),'utf8');
-        //console.log(util.inspect(process._getActiveRequests()));
-        //console.log(util.inspect(process._getActiveHandles()));
-        //process.exit(0); // ensure we exit even if http2-client sitting about
+        fs.writeFileSync(argv.output,yaml.stringify(options.openapi),'utf8');
     })
     .catch(function(err){
         console.warn(err);

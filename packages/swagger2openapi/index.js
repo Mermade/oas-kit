@@ -4,10 +4,11 @@
 const fs = require('fs');
 const url = require('url');
 const pathlib = require('path');
+const util = require('util');
 
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch-h2');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
@@ -748,7 +749,8 @@ function processParameter(param, op, path, index, openapi, options) {
                 param.required = true;
             }
             else {
-                throwError('(Patchable) path parameters must be required:true', options);
+                console.warn(util.inspect(param));
+                throwError('(Patchable) path parameters must be required:true ['+param.name+' in '+index+']', options);
             }
         }
     }
@@ -1473,7 +1475,7 @@ function convertStr(str, options, callback) {
         }
         catch (ex) {
             try {
-                obj = yaml.safeLoad(str, { json: true });
+                obj = yaml.parse(str, { schema: 'core' });
                 options.sourceYaml = true;
             }
             catch (ex) { }

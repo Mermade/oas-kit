@@ -1,6 +1,6 @@
 const util = require('util');
 const fs = require('fs');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 
 const dereference = require('../lib/dereference.js').dereference;
 const reref = require('../lib/reref.js').reref;
@@ -14,7 +14,7 @@ const apiName = '../openapi-directory/APIs/bbci.co.uk/1.0/swagger.yaml';
 //const apiName = '../../openapi-directory/APIs/bungie.net/2.0.0/swagger.yaml';
 
 let apiStr = fs.readFileSync(apiName,'utf8');
-let api = yaml.safeLoad(apiStr,{json:true});
+let api = yaml.parse(apiStr,{schema:'core'});
 
 let clones = clone(api.definitions);
 

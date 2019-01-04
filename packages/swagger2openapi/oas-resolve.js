@@ -5,7 +5,7 @@
 const fs = require('fs');
 const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch-h2');
 
 const resolver = require('oas-resolver');
@@ -33,10 +33,10 @@ options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 
 function main(str,source,options){
-    let input = yaml.safeLoad(str,{json:true});
+    let input = yaml.parse(str,{schema:'core'});
     resolver.resolve(input,source,options)
     .then(function(options){
-        fs.writeFileSync(argv.output,yaml.safeDump(options.openapi,{lineWidth:-1}),'utf8');
+        fs.writeFileSync(argv.output,yaml.stringify(options.openapi),'utf8');
     })
     .catch(function(err){
         console.warn(err);

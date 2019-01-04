@@ -6,7 +6,7 @@ const url = require('url');
 const URL = url.URL;
 const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const should = require('should/as-function');
 const maybe = require('call-me-maybe');
 let ajv = require('ajv')({
@@ -908,7 +908,7 @@ function validateSync(openapi, options, callback) {
 
     if (options.jsonschema) {
         let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
-        openapi3Schema = yaml.safeLoad(schemaStr, { json: true });
+        openapi3Schema = yaml.parse(schemaStr, { schema:'core' });
         validateOpenAPI3 = ajv.compile(openapi3Schema);
     }
 
@@ -1396,7 +1396,6 @@ function validate(openapi, options, callback) {
             });
         })
         .catch(function (err) {
-            //return resolve(!options.valid);
             return reject(options);
         });
     }));

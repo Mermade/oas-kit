@@ -8,7 +8,7 @@ const path = require('path');
 const util = require('util');
 const readfiles = require('node-readfiles');
 const should = require('should/as-function');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 
 const validator = require('oas-validator');
 const common = require('oas-kit-common');
@@ -136,7 +136,7 @@ function finalise(err, options) {
         pass++;
         if ((options.file.indexOf('swagger.yaml') >= 0) && argv.output) {
             let outFile = options.file.replace('swagger.yaml', argv.output);
-            let resultStr = yaml.safeDump(options.openapi, {lineWidth: -1});
+            let resultStr = yaml.stringify(options.openapi);
             fs.writeFileSync(outFile, resultStr, argv.encoding);
         }
     }
@@ -160,13 +160,13 @@ function handleResult(err, options) {
     else {
         result = options.openapi;
     }
-    let resultStr = yaml.dump(result);
+    let resultStr = yaml.stringify(result);
 
     if (typeof result !== 'boolean') try {
         if (!options.yaml) {
             try {
-                resultStr = yaml.safeDump(result, { lineWidth: -1 }); // should be representable safely in yaml
-                let resultStr2 = yaml.safeDump(result, { lineWidth: -1, noRefs: true });
+                resultStr = yaml.stringify(result); // should be representable safely in yaml
+                let resultStr2 = yaml.stringify(result); // FIXME dropped 'noRefs:true' here
                 should(resultStr).not.be.exactly('{}','Result should not be empty');
                 should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
             }
@@ -175,7 +175,7 @@ function handleResult(err, options) {
                     fs.writeFileSync('./debug.yaml',resultStr,'utf8');
                     console.warn('Result dumped to debug.yaml fixed.yaml');
                     let fix = reref(result);
-                    fs.writeFileSync('./fixed.yaml',yaml.safeDump(fix, { lineWidth: -1 }),'utf8');
+                    fs.writeFileSync('./fixed.yaml',yaml.stringify(fix),'utf8');
                 }
                 should.fail(false,true,'Result cannot be represented safely in YAML');
             }
@@ -225,7 +225,7 @@ function* check(file, force, expectFailure) {
             }
             catch (ex) {
                 try {
-                    src = yaml.safeLoad(srcStr, { schema: yaml.JSON_SCHEMA, json: true });
+                    src = yaml.parse(srcStr, { schema: 'core' });
                 }
                 catch (ex) {
                     let warning = 'Could not parse file ' + file + '\n' + ex.message;
