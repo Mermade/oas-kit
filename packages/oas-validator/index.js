@@ -1131,6 +1131,7 @@ function validateSync(openapi, options, callback) {
             else {
                 should(scheme).not.have.property('openIdConnectUrl');
             }
+            if (options.lint) options.linter('securityScheme',scheme,s,options);
             options.context.pop();
         }
         options.context.pop();
