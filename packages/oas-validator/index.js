@@ -1342,9 +1342,9 @@ function validateSync(openapi, options, callback) {
     resolve(options.valid);
     }
     catch (ex) {
-        //resolve(!(options.expectFailure||options.allowFailure));
         ex.options = options;
         reject(ex);
+        throw ex;
     }
     }));
 }
