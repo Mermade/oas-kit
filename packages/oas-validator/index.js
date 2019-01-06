@@ -110,7 +110,7 @@ function validateSchema(schema, openapi, options) {
 function checkSubSchema(schema, parent, state) {
     let prop = state.property;
     if (prop) contextAppend(state.options, prop);
-    if (state.options.lint) state.options.linter('schema',schema,'schema',state.options);
+    if (state.options.lint) state.options.linter('schema',schema,prop,state.options);
     should(schema).be.an.Object();
     should(schema).not.be.an.Array();
 
