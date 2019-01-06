@@ -3,19 +3,22 @@
 ## Webpack v4
 
 Many thanks to @RomanGotsiy for getting these sizes down somewhat.
-Further size reductions were made by replacing `js-yaml` with `yaml`.
+Further size reductions were made by replacing `js-yaml` with `yaml` and
+forcing `webpack` to deduplicate across packages.
 
 ```shell
 $ npm run webpack
 $ ls -lh dist
-total 872K
--rw-r--r-- 1 mike mike  42K Jan  6 13:28 converter.min.js
--rw-r--r-- 1 mike mike 5.0K Jan  6 13:28 linter.min.js
--rw-r--r-- 1 mike mike  13K Jan  6 13:28 resolver.min.js
--rw-r--r-- 1 mike mike  82K Jan  6 13:28 validator.min.js
--rw-r--r-- 1 mike mike 713K Jan  6 13:28 vendors.min.js
--rw-r--r-- 1 mike mike 2.5K Jan  6 13:28 walker.min.js
+total 568K
+-rw-r--r-- 1 mike mike  42K Jan  6 21:21 converter.min.js
+-rw-r--r-- 1 mike mike 5.0K Jan  6 21:21 linter.min.js
+-rw-r--r-- 1 mike mike  13K Jan  6 21:21 resolver.min.js
+-rw-r--r-- 1 mike mike  82K Jan  6 21:21 validator.min.js
+-rw-r--r-- 1 mike mike 412K Jan  6 21:21 vendor.min.js
+-rw-r--r-- 1 mike mike 2.5K Jan  6 21:21 walker.min.js
 ```
+
+The whole suite is therefore around 149K gzipped.
 
 ## Browserify
 
