@@ -83,6 +83,7 @@ function lint(objectName,object,key,options) {
                 for (let property of rule.truthy) {
                     ensure(rule, () => {
                         should(object).have.property(property);
+                        should(object[property]).not.be.undefined();
                         should(object[property]).not.be.empty();
                     });
                 }
