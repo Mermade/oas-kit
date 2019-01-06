@@ -238,15 +238,15 @@ function checkSubSchema(schema, parent, state) {
             should(schema).have.property('items');
         }
     }
-    if (schema.allOf) {
+    if (typeof schema.allOf !== 'undefined') {
         should(schema.allOf).be.an.Array();
         should(schema.allOf).not.be.empty();
     }
-    if (schema.anyOf) {
+    if (typeof schema.anyOf !== 'undefined') {
         should(schema.anyOf).be.an.Array();
         should(schema.anyOf).not.be.empty();
     }
-    if (schema.oneOf) {
+    if (typeof schema.oneOf !== 'undefined') {
         should(schema.oneOf).be.an.Array();
         should(schema.oneOf).not.be.empty();
     }
@@ -736,6 +736,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             should(op).not.have.property('produces');
             should(op).not.have.property('schemes');
             should(op).have.property('responses');
+            should(op.responses).not.be.undefined();
             should(op.responses).be.an.Object();
             should(op.responses).not.be.an.Array();
             should(op.responses).not.be.empty();
