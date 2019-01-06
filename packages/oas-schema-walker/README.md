@@ -18,16 +18,16 @@ by walkSchema</p>
 obtains the default starting state for the `state` object used
 by walkSchema
 
-**Kind**: global function  
-**Returns**: the state object suitable for use in walkSchema  
+**Kind**: global function
+**Returns**: the state object suitable for use in walkSchema
 <a name="walkSchema"></a>
 
 ## walkSchema(parent, state, callback,) ⇒
 begins the walk of a schema object, or the `state` object used
 by walkSchema
 
-**Kind**: global function  
-**Returns**: the schema object  
+**Kind**: global function
+**Returns**: the schema object
 
 | Param | Description |
 | --- | --- |

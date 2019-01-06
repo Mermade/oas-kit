@@ -12,3 +12,4 @@ validator.validate(openapi, options, function(err, options){
 // also available is a synchronous validateSync method which returns a boolean
 ```
 
+See here for complete [documentation](/docs/options.md) of the `options` object.
