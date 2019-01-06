@@ -30,13 +30,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mermade/swagger2openapi.git"
+    "url": "git+https://github.com/mermade/oas-kit.git"
   },
   "author": "Mike Ralphson",
   "bugs": {
-    "url": "https://github.com/mermade/swagger2openapi/issues"
+    "url": "https://github.com/mermade/oas-kit/issues"
   },
-  "homepage": "https://github.com/mermade/swagger2openapi#readme",
+  "homepage": "https://github.com/mermade/oas-kit#readme",
   "keywords": [
     "openapi",
     "oas",
