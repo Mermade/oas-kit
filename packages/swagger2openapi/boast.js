@@ -37,6 +37,7 @@ let argv = require('yargs')
 
 function main(){
     return new Promise(async function(resolve,reject){
+        const ruleUrls = new Set();
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
@@ -70,10 +71,17 @@ function main(){
                     }
                     else {
                         console.warn(warning.message,warning.pointer);
+                        if (warning.rule.url) ruleUrls.add(warning.rule.url+'#'+warning.ruleName);
                     }
                 }
             }
             reject(ex);
+        }
+        if (ruleUrls.size > 0) {
+            console.warn('For more information, visit:');
+            for (let url of ruleUrls) {
+                console.warn(url);
+            }
         }
         if (result) {
             if (options.sourceYaml) {

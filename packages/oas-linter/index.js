@@ -23,6 +23,7 @@ function applyRules(ruleData,parent) {
     let newRules = ruleData.rules;
 
     for (let rule of newRules) {
+        if (!rule.url) rule.url = ruleData.url;
         if (!Array.isArray(rule.object)) rule.object = [ rule.object ];
         if (rule.truthy && !Array.isArray(rule.truthy)) rule.truthy = [ rule.truthy ];
     }
@@ -56,7 +57,7 @@ const ensureRule = (context, rule, shouldAssertion) => {
         }
 
         const pointer = (context && context.length > 0 ? context[context.length-1] : null);
-        return { pointer, rule, error, dataPath: pointer, keyword: 'lint', message: rule.name };
+        return { pointer, rule, ruleName: rule.name, error, dataPath: pointer, keyword: 'lint', message: error.message, url: rules.url };
     }
 };
 

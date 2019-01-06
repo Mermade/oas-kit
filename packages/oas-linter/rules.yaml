@@ -1,3 +1,4 @@
+url: http://speccy.io/rules/1-rulesets
 rules:
 - name: parameter-description
   object: parameter

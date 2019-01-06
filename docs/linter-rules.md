@@ -6,6 +6,8 @@ A rules file is a YAML (or JSON) formatted file, containing an object, with a `r
 
 There is a `require` property (type `string`) at the top level, which is used for rule-set chaining.
 
+The `url` property can be used as the base for looking up rule documentation, the `rule-name` value should be appended as a fragment-id. The `url` property may be overridden for individual rules.
+
 ### Example
 
 ```yaml
@@ -41,4 +43,5 @@ rules:
 |pattern|object|no|An object containing a `property` name, an optional `split` string which is used to split the value being tested into individual components, an optional `omit` string (which is chopped off the front of each component being tested), and a `value` regex property which is used to test all components of the property value being tested|
 |properties|integer|no|The exact number of non-extension properties which must be present on the target object|
 |skip|string|no|The name of a property in the `options` object. If this property is truthy, then the rule is skipped. E.g. `isCallback` can be used to skip rules for `operation` objects within `callback` objects, while still applying to top-level `operation` objects|
+|url|string|no|An optional override of the top-level `url` property, just for this rule
 |xor|array|no|An array of property names, only one of which must be present|
