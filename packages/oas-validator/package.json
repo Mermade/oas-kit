@@ -1,6 +1,6 @@
 {
   "name": "oas-validator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
   "scripts": {
@@ -19,10 +19,10 @@
     "ajv": "^5.5.2",
     "better-ajv-errors": "^0.5.2",
     "js-yaml": "^3.12.0",
-    "oas-kit-common": "^1.0.5",
-    "oas-linter": "^2.0.0",
-    "oas-resolver": "^1.1.0",
-    "oas-schema-walker": "^1.1.1",
+    "oas-kit-common": "^1.0.6",
+    "oas-linter": "^2.0.1",
+    "oas-resolver": "^1.1.1",
+    "oas-schema-walker": "^1.1.2",
     "reftools": "^1.0.4",
     "should": "^13.2.1"
   },
