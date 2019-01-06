@@ -14,7 +14,7 @@
   ],
   "author": "Mike Ralphson",
   "dependencies": {
-    "yaml": "^1.2.0"
+    "safe-json-stringify": "^1.2.0"
   },
   "license": "BSD-3-Clause",
   "repository": {

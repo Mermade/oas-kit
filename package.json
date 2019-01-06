@@ -16,7 +16,7 @@
   },
   "name": "oas-kit",
   "description": "This is the mono-repo for swagger2openapi and related projects",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "main": "index.js",
   "directories": {
     "test": "test"
