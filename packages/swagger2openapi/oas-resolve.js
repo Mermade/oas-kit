@@ -3,7 +3,6 @@
 'use strict';
 
 const fs = require('fs');
-const util = require('util');
 
 const yaml = require('yaml');
 const fetch = require('node-fetch-h2');

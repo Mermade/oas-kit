@@ -1,7 +1,5 @@
 'use strict';
 
-const util = require('util');
-
 const recurse = require('./recurse.js').recurse;
 const clone = require('./clone.js').shallowClone;
 const jptr = require('./jptr.js').jptr;
@@ -68,7 +66,6 @@ function dereference(o,definitions,options) {
                 options.cache[$ref] = entry;
                 entry.data = state.parent[state.pkey] = dereference(jptr(entry.source,entry.key),entry.source,options);
                 if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
-                logger.warn(util.inspect(state.parent[state.pkey]));
                 entry.resolved = true;
             }
             else {
@@ -86,7 +83,6 @@ function dereference(o,definitions,options) {
                 else {
                     // we're dealing with a circular reference here
                     logger.warn('Unresolved ref');
-                    logger.warn(util.inspect(entry));
                     state.parent[state.pkey] = jptr(entry.source,entry.path);
                     if (state.parent[state.pkey] === false) {
                         state.parent[state.pkey] = jptr(entry.source,entry.key);

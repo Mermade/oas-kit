@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const url = require('url');
-const util = require('util');
 
 const yaml = require('yaml');
 const converter = require('./index.js');
@@ -69,7 +68,7 @@ let argv = require('yargs')
 function processResult(err, options) {
     if (err) {
         delete err.options;
-        console.warn(util.inspect(err));
+        console.warn(yaml.stringify(err));
         return process.exitCode = 1;
     }
     if (options.yaml && options.outfile && options.outfile.indexOf('.json') > 0) {

@@ -4,7 +4,6 @@
 const fs = require('fs');
 const url = require('url');
 const URL = url.URL;
-const util = require('util');
 
 const yaml = require('yaml');
 const should = require('should/as-function');
@@ -101,7 +100,7 @@ function validateSchema(schema, openapi, options) {
             const errorStr = bae(schema, openapi, errors);
             throw (new CLIError(errorStr));
         }
-        throw (new JSONSchemaError('Schema invalid: ' + util.inspect(errors)));
+        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringfy(errors)));
     }
     options.schema = schema;
     return !(errors && errors.length);
@@ -1372,7 +1371,10 @@ function setupOptions(options,openapi) {
     options.operationIds = [];
     options.allScopes = {};
     options.openapi = openapi;
-    if (options.lint && !options.linter) options.linter = linter.lint;
+    if (options.lint && !options.linter) {
+        options.linter = linter.lint;
+        linter.loadDefaultRules();
+    }
     if (!options.cache) options.cache = {};
     options.schema = openapi3Schema;
 }

@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const util = require('util');
 
 const fetch = require('node-fetch-h2');
 const yaml = require('yaml');

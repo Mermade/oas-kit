@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
 const readfiles = require('node-readfiles');
 const should = require('should/as-function');
 const yaml = require('yaml');
@@ -325,7 +324,7 @@ function processPathSpec(pathspec, expectFailure) {
     }
     else {
         readfiles(pathspec, { readContents: false, filenameFormat: readfiles.FULL_PATH }, function (err) {
-            if (err) console.log(util.inspect(err));
+            if (err) console.log(yaml.stringify(err));
         })
         .then(files => {
             files = files.sort();
@@ -335,7 +334,6 @@ function processPathSpec(pathspec, expectFailure) {
             genStackNext();
         })
         .catch(err => {
-            //console.log(util.inspect(err));
             handleResult(err,options);
         });
     }

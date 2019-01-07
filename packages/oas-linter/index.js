@@ -238,12 +238,11 @@ function lint(objectName,object,key,options) {
     options.warnings = options.warnings.concat(results);
 }
 
-loadRules(path.join(__dirname,'rules.yaml'));
-
 module.exports = {
     lint : lint,
     loadRules : loadRules,
     applyRules : applyRules,
-    getRules : function() { return { rules: rules }; }
+    loadDefaultRules : function() { return loadRules(path.join(__dirname,'rules.yaml')) },
+    getRules : function() { return { rules }; }
 };
 

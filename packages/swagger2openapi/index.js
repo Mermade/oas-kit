@@ -4,7 +4,6 @@
 const fs = require('fs');
 const url = require('url');
 const pathlib = require('path');
-const util = require('util');
 
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch-h2');
@@ -749,7 +748,6 @@ function processParameter(param, op, path, index, openapi, options) {
                 param.required = true;
             }
             else {
-                console.warn(util.inspect(param));
                 throwError('(Patchable) path parameters must be required:true ['+param.name+' in '+index+']', options);
             }
         }
