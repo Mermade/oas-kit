@@ -289,11 +289,20 @@ function fixupRefs(obj, key, state) {
         }
 
         delete obj['x-miro'];
-        // do this last
+        // do this last - rework cases where $ref object has sibling properties
         if (Object.keys(obj).length > 1) {
-            let tmp = obj[key];
-            delete obj[key];
-            state.parent[state.pkey] = { allOf: [ { $ref: tmp }, obj ]};
+            const tmpRef = obj[key];
+            const inSchema = state.path.indexOf('/schema') >= 0; // not perfect, but in the absence of a reasonably-sized and complete OAS 2.0 parser...
+            if (options.refSiblings === 'preserve') {
+                // nop
+            }
+            else if (inSchema && (options.refSiblings === 'allOf')) {
+                delete obj.$ref;
+                state.parent[state.pkey] = { allOf: [ { $ref: tmpRef }, obj ]};
+            }
+            else { // remove, or not 'preserve' and not in a schema
+                state.parent[state.pkey] = { $ref: tmpRef };
+            }
         }
 
     }
