@@ -777,6 +777,7 @@ function checkPathItem(pathItem, path, openapi, options) {
             }
 
             contextAppend(options, 'responses');
+            if (options.lint) options.linter('responses',op.responses,'responses',options);
             for (let r in op.responses) {
                 if (!r.startsWith('x-')) {
                     contextAppend(options, r);
