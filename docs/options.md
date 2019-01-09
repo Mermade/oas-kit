@@ -38,6 +38,7 @@ preserveMiro|Boolean|Input|Flag to resolver as to whether to preserve old value 
 prettify|Boolean|Input|Flag to validator to generate pretty (but potentially misleading) schema validation error reports
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
+rbname|String|Input|The name of the vendor extension to use to preserve body parameter names (e.g. x-codegen-request-body-name)
 refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
