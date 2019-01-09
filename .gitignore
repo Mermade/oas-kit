@@ -9,6 +9,10 @@ schemadev/
 utils/
 in/
 out/
+.vscode/
+dist/
+packages/
+test/
 
 # Logs
 logs
