@@ -3,6 +3,7 @@
 Parameter|Type|Input/Output|Description
 |---|---|---|---|
 agent|Object|Input|Optional http(s).Agent to be used when fetching resources
+ajv|Object|Input|Used to pass the instance of the `ajv` JSON Schema validator from the validator to the linter
 allScopes|Object|Internal|Cache of scopes by securityScheme for validation
 cache|Object|Input|Optional cache of external resources
 components|Boolean|Input|Command-line flag to indicate unresolve information should be displayed
@@ -23,9 +24,12 @@ isCallback|Boolean|Input|Hint to the linter that we are within a `callback` obje
 jsonschema|String|Input|Path to alternative JSON schema (in JSON or YAML) for validation
 laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs
-mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
+lint|Boolean|Input|Whether to lint the document during validation
+linter|Function|Input|A linter plugin to use in place of the default linter
+linterResults|Function|Input|A function to return the set of linter warnings
 lintLimit|Integer|Input|Controls how many linter warnings are logged in verbose mode
 lintSkip|Array|Input|A list of lint rule names which will not be tested
+mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds

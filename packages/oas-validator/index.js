@@ -1339,6 +1339,12 @@ function validateSync(openapi, options, callback) {
         }
     }
 
+    if (options.lint) {
+        options.linter('metadata',options.metadata,'metadata',options);
+        options.linter('metadata.count',options.metadata.count,'count',options);
+        options.warnings = options.warnings.concat(options.linterResults());
+    }
+
     should (options.warnings.length).be.equal(0,`There were ${options.warnings.length} lint rule violations${options.warnings.length > options.lintLimit ? `, showing first ${options.lintLimit}` : ''}`);
 
     resolve(options.valid);
@@ -1367,7 +1373,7 @@ function setupOptions(options,openapi) {
     options.valid = false;
     options.context = [ '#/' ];
     options.warnings = [];
-    options.lintLimit = 5;
+    if (!options.lintLimit) options.lintLimit = 5;
     if (!options.lintSkip) options.lintSkip = [];
     options.operationIds = [];
     options.allScopes = {};
@@ -1375,9 +1381,13 @@ function setupOptions(options,openapi) {
     if (options.lint && !options.linter) {
         options.linter = linter.lint;
         linter.loadDefaultRules();
+        options.linterResults = linter.getResults;
     }
     if (!options.cache) options.cache = {};
     options.schema = openapi3Schema;
+    options.metadata = { lines: -1 };
+    if (options.text) options.metadata.lines = options.text.split('\n').length;
+    options.ajv = ajv;
 }
 
 function validate(openapi, options, callback) {

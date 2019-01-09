@@ -33,6 +33,7 @@ rules:
 |disabled|boolean|no|Set to `true` to temporarily disable a rule|
 |enabled|boolean|deprecated|No longer used by `oas-linter`|
 |object|string\|array|no|The object(s) to act upon, may be `*` for all objects. E.g. `parameter`|
+|schema|o bject|no|A JSON Schema object used to validate the input object|
 |truthy|string\|array|no|A property or list of properties which must be truthy (present with a non-false, non-null, non-empty value). Empty arrays are not considered truthy|
 |alphabetical|object|no|Structure: `{ properties: string, keyedBy: string }`|
 |if|object|no|An object containing a `property` key. If this is present, the property within `then.property` must be present with the value in the `then.value`. An optional `else.property` and `else.value` may be supplied|

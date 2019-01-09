@@ -1310,6 +1310,7 @@ function convertObj(swagger, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         if (!swagger) swagger = {};
         options.original = swagger;
+        if (!options.text) options.text = yaml.stringify(swagger);
         options.externals = [];
         options.externalRefs = {};
         options.rewriteRefs = true; // avoids stack explosions
@@ -1479,11 +1480,13 @@ function convertStr(str, options, callback) {
         let obj = null;
         try {
             obj = JSON.parse(str);
+            options.text = JSON.stringify(obj,null,2);
         }
         catch (ex) {
             try {
                 obj = yaml.parse(str, { schema: 'core' });
                 options.sourceYaml = true;
+                options.text = str;
             }
             catch (ex) { }
         }

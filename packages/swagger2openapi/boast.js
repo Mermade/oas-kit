@@ -16,6 +16,9 @@ const validator = require('oas-validator');
 process.exitCode = 1;
 
 let argv = require('yargs')
+    .boolean('all')
+    .alias('a','all')
+    .describe('all','show all lint warnings')
     .boolean('bae')
     .alias('b','bae')
     .describe('bae','enable better-ajv-errors')
@@ -25,6 +28,9 @@ let argv = require('yargs')
     .array('lintSkip')
     .describe('lintSkip','linter rule name(s) to skip')
     .alias('s','lintSkip')
+    .boolean('dumpMeta')
+    .alias('m','dumpMeta')
+    .describe('Dump definition metadata')
     .count('quiet')
     .alias('q','quiet')
     .describe('quiet','reduce verbosity')
@@ -41,6 +47,7 @@ function main(){
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
+        if (argv.all) argv.lintLimit = Number.MAX_SAFE_INTEGER;
         if (argv.bae) {
             argv.validateSchema = 'first';
             argv.prettify = true;
@@ -70,7 +77,7 @@ function main(){
                         console.warn(display);
                     }
                     else {
-                        console.warn(warning.message,warning.pointer);
+                        console.warn(warning.message,warning.pointer,warning.ruleName);
                         if (warning.rule.url) ruleUrls.add(warning.rule.url+'#'+warning.ruleName);
                     }
                 }
@@ -82,6 +89,10 @@ function main(){
             for (let url of ruleUrls) {
                 console.warn(url);
             }
+        }
+        if (argv.dumpMeta) {
+            console.warn('\n#Definition metadata:');
+            console.warn(yaml.stringify(options.metadata,{depth:Math.INFINITY}));
         }
         if (result) {
             if (options.sourceYaml) {

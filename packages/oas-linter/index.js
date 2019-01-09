@@ -63,15 +63,22 @@ const ensureRule = (context, rule, shouldAssertion) => {
 
 function lint(objectName,object,key,options) {
 
+    if (!options.metadata.count) {
+        options.metadata.count = {};
+    }
+    if (!options.metadata.count[objectName]) {
+        options.metadata.count[objectName] = 0;
+    }
+    options.metadata.count[objectName]++;
+
     const ensure = (rule, func) => {
         const result = ensureRule(options.context, rule, func);
         if (result) results.push(result);
     };
 
     for (let rule of rules) {
-        if (options.verbose > 2) console.warn('Linting',rule.name);
         if ((rule.object[0] === '*') || (rule.object.indexOf(objectName)>=0)) {
-            options.lintRule = rule;
+            if (options.verbose > 2) console.warn('Linting',rule.name,'@',rule.object,'for',objectName);
             if (rule.skip && options[rule.skip]) {
                 continue;
             }
@@ -231,11 +238,20 @@ function lint(objectName,object,key,options) {
                     });
                 }
             }
+            if (rule.schema) {
+                matched = true;
+                const validate = options.ajv.compile(rule.schema);
+                const valid = validate(object);
+                if (!valid) {
+                    const pointer = (options.context && options.context.length > 0 ? options.context[options.context.length-1] : null);
+                    for (let error of validate.errors) {
+                        results.push({ pointer, rule, ruleName: rule.name, error, dataPath: pointer, keyword: 'lint', message: error.dataPath + ' ' + error.message, url: rules.url });
+                    }
+                }
+            }
             if (!matched && options.verbose) console.warn('Linter rule did not match any known rule-types',rule.name);
         }
     }
-    delete options.lintRule;
-    options.warnings = options.warnings.concat(results);
 }
 
 module.exports = {
@@ -243,6 +259,7 @@ module.exports = {
     loadRules : loadRules,
     applyRules : applyRules,
     loadDefaultRules : function() { return loadRules(path.join(__dirname,'rules.yaml')) },
-    getRules : function() { return { rules }; }
+    getRules : function() { return { rules }; },
+    getResults : function() { return results; }
 };
 
