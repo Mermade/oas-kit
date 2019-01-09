@@ -1000,7 +1000,7 @@ function convertObj(swagger, options, callback) {
             server.url = xMsPHost.hostTemplate;
             server.variables = {};
             for (let msp in xMsPHost.parameters) {
-                let param = xMsPHost.parameters[p];
+                let param = xMsPHost.parameters[msp];
                 if (param.$ref) {
                     param = common.resolveInternal(openapi, param.$ref);
                 }
