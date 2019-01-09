@@ -6,6 +6,7 @@ var path = require('path');
 var util = require('util');
 var readfiles = require('node-readfiles');
 var yaml = require('js-yaml');
+var should = require('should/as-function');
 
 var common = require('./common.js');
 var swagger2openapi = require('./index.js');
@@ -129,8 +130,8 @@ function handleResult(err, options) {
         if (!options.yaml) {
             resultStr = yaml.safeDump(result, { lineWidth: -1 }); // should be representable safely in yaml
             let resultStr2 = yaml.safeDump(result, { lineWidth: -1, noRefs: true }); // have no identity ref_s
-            resultStr.should.not.be.exactly('{}','Result should not be empty');
-            resultStr.should.equal(resultStr2,'Result should have no object identity ref_s');
+            should(resultStr).not.be.exactly('{}','Result should not be empty');
+            should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
         }
 
         validator.validate(result, options, finalise);
