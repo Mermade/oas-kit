@@ -405,6 +405,7 @@ function checkContent(content, contextServers, openapi, options) {
                 should(['schema','example','examples','encoding'].indexOf(k)).be.greaterThan(-1,'mediaType object cannot have additionalProperty: '+k);
             }
         }
+        if (options.lint) options.linter('content',content,ct,options);
         options.context.pop();
     }
     options.context.pop();
