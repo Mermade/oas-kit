@@ -52,16 +52,16 @@ function main(){
             argv.validateSchema = 'first';
             argv.prettify = true;
         }
-        let options;
-        if (argv.source.startsWith('http')) {
-            options = await swagger2openapi.convertUrl(argv.source,argv);
-        }
-        else {
-            options = await swagger2openapi.convertFile(argv.source,argv);
-        }
+        let options = {};
         let result = false;
         try {
-            result = await validator.validateSync(options.openapi,options);
+          if (argv.source.startsWith('http')) {
+              options = await swagger2openapi.convertUrl(argv.source,argv);
+          }
+          else {
+              options = await swagger2openapi.convertFile(argv.source,argv);
+          }
+          result = await validator.validateSync(options.openapi,options);
         }
         catch (ex) {
             console.warn(ex.message);
