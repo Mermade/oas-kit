@@ -542,7 +542,7 @@ function checkHeader(header, contextServers, openapi, options) {
     if (options.lint) options.linter('header',header,'header',options);
 }
 
-function checkResponse(response, contextServers, openapi, options) {
+function checkResponse(response, key, contextServers, openapi, options) {
     should(response).not.be.null();
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
@@ -579,7 +579,7 @@ function checkResponse(response, contextServers, openapi, options) {
         }
         options.context.pop();
     }
-    if (options.lint) options.linter('response',response,'response',options);
+    if (options.lint) options.linter('response',response,key,options);
 }
 
 function checkParam(param, index, path, contextServers, openapi, options) {
@@ -782,7 +782,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 if (!r.startsWith('x-')) {
                     contextAppend(options, r);
                     let response = op.responses[r];
-                    checkResponse(response, contextServers, openapi, options);
+                    checkResponse(response, r, contextServers, openapi, options);
                     options.context.pop();
                 }
             }
@@ -1222,7 +1222,7 @@ function validateSync(openapi, options, callback) {
         for (let r in openapi.components.responses) {
             options.context.push('#/components/responses/' + r);
             should(validateComponentName(r)).be.equal(true, 'component name invalid');
-            checkResponse(openapi.components.responses[r], contextServers, openapi, options);
+            checkResponse(openapi.components.responses[r], r, contextServers, openapi, options);
             options.context.pop();
         }
         options.context.pop();
