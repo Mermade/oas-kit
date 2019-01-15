@@ -9,6 +9,7 @@ const yaml = require('yaml');
 const should = require('should/as-function');
 const maybe = require('call-me-maybe');
 let ajv = require('ajv')({
+    $data: true,
     allErrors: true,
     verbose: true,
     jsonPointers: true,
