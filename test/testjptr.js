@@ -150,4 +150,13 @@ describe('top level tests',function(){
     });
 });
 
+describe('encoding edge cases',function(){
+    it('should handle keys containing +',function(){
+        const input = { 'application/ld+json': 1234, 'my integer': 5678 };
+        should(jptr(input,'#/application%2Fld%2Bjson',1234));
+        should(jptr(input,'#/my+integer',5678));
+        should(jptr(input,'#/my%20integer',5678));
+    });
+});
+
 });
