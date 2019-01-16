@@ -445,10 +445,23 @@ function fixParamRef(param, options) {
     }
 }
 
+function attachRequestBody(op,options) {
+    let newOp = {};
+    for (let key of Object.keys(op)) {
+        newOp[key] = op[key];
+        if (key === 'parameters') {
+            newOp.requestBody = {};
+            if (options.rbname) newOp[options.rbname] = '';
+        }
+    }
+    newOp.requestBody = {}; // just in case there are no parameters
+    return newOp;
+}
+
 /**
- * @returns requestBody
+ * @returns op, as it may have changed
  */
-function processParameter(param, op, path, index, openapi, options) {
+function processParameter(param, op, path, method, index, openapi, options) {
     let result = {};
     let singularRequestBody = true;
     let originalType;
@@ -711,7 +724,9 @@ function processParameter(param, op, path, index, openapi, options) {
                 throwOrWarn('Operation ' + opId + ' has multiple requestBodies', op, options);
             }
             else {
-                op.requestBody = Object.assign({}, op.requestBody); // make sure we have one
+                if (!op.requestBody) {
+                   op = path[method] = attachRequestBody(op,options); // make sure we have one
+                }
                 if ((op.requestBody.content && op.requestBody.content["multipart/form-data"])
                     && (op.requestBody.content["multipart/form-data"].schema) && (op.requestBody.content["multipart/form-data"].schema.properties) && (result.content["multipart/form-data"]) && (result.content["multipart/form-data"].schema) && (result.content["multipart/form-data"].schema.properties)) {
                     op.requestBody.content["multipart/form-data"].schema.properties =
@@ -762,7 +777,7 @@ function processParameter(param, op, path, index, openapi, options) {
         }
     }
 
-    return result;
+    return op;
 }
 
 function copyExtensions(src, tgt) {
@@ -900,12 +915,18 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                             });
 
                             if (!match && ((param.in === 'formData') || (param.in === 'body') || (param.type === 'file'))) {
-                                processParameter(param, op, path, p, openapi, options);
+                                op = processParameter(param, op, path, method, p, openapi, options);
+                                if (options.rbname && op[options.rbname] === '') {
+                                    delete op[options.rbname];
+                                }
                             }
                         }
                     }
                     for (let param of op.parameters) {
-                        processParameter(param, op, path, method + ':' + p, openapi, options);
+                        op = processParameter(param, op, path, method, method + ':' + p, openapi, options);
+                    }
+                    if (options.rbname && op[options.rbname] === '') {
+                        delete op[options.rbname];
                     }
                     if (!options.debug) {
                         op.parameters = op.parameters.filter(keepParameters);
@@ -1036,7 +1057,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
         if (path && path.parameters) {
             for (let p2 in path.parameters) {
                 let param = path.parameters[p2];
-                processParameter(param, null, path, p, openapi, options); // index here is the path string
+                processParameter(param, null, path, null, p, openapi, options); // index here is the path string
             }
             if (!options.debug && Array.isArray(path.parameters)) {
                 path.parameters = path.parameters.filter(keepParameters);
@@ -1094,7 +1115,7 @@ function main(openapi, options) {
             delete openapi.components.parameters[p];
         }
         let param = openapi.components.parameters[sname];
-        processParameter(param, null, null, sname, openapi, options);
+        processParameter(param, null, null, null, sname, openapi, options);
     }
 
     for (let r in openapi.components.responses) {
