@@ -34,7 +34,7 @@ options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 options.fatal = true;
 
-if (filespec.startsWith('https')) options.agent = new https.Agent({ keepAlive: true, keepAliveMsecs: 1500 })
+if (filespec.startsWith('https')) options.agent = new https.Agent({ keepAlive: true })
 else if (filespec.startsWith('http')) options.agent = new http.Agent({ keepAlive: true });
 
 function main(str,source,options){
@@ -48,7 +48,6 @@ function main(str,source,options){
     })
     .catch(function(err){
         console.warn(err);
-        process.exit(1); // ensure we exit even if http2-client sitting about
     });
 }
 
