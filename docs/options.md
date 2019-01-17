@@ -3,6 +3,7 @@
 Parameter|Type|Input/Output|Description
 |---|---|---|---|
 agent|Object|Input|Optional http(s).Agent to be used when fetching resources
+ajv|Object|Input|Used to pass the instance of the `ajv` JSON Schema validator from the validator to the linter
 allScopes|Object|Internal|Cache of scopes by securityScheme for validation
 cache|Object|Input|Optional cache of external resources
 components|Boolean|Input|Command-line flag to indicate unresolve information should be displayed
@@ -15,7 +16,7 @@ externals|[Array](externals.md)|Output|Information required to unresolve a resol
 fail|Boolean|Input|Command-line flag used by `testRunner`
 fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
 file|String|Input|Used to pass filename back to `testRunner`
-filters|Array\[function\]|Input filters for the resolver (e.g. to convert JSON schema dialects)
+filters|Array\[function\]|Input|Input filters for the resolver (e.g. to convert JSON schema dialects)
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting
@@ -23,9 +24,12 @@ isCallback|Boolean|Input|Hint to the linter that we are within a `callback` obje
 jsonschema|String|Input|Path to alternative JSON schema (in JSON or YAML) for validation
 laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs
-mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
+lint|Boolean|Input|Whether to lint the document during validation
+linter|Function|Input|A linter plugin to use in place of the default linter
+linterResults|Function|Input|A function to return the set of linter warnings
 lintLimit|Integer|Input|Controls how many linter warnings are logged in verbose mode
 lintSkip|Array|Input|A list of lint rule names which will not be tested
+mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds
@@ -40,6 +44,7 @@ promise|Object|Internal|Object containing resolve and reject functions for the c
 quiet|Boolean|Input|Command-line flag used by `testRunner`
 rbname|String|Input|The name of the vendor extension to use to preserve body parameter names (e.g. x-codegen-request-body-name)
 refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
+refSiblings|string|Input|Controls handling of `$ref` which has sibling properties. Valid values are `remove` (to remove such properties) which is the default outside `schema` objects,  `preserve` to keep the (incorrect) use of sibling properties, and `allOf`, to wrap the `$ref` and the remaining sibling properties in an `allOf`, which is the default/allowed only within `schema` objects.
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
 schema|Object|Input|Temporarily holds JSON Schema during validation step

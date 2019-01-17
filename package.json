@@ -6,20 +6,18 @@
     "conventional-changelog-cli": "^2.0.11",
     "cz-lerna-changelog": "^2.0.1",
     "eslint": "^5.9.0",
-    "js-yaml": "^3.12.0",
     "jsdoc-to-markdown": "^4.0.1",
     "lerna": "^3.6.0",
     "mocha": "^5.2.0",
     "should": "^13.2.1",
     "webpack": "^4.14.0",
-    "webpack-cli": "^3.0.8"
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-cli": "^3.0.8",
+    "yaml": "^1.2.0"
   },
   "name": "oas-kit",
-  "dependencies": {
-    "node-fetch-h2": "^2.3.1-0"
-  },
   "description": "This is the mono-repo for swagger2openapi and related projects",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -27,21 +25,25 @@
   "scripts": {
     "test": "npx mocha",
     "webpack": "npx webpack -p",
+    "webpack-converter": "npx webpack -p --config webpack.converter.js",
+    "webpack-validator": "npx webpack -p --config webpack.validator.js",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s",
     "audits": "npx lerna exec npm audit",
     "postinstall": "echo If you need Linode hosting, the oas-kit referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mermade/swagger2openapi.git"
+    "url": "git+https://github.com/mermade/oas-kit.git"
   },
   "author": "Mike Ralphson",
   "bugs": {
-    "url": "https://github.com/mermade/swagger2openapi/issues"
+    "url": "https://github.com/mermade/oas-kit/issues"
   },
-  "homepage": "https://github.com/mermade/swagger2openapi#readme",
+  "homepage": "https://github.com/mermade/oas-kit#readme",
   "keywords": [
     "openapi",
     "oas",
     "swagger"
-  ]
+  ],
+  "dependencies": {}
 }

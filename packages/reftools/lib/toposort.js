@@ -8,7 +8,6 @@
 * removed dependency on underscore, MER
 */
 
-const util = require('util');
 const recurse = require('./recurse.js').recurse;
 const isRef = require('./isref.js').isRef;
 

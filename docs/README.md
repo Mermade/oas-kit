@@ -6,6 +6,8 @@ This is the documentation site for OAS-Kit, a collection of packages which compr
 
 * [main README](https://github.com/Mermade/oas-kit/blob/master/README.md)
 * [swagger2openapi README](https://github.com/Mermade/oas-kit/blob/master/packages/swagger2openapi/README.md)
+* [oas-validator README](https://github.com/Mermade/oas-kit/blob/master/packages/oas-validator/README.md)
+* [oas-resolver README](https://github.com/Mermade/oas-kit/blob/master/packages/oas-resolver/README.md)
 * [oas-linter README](https://github.com/Mermade/oas-kit/blob/master/packages/oas-linter/README.md)
 * [oas-schema-walker README](https://github.com/Mermade/oas-kit/blob/master/packages/oas-schema-walker/README.md)
 * [reftools README](https://github.com/Mermade/oas-kit/blob/master/packages/reftools/README.md)
@@ -18,6 +20,10 @@ This is the documentation site for OAS-Kit, a collection of packages which compr
 * [Details on custom protocol/scheme handlers](handlers.md)
 * [Linter rule DSL documentation](linter-rules.md)
 * [The options object](options.md)
+
+## OAS-Kit Wiki
+
+* [Including contributed Linter rules](https://github.com/Mermade/oas-kit/wiki)
 
 ## TODO (help wanted)
 

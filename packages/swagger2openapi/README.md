@@ -14,7 +14,7 @@ Convert Swagger 2.0 definitions into OpenApi 3.0.x
 
 The online version of the converter/validator runs on a [Linode](https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa) VPS. If you are considering a hosted server, please sign up through this link so we both receive free credit.
 
-Currently tracking [v3.0.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)
+Currently tracking [v3.0.x](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md)
 
 ## Installation:
 This is a node.js module, which you can run on the command line. First ensure you have npm installed (tested on version 6.1+), and then install as follows:
@@ -29,23 +29,30 @@ Or, add it to your node.js projects as shown below in option B.
 ```text
 swagger2openapi [options] [filename|url]
 Options:
-  --warnProperty      Property name to use for warning extensions
-                                                                    [string] [default: "x-s2o-warning"]
-  --version            Show version number                                                    [boolean]
-  -c, --components     output information to unresolve a definition                           [boolean]
-  -d, --debug          enable debug mode, adds specification-extensions                       [boolean]
-  -e, --encoding       encoding for input/output files                       [string] [default: "utf8"]
-  -h, --help           Show help                                                              [boolean]
-  -i, --indent         JSON indent to use, defaults to 4 spaces                                [string]
-  -o, --outfile        the output file to write to                                             [string]
-  -p, --patch          fix up small errors in the source definition                           [boolean]
-  -r, --resolve        resolve external references                                            [boolean]
-  -t, --targetVersion  override default target version of 3.0.0                                [string]
-  -u, --url            url of original spec, creates x-origin entry                            [string]
-  -v, --verbose        increase verbosity                                                       [count]
-  -w, --warnOnly       Do not throw on non-patchable errors, add warning extensions
-                                                                                              [boolean]
-  -y, --yaml           write YAML, default JSON (overridden by --outfile filepath extension)  [boolean]
+  --refSiblings        mode to handle $ref's with sibling properties
+                                        [choices: "remove", "preserve", "allOf"]
+  --warnProperty       Property name to use for warning extensions
+                                             [string] [default: "x-s2o-warning"]
+  --version            Show version number                             [boolean]
+  -c, --components     output information to unresolve a definition    [boolean]
+  -d, --debug          enable debug mode, adds specification-extensions[boolean]
+  -e, --encoding       encoding for input/output files[string] [default: "utf8"]
+  -f, --fatal          make resolution errors fatal                    [boolean]
+  -h, --help           Show help                                       [boolean]
+  -i, --indent         JSON indent to use, defaults to 4 spaces         [string]
+  -o, --outfile        the output file to write to                      [string]
+  -p, --patch          fix up small errors in the source definition    [boolean]
+  -r, --resolve        resolve external references                     [boolean]
+  -t, --targetVersion  override default target version of 3.0.0         [string]
+  -u, --url            url of original spec, creates x-origin entry     [string]
+  -v, --verbose        increase verbosity                                [count]
+  -w, --warnOnly       Do not throw on non-patchable errors, add warning
+                       extensions                                      [boolean]
+  -y, --yaml           write YAML, default JSON (overridden by --outfile
+                       filepath extension)                             [boolean]
+  -b, --rbname         Extension to use to preserve body parameter names in
+                       converted operations ("" == disabled)
+                                                          [string] [default: ""]
 ```
 
 ### B. Node.js API:

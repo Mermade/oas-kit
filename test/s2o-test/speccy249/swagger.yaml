@@ -1,0 +1,14 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: API
+produces:
+- 'application/vnd.api+json'
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: ./xyz.json

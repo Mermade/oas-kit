@@ -5,9 +5,8 @@
 
 const fs = require('fs');
 const url = require('url');
-const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const converter = require('./index.js');
 
 // @ts-ignore
@@ -36,6 +35,8 @@ let argv = require('yargs')
     .boolean('patch')
     .alias('p', 'patch')
     .describe('patch', 'fix up small errors in the source definition')
+    .choices('refSiblings',['remove','preserve','allOf'])
+    .describe('refSiblings','mode to handle $ref\'s with sibling properties')
     .boolean('resolve')
     .alias('r', 'resolve')
     .describe('resolve', 'resolve external references')
@@ -69,7 +70,7 @@ let argv = require('yargs')
 function processResult(err, options) {
     if (err) {
         delete err.options;
-        console.warn(util.inspect(err));
+        console.warn(yaml.stringify(err));
         return process.exitCode = 1;
     }
     if (options.yaml && options.outfile && options.outfile.indexOf('.json') > 0) {
@@ -82,7 +83,7 @@ function processResult(err, options) {
     let s;
     try {
         if (options.yaml) {
-            s = options.debug ? yaml.dump(options.openapi) : yaml.safeDump(options.openapi, {noRefs:true});
+            s = options.debug ? yaml.stringify(options.openapi) : yaml.stringify(options.openapi, {noRefs:true});
         }
         else {
             s = JSON.stringify(options.openapi, null, options.indent||4);

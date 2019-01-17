@@ -4,12 +4,12 @@
 const fs = require('fs');
 const url = require('url');
 const URL = url.URL;
-const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const should = require('should/as-function');
 const maybe = require('call-me-maybe');
 let ajv = require('ajv')({
+    $data: true,
     allErrors: true,
     verbose: true,
     jsonPointers: true,
@@ -101,7 +101,7 @@ function validateSchema(schema, openapi, options) {
             const errorStr = bae(schema, openapi, errors);
             throw (new CLIError(errorStr));
         }
-        throw (new JSONSchemaError('Schema invalid: ' + util.inspect(errors)));
+        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringfy(errors)));
     }
     options.schema = schema;
     return !(errors && errors.length);
@@ -406,6 +406,7 @@ function checkContent(content, contextServers, openapi, options) {
                 should(['schema','example','examples','encoding'].indexOf(k)).be.greaterThan(-1,'mediaType object cannot have additionalProperty: '+k);
             }
         }
+        if (options.lint) options.linter('content',content,ct,options);
         options.context.pop();
     }
     options.context.pop();
@@ -543,7 +544,7 @@ function checkHeader(header, contextServers, openapi, options) {
     if (options.lint) options.linter('header',header,'header',options);
 }
 
-function checkResponse(response, contextServers, openapi, options) {
+function checkResponse(response, key, contextServers, openapi, options) {
     should(response).not.be.null();
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
@@ -580,7 +581,7 @@ function checkResponse(response, contextServers, openapi, options) {
         }
         options.context.pop();
     }
-    if (options.lint) options.linter('response',response,'response',options);
+    if (options.lint) options.linter('response',response,key,options);
 }
 
 function checkParam(param, index, path, contextServers, openapi, options) {
@@ -778,11 +779,12 @@ function checkPathItem(pathItem, path, openapi, options) {
             }
 
             contextAppend(options, 'responses');
+            if (options.lint) options.linter('responses',op.responses,'responses',options);
             for (let r in op.responses) {
                 if (!r.startsWith('x-')) {
                     contextAppend(options, r);
                     let response = op.responses[r];
-                    checkResponse(response, contextServers, openapi, options);
+                    checkResponse(response, r, contextServers, openapi, options);
                     options.context.pop();
                 }
             }
@@ -908,7 +910,7 @@ function validateSync(openapi, options, callback) {
 
     if (options.jsonschema) {
         let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
-        openapi3Schema = yaml.safeLoad(schemaStr, { json: true });
+        openapi3Schema = yaml.parse(schemaStr, { schema:'core' });
         validateOpenAPI3 = ajv.compile(openapi3Schema);
     }
 
@@ -1222,7 +1224,7 @@ function validateSync(openapi, options, callback) {
         for (let r in openapi.components.responses) {
             options.context.push('#/components/responses/' + r);
             should(validateComponentName(r)).be.equal(true, 'component name invalid');
-            checkResponse(openapi.components.responses[r], contextServers, openapi, options);
+            checkResponse(openapi.components.responses[r], r, contextServers, openapi, options);
             options.context.pop();
         }
         options.context.pop();
@@ -1339,6 +1341,12 @@ function validateSync(openapi, options, callback) {
         }
     }
 
+    if (options.lint) {
+        options.linter('metadata',options.metadata,'metadata',options);
+        options.linter('metadata.count',options.metadata.count,'count',options);
+        options.warnings = options.warnings.concat(options.linterResults());
+    }
+
     should (options.warnings.length).be.equal(0,`There were ${options.warnings.length} lint rule violations${options.warnings.length > options.lintLimit ? `, showing first ${options.lintLimit}` : ''}`);
 
     resolve(options.valid);
@@ -1367,14 +1375,21 @@ function setupOptions(options,openapi) {
     options.valid = false;
     options.context = [ '#/' ];
     options.warnings = [];
-    options.lintLimit = 5;
+    if (!options.lintLimit) options.lintLimit = 5;
     if (!options.lintSkip) options.lintSkip = [];
     options.operationIds = [];
     options.allScopes = {};
     options.openapi = openapi;
-    if (options.lint && !options.linter) options.linter = linter.lint;
+    if (options.lint && !options.linter) {
+        options.linter = linter.lint;
+        linter.loadDefaultRules();
+        options.linterResults = linter.getResults;
+    }
     if (!options.cache) options.cache = {};
     options.schema = openapi3Schema;
+    options.metadata = { lines: -1 };
+    if (options.text) options.metadata.lines = options.text.split('\n').length;
+    options.ajv = ajv;
 }
 
 function validate(openapi, options, callback) {
@@ -1396,7 +1411,6 @@ function validate(openapi, options, callback) {
             });
         })
         .catch(function (err) {
-            //return resolve(!options.valid);
             return reject(options);
         });
     }));

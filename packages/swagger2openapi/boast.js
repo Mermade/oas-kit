@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch-h2');
 const bae = require('better-ajv-errors');
 
@@ -16,6 +16,9 @@ const validator = require('oas-validator');
 process.exitCode = 1;
 
 let argv = require('yargs')
+    .boolean('all')
+    .alias('a','all')
+    .describe('all','show all lint warnings')
     .boolean('bae')
     .alias('b','bae')
     .describe('bae','enable better-ajv-errors')
@@ -25,6 +28,9 @@ let argv = require('yargs')
     .array('lintSkip')
     .describe('lintSkip','linter rule name(s) to skip')
     .alias('s','lintSkip')
+    .boolean('dumpMeta')
+    .alias('m','dumpMeta')
+    .describe('Dump definition metadata')
     .count('quiet')
     .alias('q','quiet')
     .describe('quiet','reduce verbosity')
@@ -41,20 +47,21 @@ function main(){
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
+        if (argv.all) argv.lintLimit = Number.MAX_SAFE_INTEGER;
         if (argv.bae) {
             argv.validateSchema = 'first';
             argv.prettify = true;
         }
-        let options;
-        if (argv.source.startsWith('http')) {
-            options = await swagger2openapi.convertUrl(argv.source,argv);
-        }
-        else {
-            options = await swagger2openapi.convertFile(argv.source,argv);
-        }
+        let options = {};
         let result = false;
         try {
-            result = await validator.validateSync(options.openapi,options);
+          if (argv.source.startsWith('http')) {
+              options = await swagger2openapi.convertUrl(argv.source,argv);
+          }
+          else {
+              options = await swagger2openapi.convertFile(argv.source,argv);
+          }
+          result = await validator.validateSync(options.openapi,options);
         }
         catch (ex) {
             console.warn(ex.message);
@@ -70,7 +77,7 @@ function main(){
                         console.warn(display);
                     }
                     else {
-                        console.warn(warning.message,warning.pointer);
+                        console.warn(warning.message,warning.pointer,warning.ruleName);
                         if (warning.rule.url) ruleUrls.add(warning.rule.url+'#'+warning.ruleName);
                     }
                 }
@@ -83,9 +90,13 @@ function main(){
                 console.warn(url);
             }
         }
+        if (argv.dumpMeta) {
+            console.warn('\n#Definition metadata:');
+            console.warn(yaml.stringify(options.metadata,{depth:Math.INFINITY}));
+        }
         if (result) {
             if (options.sourceYaml) {
-                console.log(yaml.safeDump(options.openapi));
+                console.log(yaml.stringify(options.openapi));
             }
             else {
                 console.log(JSON.stringify(options.openapi,null,2));

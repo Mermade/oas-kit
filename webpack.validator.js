@@ -11,8 +11,8 @@ module.exports = {
       new webpack.NormalModuleReplacementPlugin(/node_modules.should/, resource => {
         const components = resource.request.split('/');
         for (let i=0;i<components.length;i++) {
-            if (components[i].startsWith('oas-')) {
-                components[i] = 'swagger2openapi';
+            if (components[i].match(/^oas-[rl]/)) {
+                components[i] = 'oas-validator';
             }
         }
 		resource.request = components.join('/');
@@ -20,8 +20,8 @@ module.exports = {
       new webpack.NormalModuleReplacementPlugin(/node_modules.yaml/, resource => {
         const components = resource.request.split('/');
         for (let i=0;i<components.length;i++) {
-            if (components[i].startsWith('oas-')) {
-                components[i] = 'swagger2openapi';
+            if (components[i].match(/^oas-[rl]/)) {
+                components[i] = 'oas-validator';
             }
         }
 		resource.request = components.join('/');
@@ -32,7 +32,7 @@ module.exports = {
             cacheGroups: {
                 commons: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: 'oas-lib',
+                    name: 'validator-lib',
                     chunks: 'all'
                 }
             }
@@ -42,11 +42,7 @@ module.exports = {
         fs: 'empty'
     },
     entry: {
-        converter: './packages/swagger2openapi/index.js',
-        validator: './packages/oas-validator/index.js',
-        resolver: './packages/oas-resolver/index.js',
-        linter: './packages/oas-linter/index.js',
-        walker: './packages/oas-schema-walker/index.js'
+        validatorOnly: './packages/oas-validator/index.js'
     },
     output: {
         filename: '[name].min.js'
