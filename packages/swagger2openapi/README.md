@@ -31,6 +31,7 @@ swagger2openapi [options] [filename|url]
 Options:
   --refSiblings        mode to handle $ref's with sibling properties
                                         [choices: "remove", "preserve", "allOf"]
+  --resolveInternal    resolve internal references also                [boolean]
   --warnProperty       Property name to use for warning extensions
                                              [string] [default: "x-s2o-warning"]
   --version            Show version number                             [boolean]
