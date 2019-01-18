@@ -1411,7 +1411,7 @@ function validate(openapi, options, callback) {
             });
         })
         .catch(function (err) {
-            return reject(options);
+            return reject(err);
         });
     }));
 }
