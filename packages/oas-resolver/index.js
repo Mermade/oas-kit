@@ -10,6 +10,7 @@ const yaml = require('yaml');
 const jptr = require('reftools/lib/jptr.js').jptr;
 const recurse = require('reftools/lib/recurse.js').recurse;
 const clone = require('reftools/lib/clone.js').clone;
+const deRef = require('reftools/lib/dereference.js').dereference;
 const isRef = require('reftools/lib/isref.js').isRef;
 const common = require('oas-kit-common');
 
@@ -28,7 +29,7 @@ function readFileAsync(filename, encoding) {
     });
 }
 
-function resolveAllInternal(obj, context, src, parentPath, base, options) {
+function resolveAllFragment(obj, context, src, parentPath, base, options) {
 
     let attachPoint = options.externalRefs[src+parentPath].paths[0];
 
@@ -42,7 +43,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                 if (obj[key].startsWith('#')) {
                     if (!seen[obj[key]] && !obj.$fixed) {
                         let target = clone(jptr(context, obj[key]));
-                        if (options.verbose>1) console.log((target === false ? common.colour.red : common.colour.green)+'Internal resolution', obj[key], common.colour.normal);
+                        if (options.verbose>1) console.log((target === false ? common.colour.red : common.colour.green)+'Fragment resolution', obj[key], common.colour.normal);
                         /*
                             ResolutionCase:A is where there is a local reference in an externally
                             referenced document, and we have not seen it before. The reference
@@ -52,7 +53,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
                         if (target === false) {
                             state.parent[state.pkey] = {}; /* case:A(2) where the resolution fails */
                             if (options.fatal) {
-                                let ex = new Error('Internal $ref resolution failed '+obj[key]);
+                                let ex = new Error('Fragment $ref resolution failed '+obj[key]);
                                 if (options.promise) options.promise.reject(ex)
                                 else throw(ex);
                             }
@@ -100,7 +101,7 @@ function resolveAllInternal(obj, context, src, parentPath, base, options) {
         }
     });
 
-    if (options.verbose>1) console.log('Finished internal resolution');
+    if (options.verbose>1) console.log('Finished fragment resolution');
     return obj;
 }
 
@@ -155,7 +156,7 @@ function resolveExternal(root, pointer, options, callback) {
                 }
             }
         }
-        data = resolveAllInternal(data, context, pointer, fragment, target, options);
+        data = resolveAllFragment(data, context, pointer, fragment, target, options);
         data = filterData(data, options);
         callback(clone(data), target, options);
         return Promise.resolve(data);
@@ -199,7 +200,7 @@ function resolveExternal(root, pointer, options, callback) {
                             }
                         }
                     }
-                    data = resolveAllInternal(data, context, pointer, fragment, target, options);
+                    data = resolveAllFragment(data, context, pointer, fragment, target, options);
                     data = filterData(data, options);
                 }
                 catch (ex) {
@@ -238,7 +239,7 @@ function resolveExternal(root, pointer, options, callback) {
                             }
                         }
                     }
-                    data = resolveAllInternal(data, context, pointer, fragment, target, options);
+                    data = resolveAllFragment(data, context, pointer, fragment, target, options);
                     data = filterData(data, options);
                 }
                 catch (ex) {
@@ -418,7 +419,12 @@ function loopReferences(options, res, rej) {
                             }, 0);
                         }
                         else {
-                            if (options.verbose>1) console.log(common.colour.yellow+'Finished resolution!',common.colour.normal);
+                            if (options.verbose>1) console.log(common.colour.yellow+'Finished external resolution!',common.colour.normal);
+                            if (options.resolveInternal) {
+                                if (options.verbose>1) console.log(common.colour.yellow+'Starting internal resolution!',common.colour.normal);
+                                options.openapi = deRef(options.openapi,options.original,{verbose:options.verbose-1});
+                                if (options.verbose>1) console.log(common.colour.yellow+'Finished internal resolution!',common.colour.normal);
+                            }
                             res(options);
                         }
                     }

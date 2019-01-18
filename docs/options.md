@@ -43,9 +43,10 @@ prettify|Boolean|Input|Flag to validator to generate pretty (but potentially mis
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
 rbname|String|Input|The name of the vendor extension to use to preserve body parameter names (e.g. x-codegen-request-body-name)
-refmap|Object|Internal|Used as a mapping between old and new `$ref`s.
-refSiblings|string|Input|Controls handling of `$ref` which has sibling properties. Valid values are `remove` (to remove such properties) which is the default outside `schema` objects,  `preserve` to keep the (incorrect) use of sibling properties, and `allOf`, to wrap the `$ref` and the remaining sibling properties in an `allOf`, which is the default/allowed only within `schema` objects.
+refmap|Object|Internal|Used as a mapping between old and new `$ref`s
+refSiblings|string|Input|Controls handling of `$ref` which has sibling properties. Valid values are `remove` (to remove such properties) which is the default outside `schema` objects,  `preserve` to keep the (incorrect) use of sibling properties, and `allOf`, to wrap the `$ref` and the remaining sibling properties in an `allOf`, which is the default/allowed only within `schema` objects
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
+resolveInternal|Boolean|Input|Flag to enable resolution of internal `$ref`s. Also disables deduplication of `requestBodies`
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
 schema|Object|Input|Temporarily holds JSON Schema during validation step
 skip|Boolean|Reserved|Used by tools such as Speccy to skip linter rules

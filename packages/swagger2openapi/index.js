@@ -197,7 +197,7 @@ function fixupRefs(obj, key, state) {
     let options = state.payload.options;
     if (isRef(obj,key)) {
         if (obj[key].startsWith('#/components/')) {
-            // nop
+            // no-op
         }
         else if (obj[key] === '#/consumes') {
             // people are *so* creative
@@ -294,7 +294,7 @@ function fixupRefs(obj, key, state) {
             const tmpRef = obj[key];
             const inSchema = state.path.indexOf('/schema') >= 0; // not perfect, but in the absence of a reasonably-sized and complete OAS 2.0 parser...
             if (options.refSiblings === 'preserve') {
-                // nop
+                // no-op
             }
             else if (inSchema && (options.refSiblings === 'allOf')) {
                 delete obj.$ref;
@@ -813,7 +813,7 @@ function processResponse(response, name, op, openapi, options) {
                 throwError('(Patchable) response.description is mandatory', options);
             }
         }
-        if (response.schema) {
+        if (typeof response.schema !== 'undefined') {
 
             fixUpSchema(response.schema,options);
 
@@ -1183,28 +1183,30 @@ function main(openapi, options) {
 
     openapi.components.requestBodies = {}; // for now as we've dereffed them
 
-    let counter = 1;
-    for (let e in requestBodyCache) {
-        let entry = requestBodyCache[e];
-        if (entry.refs.length > 1) {
-            // create a shared requestBody
-            let suffix = '';
-            if (!entry.name) {
-                entry.name = 'requestBody';
-                // @ts-ignore
-                suffix = counter++;
-            }
-            while (rbNamesGenerated.indexOf(entry.name + suffix) >= 0) {
-                // @ts-ignore - this can happen if descriptions are not exactly the same (e.g. bitbucket)
-                suffix = (suffix ? ++suffix : 2);
-            }
-            entry.name = entry.name + suffix;
-            rbNamesGenerated.push(entry.name);
-            openapi.components.requestBodies[entry.name] = clone(entry.body);
-            for (let r in entry.refs) {
-                let ref = {};
-                ref.$ref = '#/components/requestBodies/' + entry.name;
-                jptr.jptr(openapi,entry.refs[r],ref);
+    if (!options.resolveInternal) {
+        let counter = 1;
+        for (let e in requestBodyCache) {
+            let entry = requestBodyCache[e];
+            if (entry.refs.length > 1) {
+                // create a shared requestBody
+                let suffix = '';
+                if (!entry.name) {
+                    entry.name = 'requestBody';
+                    // @ts-ignore
+                    suffix = counter++;
+                }
+                while (rbNamesGenerated.indexOf(entry.name + suffix) >= 0) {
+                    // @ts-ignore - this can happen if descriptions are not exactly the same (e.g. bitbucket)
+                    suffix = (suffix ? ++suffix : 2);
+                }
+                entry.name = entry.name + suffix;
+                rbNamesGenerated.push(entry.name);
+                openapi.components.requestBodies[entry.name] = clone(entry.body);
+                for (let r in entry.refs) {
+                    let ref = {};
+                    ref.$ref = '#/components/requestBodies/' + entry.name;
+                    jptr.jptr(openapi,entry.refs[r],ref);
+                }
             }
         }
     }
@@ -1387,7 +1389,7 @@ function convertObj(swagger, options, callback) {
         openapi = Object.assign(openapi, cclone(swagger));
         delete openapi.swagger;
         recurse(openapi, {}, function(obj, key, state){
-            if ((obj[key] === null) && (!key.startsWith('x-'))) delete obj[key]; // this saves *so* much grief later
+            if ((obj[key] === null) && (!key.startsWith('x-'))) delete obj[key]; // this saves *so* much grief later. FIXME examples, as per Ron
         });
 
         if (swagger.host) {
@@ -1480,7 +1482,7 @@ function convertObj(swagger, options, callback) {
 
         resolver.optionalResolve(options) // is a no-op if options.resolve is not set
         .then(function(){
-            main(openapi, options);
+            main(options.openapi, options);
             if (options.direct) {
                 resolve(options.openapi);
             }

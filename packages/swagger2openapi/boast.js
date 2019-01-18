@@ -22,6 +22,16 @@ let argv = require('yargs')
     .boolean('bae')
     .alias('b','bae')
     .describe('bae','enable better-ajv-errors')
+    .string('encoding')
+    .alias('e','encoding')
+    .default('encoding','utf8')
+    .describe('encoding','text encoding to use')
+    .boolean('force')
+    .alias('f','force')
+    .describe('force','output even if validation/lint failures')
+    .boolean('internal')
+    .alias('i','internal')
+    .describe('internal','resolve internal $refs also')
     .boolean('lint')
     .describe('lint','also lint the document')
     .alias('l','lint')
@@ -30,7 +40,10 @@ let argv = require('yargs')
     .alias('s','lintSkip')
     .boolean('dumpMeta')
     .alias('m','dumpMeta')
-    .describe('Dump definition metadata')
+    .describe('dumpMeta','Dump definition metadata')
+    .string('output')
+    .alias('o','output')
+    .describe('output','outfile file to write to, default STDOUT')
     .count('quiet')
     .alias('q','quiet')
     .describe('quiet','reduce verbosity')
@@ -51,6 +64,9 @@ function main(){
         if (argv.bae) {
             argv.validateSchema = 'first';
             argv.prettify = true;
+        }
+        if (argv.internal) {
+            argv.resolveInternal = true;
         }
         let options = {};
         let result = false;
@@ -94,12 +110,22 @@ function main(){
             console.warn('\n#Definition metadata:');
             console.warn(yaml.stringify(options.metadata,{depth:Math.INFINITY}));
         }
-        if (result) {
-            if (options.sourceYaml) {
-                console.log(yaml.stringify(options.openapi));
+        if (result || argv.force) {
+            if (options.output) {
+                if (options.sourceYaml) {
+                    fs.writeFileSync(options.output, yaml.stringify(options.openapi),options.encoding);
+                }
+                else {
+                    fs.writeFileSync(options.output, JSON.stringify(options.openapi,null,2),options.encoding);
+                }
             }
             else {
-                console.log(JSON.stringify(options.openapi,null,2));
+                if (options.sourceYaml) {
+                    console.log(yaml.stringify(options.openapi));
+                }
+                else {
+                    console.log(JSON.stringify(options.openapi,null,2));
+                }
             }
         }
         resolve(options.openapi);

@@ -63,6 +63,9 @@ function dereference(o,definitions,options) {
                     entry.data = jptr(options.master,entry.key);
                     entry.source = options.master;
                 }
+                if (entry.data === false) {
+                    logger.warn('Missing $ref target',entry.key);
+                }
                 options.cache[$ref] = entry;
                 entry.data = state.parent[state.pkey] = dereference(jptr(entry.source,entry.key),entry.source,options);
                 if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
