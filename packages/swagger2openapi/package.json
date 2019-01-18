@@ -6,7 +6,6 @@
   "bin": {
     "swagger2openapi": "./swagger2openapi.js",
     "oas-validate": "./oas-validate.js",
-    "oas-resolve": "./node_modules/oas-resolver/resolve.js",
     "boast": "./boast.js"
   },
   "scripts": {
