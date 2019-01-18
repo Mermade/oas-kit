@@ -1156,7 +1156,7 @@ function validateSync(openapi, options, callback) {
     let paths = {};
 
     for (let p in openapi.paths) {
-        options.context.push('#/paths/' + jptr.jpescape(p));
+        options.context.push('#/paths' + jptr.jpescape(p));
         if (!p.startsWith('x-')) {
             should(p).startWith('/');
             should(p).not.containEql('?');
