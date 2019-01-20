@@ -19,6 +19,10 @@ tests.forEach((test) => {
             const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver', test, 'output.yaml'),'utf8'),{schema:'core'});
 
             let options = { resolve: true, preserveMiro: false, source: inputSpec };
+            try {
+                options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver', test, 'options.yaml'),'utf8'),{schema:'core'}));
+            }
+            catch (ex) {}
 
             resolver.resolve(input, options.source, options)
             .then(function(result){
