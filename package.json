@@ -2,14 +2,12 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
-    "commitizen": "^3.0.5",
-    "conventional-changelog-cli": "^2.0.11",
-    "cz-lerna-changelog": "^2.0.1",
     "eslint": "^5.9.0",
     "jsdoc-to-markdown": "^4.0.1",
     "lerna": "^3.6.0",
     "mocha": "^5.2.0",
     "should": "^13.2.1",
+    "standard-version": "^4.4.0",
     "webpack": "^4.14.0",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.0.8",
@@ -27,9 +25,16 @@
     "webpack": "npx webpack -p",
     "webpack-converter": "npx webpack -p --config webpack.converter.js",
     "webpack-validator": "npx webpack -p --config webpack.validator.js",
-    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s",
+    "changelog": "standard-version",
     "audits": "npx lerna exec npm audit",
     "postinstall": "echo If you need Linode hosting, the oas-kit referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\""
+  },
+  "standard-version": {
+    "skip": {
+      "bump": true,
+      "commit": true,
+      "tag": true
+    }
   },
   "repository": {
     "type": "git",
