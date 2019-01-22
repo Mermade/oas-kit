@@ -13,6 +13,7 @@ This is the mono-repo for the following related projects
 ## Documentation
 
 * [Main site](https://mermade.github.io/oas-kit)
+* [CHANGELOG](https://github.com/Mermade/oas-kit/blob/master/CHANGELOG.md#change-log)
 
 ## Online converter/validator
 
