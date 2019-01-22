@@ -114,17 +114,17 @@ Options:
 
 ### Reference preservation
 
-swagger2openapi preserves almost all `$ref` JSON references in your API definition, and does not dereference
-every item, as with some model-based parsers. The exception is internal references within externally referenced documents.
+`swagger2openapi` by default preserves almost all `$ref` JSON references in your API definition, and does not dereference
+every item, as with some model-based parsers. The exception is internal references within externally referenced documents. To enable internal `$ref` resolution across the whole document, use the `--resolveInternal` option, which also disables creation of `$ref`s for shared `requestBodies`.
 
 ### Schema transformations
 
-swagger2openapi will automatically 'repair' a number of problems where non-compliant Swagger 2.0 schemas have been used. It will attempt to transform JSON schemas (used incorrectly) into OpenAPI 3.0.x Schema objects.
+`swagger2openapi` will automatically 'repair' a number of problems where non-compliant Swagger 2.0 schemas have been used. It will attempt to transform JSON schemas (used incorrectly) into OpenAPI 3.0.x Schema objects.
 
 ### Specification extensions
 
-swagger2openapi has support for a limited number of real-world [specification extensions](/docs/extensions.md) which have a direct bearing on the conversion. All other specification extensions are left untouched. swagger2openapi is [swaggerplusplus](https://github.com/mermade/swaggerplusplus)-compatible.
-
+`swagger2openapi`` has support for a limited number of real-world [specification extensions](/docs/extensions.md) which have a direct bearing on the conversion. All other specification extensions are left untouched. swagger2openapi is [swaggerplusplus](https://github.com/mermade/swaggerplusplus)-compatible.
+`
 It is expected to be able to configure the process of specification-extension modification using options or a plugin mechanism in a future release.
 
 ## Tests
@@ -142,11 +142,15 @@ The test harness currently expects files with a `.json` or `.yaml` extension, or
 * [OpenAPI3-Examples (pass/fail)](https://github.com/mermade/openapi3-examples)
 * [SOM-Research collection](https://github.com/SOM-Research/hapi)
 
-Additionally swagger2openapi has been tested on a corpus of 74,426 real-world valid Swagger 2.0 definitions from GitHub and [SwaggerHub](https://swaggerhub.com/). However, if you have a definition which causes errors in the converter or does not pass validation, please do not hesitate to [raise an issue](https://github.com/Mermade/swagger2openapi/issues).
+Additionally `swagger2openapi` has been tested on a corpus of 74,426 real-world valid Swagger 2.0 definitions from GitHub and [SwaggerHub](https://swaggerhub.com/). However, if you have a definition which causes errors in the converter or does not pass validation, please do not hesitate to [raise an issue](https://github.com/Mermade/swagger2openapi/issues).
 
 ### Regression tests
 
-Regression tests (thanks @domharrington) live in the `/test` directory and can be run with `npx mocha`. Each sub-directory should contain an input `swagger.yaml` file, an expected output `openapi.yaml` file and an optional `options.yaml` file. You can put private test cases in sub-directories starting with an underscore character.
+Regression tests (thanks [@domharrington](https://github.com/domharrington)) live in the `/test` directory and can be run with `npx mocha`. Each sub-directory of `s2o-test` should contain an input `swagger.yaml` file, an expected output `openapi.yaml` file and an optional `options.yaml` file. You can put private test cases in sub-directories starting with an underscore character. In the `resolver` sub-directory, each directory should contain an `input.yaml`, an `output.yaml` and an optional `options.yaml` file.
+
+### Version history
+
+* [Change-Log](https://github.com/Mermade/oas-kit/blob/master/CHANGELOG.md#change-log)
 
 ## License
 
