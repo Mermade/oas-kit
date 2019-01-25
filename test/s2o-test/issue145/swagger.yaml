@@ -1,0 +1,50 @@
+swagger: '2.0'
+basePath: /issue145/api
+info:
+  version: '1.0'
+  title: 'Issue 145 Test v1'
+  description: 'This is a testcase re: a referenced form param which is a string array.'
+paths:
+  /v1/formtest1:
+    post:
+      operationId: formTest1
+      summary: 'Form parameter test 1'
+      description: 'Form param is a referenced parameter.'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/StringArrayFormParam'
+      responses:
+        '201':
+          description: 'Successful request.'
+        '400':
+          description: 'Invalid request.'
+  /v1/formtest2:
+    post:
+      operationId: formTest2
+      summary: 'Form parameter test 2'
+      description: 'Form param is defined inline'
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: inline_form_param
+          in: formData
+          description: 'Inline form param.'
+          required: true
+          type: array
+          items:
+            type: string
+      responses:
+        '201':
+          description: 'Successful request.'
+        '400':
+          description: 'Invalid request.'
+parameters:
+  StringArrayFormParam:
+    name: referenced_form_param
+    in: formData
+    description: 'Referenced form param'
+    required: true
+    type: array
+    items:
+      type: string
