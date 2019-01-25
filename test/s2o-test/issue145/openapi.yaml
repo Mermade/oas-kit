@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  version: "1.0"
+  title: Issue 145 Test v1
+  description: "This is a testcase re: a referenced form param which is a string array."
+paths:
+  /v1/formtest1:
+    post:
+      operationId: formTest1
+      summary: Form parameter test 1
+      description: Form param is a referenced parameter.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                referenced_form_param:
+                  description: Referenced form param
+                  type: array
+                  items:
+                    type: string
+              required:
+                - referenced_form_param
+      responses:
+        "201":
+          description: Successful request.
+        "400":
+          description: Invalid request.
+  /v1/formtest2:
+    post:
+      operationId: formTest2
+      summary: Form parameter test 2
+      description: Form param is defined inline
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                inline_form_param:
+                  description: Inline form param.
+                  type: array
+                  items:
+                    type: string
+              required:
+                - inline_form_param
+      responses:
+        "201":
+          description: Successful request.
+        "400":
+          description: Invalid request.
+servers:
+  - url: /issue145/api
