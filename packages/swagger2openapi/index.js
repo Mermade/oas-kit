@@ -761,7 +761,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
     }
 
     // tidy up
-    if (param) {
+    if (param && !param['x-s2o-delete']) {
         delete param.type;
         for (let prop of common.parameterTypeProperties) {
             delete param[prop];
