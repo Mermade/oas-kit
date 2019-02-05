@@ -144,7 +144,7 @@ function resolveExternal(root, pointer, options, callback) {
             file, http or custom handler
         */
         let context = clone(options.cache[target]);
-        let data = context;
+        let data = options.externalRef = context;
         if (fragment) {
             data = jptr(data, fragment);
             if (data === false) {
@@ -167,6 +167,7 @@ function resolveExternal(root, pointer, options, callback) {
     if (options.handlers && options.handlers[effectiveProtocol]) {
         return options.handlers[effectiveProtocol](base, pointer, fragment, options)
             .then(function (data) {
+                options.externalRef = data;
                 data = filterData(data, options);
                 options.cache[target] = data;
                 callback(data, target, options);
@@ -186,7 +187,7 @@ function resolveExternal(root, pointer, options, callback) {
             .then(function (data) {
                 try {
                     let context = yaml.parse(data, { schema:'core' });
-                    data = context;
+                    data = options.externalRef = context;
                     options.cache[target] = clone(data);
                     /* resolutionSource:B, from the network, data is fresh, but we clone it into the cache */
                     if (fragment) {
@@ -223,7 +224,7 @@ function resolveExternal(root, pointer, options, callback) {
             .then(function (data) {
                 try {
                     let context = yaml.parse(data, { schema:'core' });
-                    data = context;
+                    data = options.externalRef = context;
                     /*
                         resolutionSource:C from a file, data is fresh but we clone it into the cache
                     */

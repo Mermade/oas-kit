@@ -12,6 +12,7 @@ debug|Boolean|Input|Flag to enable debug mode, adds specification-extensions
 direct|Boolean|Input|Flag to indicate that only the converted OpenApi definition should be returned, not wrapped in options
 encoding|String|Input|Encoding to use when reading/writing files
 expectFailure|Boolean|Input|Flag to invert the status of a validation step
+externalRef|Object|Internal|When `prevalidate` is true, holds the entire object representing an externally `$ref`d file
 externals|[Array](externals.md)|Output|Information required to unresolve a resolved definition back into its component parts
 fail|Boolean|Input|Command-line flag used by `testRunner`
 fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
@@ -40,6 +41,7 @@ output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml fi
 patch|Boolean|Input|Flag to fix-up minor errors in the source definition before conversion
 preserveMiro|Boolean|Input|Flag to resolver as to whether to preserve old value of `$ref` in `x-miro`, default: `false`
 prettify|Boolean|Input|Flag to validator to generate pretty (but potentially misleading) schema validation error reports
+prevalidate|Boolean|Input|Whether to validate each externally `$ref`d file separately
 promise|Object|Internal|Object containing resolve and reject functions for the converter
 quiet|Boolean|Input|Command-line flag used by `testRunner`
 rbname|String|Input|The name of the vendor extension to use to preserve body parameter names (e.g. x-codegen-request-body-name)

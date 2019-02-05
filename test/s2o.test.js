@@ -13,6 +13,7 @@ const tests = fs.readdirSync(path.join(__dirname,'s2o-test')).filter(file => {
     return fs.statSync(path.join(__dirname, 's2o-test', file)).isDirectory() && file !== 'include' && (!file.startsWith('_') || doPrivate);
 });
 
+describe('Converter tests', () => {
 tests.forEach((test) => {
     describe(test, () => {
         it('should match expected output', (done) => {
@@ -35,4 +36,5 @@ tests.forEach((test) => {
             });
         });
     });
+});
 });

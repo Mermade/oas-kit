@@ -1416,9 +1416,25 @@ function validate(openapi, options, callback) {
     }));
 }
 
+function microValidate(openapi, options) {
+    return (openapi && openapi.openapi && openapi.info && (typeof openapi.info.version !== 'undefined') && (typeof openapi.info.title !== 'undefined') && openapi.paths);
+}
+
+function optionallyValidate(openapi, options) {
+    const target = options.externalRef||openapi;
+    if (microValidate(target, options)) {
+        validateSync(target, options, function(err, options) {
+            if (err) throw err;
+        });
+    }
+    return openapi
+}
+
 module.exports = {
     validateSync: validateSync,
     validate: validate,
+    microValidate: microValidate,
+    optionallyValidate: optionallyValidate,
     JSONSchemaError: JSONSchemaError,
     CLIError: CLIError
 }

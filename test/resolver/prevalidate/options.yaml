@@ -1,0 +1,3 @@
+resolve: true
+prevalidate: true
+patch: false

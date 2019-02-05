@@ -11,6 +11,7 @@ const tests = fs.readdirSync(path.join(__dirname,'resolver')).filter(file => {
     return fs.statSync(path.join(__dirname, 'resolver', file)).isDirectory() && file !== 'include';
 });
 
+describe('Resolver tests', () => {
 tests.forEach((test) => {
     describe(test, () => {
         it('should match expected output', (done) => {
@@ -34,4 +35,5 @@ tests.forEach((test) => {
             });
         });
     });
+});
 });
