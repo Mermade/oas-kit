@@ -1,0 +1,9 @@
+openapi: 3.0.2
+info:
+  title: fragment
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    xyz:
+      type: integer
