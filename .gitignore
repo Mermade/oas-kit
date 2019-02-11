@@ -9,6 +9,7 @@ schemadev/
 utils/
 in/
 out/
+dev/
 .vscode/
 dist/
 packages/
