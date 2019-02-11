@@ -43,7 +43,7 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                 if (obj[key].startsWith('#')) {
                     if (!seen[obj[key]] && !obj.$fixed) {
                         let target = clone(jptr(context, obj[key]));
-                        if (options.verbose>1) console.log((target === false ? common.colour.red : common.colour.green)+'Fragment resolution', obj[key], common.colour.normal);
+                        if (options.verbose>1) console.warn((target === false ? common.colour.red : common.colour.green)+'Fragment resolution', obj[key], common.colour.normal);
                         /*
                             ResolutionCase:A is where there is a local reference in an externally
                             referenced document, and we have not seen it before. The reference
@@ -68,7 +68,7 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                         if (!obj.$fixed) {
                             let newRef = (attachPoint+'/'+seen[obj[key]]).split('/#/').join('/');
                             state.parent[state.pkey] = { $ref: newRef, 'x-miro': obj[key], $fixed: true };
-                            if (options.verbose>1) console.log('Replacing with',newRef);
+                            if (options.verbose>1) console.warn('Replacing with',newRef);
                             changes++;
                         }
                         /*
@@ -80,13 +80,13 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                 }
                 else if (baseUrl.protocol) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.log(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
+                    if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key];
                     obj[key] = newRef;
                 }
                 else if (!obj['x-miro']) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.log(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
+                    if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
                     obj[key] = newRef;
                 }
@@ -101,7 +101,7 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
         }
     });
 
-    if (options.verbose>1) console.log('Finished fragment resolution');
+    if (options.verbose>1) console.warn('Finished fragment resolution');
     return obj;
 }
 
@@ -138,7 +138,7 @@ function resolveExternal(root, pointer, options, callback) {
     }
 
     if (options.cache[target]) {
-        if (options.verbose) console.log('CACHED', target, fragment);
+        if (options.verbose) console.warn('CACHED', target, fragment);
         /*
             resolutionSource:A this is where we have cached the externally-referenced document from a
             file, http or custom handler
@@ -162,7 +162,7 @@ function resolveExternal(root, pointer, options, callback) {
         return Promise.resolve(data);
     }
 
-    if (options.verbose) console.log('GET', target, fragment);
+    if (options.verbose) console.warn('GET', target, fragment);
 
     if (options.handlers && options.handlers[effectiveProtocol]) {
         return options.handlers[effectiveProtocol](base, pointer, fragment, options)
@@ -288,7 +288,7 @@ function scanExternalRefs(options) {
                         if (options.rewriteRefs) {
                             // we've already seen it
                             let newRef = refs[$ref].resolvedAt;
-                            if (options.verbose>1) console.log('Rewriting ref', $ref, newRef);
+                            if (options.verbose>1) console.warn('Rewriting ref', $ref, newRef);
                             obj[key]['x-miro'] = $ref;
                             obj[key].$ref = newRef+$extra; // resolutionCase:C (new string)
                         }
@@ -364,16 +364,16 @@ function findExternalRefs(options) {
                             for (let ptr of pointers) {
                                 // shared x-ms-examples $refs confuse the fixupRefs heuristic in index.js
                                 if (refs[ref].resolvedAt && (ptr !== refs[ref].resolvedAt) && (ptr.indexOf('x-ms-examples/')<0)) {
-                                    if (options.verbose>1) console.log('Creating pointer to data at', ptr);
+                                    if (options.verbose>1) console.warn('Creating pointer to data at', ptr);
                                     jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt+refs[ref].extras[ptr], 'x-miro': ref+refs[ref].extras[ptr] }); // resolutionCase:E (new object)
                                 }
                                 else {
                                     if (refs[ref].resolvedAt) {
-                                        if (options.verbose>1) console.log('Avoiding circular reference');
+                                        if (options.verbose>1) console.warn('Avoiding circular reference');
                                     }
                                     else {
                                         refs[ref].resolvedAt = ptr;
-                                        if (options.verbose>1) console.log('Creating initial clone of data at', ptr);
+                                        if (options.verbose>1) console.warn('Creating initial clone of data at', ptr);
                                     }
                                     let cdata = clone(data);
                                     jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
@@ -420,11 +420,11 @@ function loopReferences(options, res, rej) {
                             }, 0);
                         }
                         else {
-                            if (options.verbose>1) console.log(common.colour.yellow+'Finished external resolution!',common.colour.normal);
+                            if (options.verbose>1) console.warn(common.colour.yellow+'Finished external resolution!',common.colour.normal);
                             if (options.resolveInternal) {
-                                if (options.verbose>1) console.log(common.colour.yellow+'Starting internal resolution!',common.colour.normal);
+                                if (options.verbose>1) console.warn(common.colour.yellow+'Starting internal resolution!',common.colour.normal);
                                 options.openapi = deRef(options.openapi,options.original,{verbose:options.verbose-1});
-                                if (options.verbose>1) console.log(common.colour.yellow+'Finished internal resolution!',common.colour.normal);
+                                if (options.verbose>1) console.warn(common.colour.yellow+'Finished internal resolution!',common.colour.normal);
                             }
                             res(options);
                         }

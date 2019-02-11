@@ -52,7 +52,7 @@ function main(str,source,options){
 }
 
 if (filespec && filespec.startsWith('http')) {
-    console.log('GET ' + filespec);
+    console.warn('GET ' + filespec);
     fetch(filespec, {agent:options.agent}).then(function (res) {
         if (res.status !== 200) throw new Error(`Received status code ${res.status}`);
         return res.text();

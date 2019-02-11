@@ -93,10 +93,10 @@ if (options.verbose) Error.stackTraceLimit = Infinity;
 
 function finalise(err, options) {
     if (!argv.quiet || err) {
-        console.log(common.colour.normal + options.file);
+        console.warn(common.colour.normal + options.file);
     }
     if (err) {
-        console.log(common.colour.red + options.context.pop() + '\n' + err.message);
+        console.warn(common.colour.red + options.context.pop() + '\n' + err.message);
         if (err.name.indexOf('ERR_INVALID_URL')>=0) {
             // nop
         }
@@ -106,7 +106,7 @@ function finalise(err, options) {
             }
         }
         else if (err.stack && err.name !== 'AssertionError' && err.name !== 'CLIError') {
-            console.log(err.stack);
+            console.warn(err.stack);
             warnings.push(err.name+' '+options.file);
         }
         if (options.lintRule && options.lintRule.description !== err.message) {
@@ -126,9 +126,9 @@ function finalise(err, options) {
     if (!argv.quiet) {
         let colour = ((options.expectFailure ? !result : result) ? common.colour.green : common.colour.red);
         if (src && src.info) {
-            console.log(colour + '  %s %s', src.info.title, src.info.version);
-            if (src["x-testcase"]) console.log(' ',src["x-testcase"]);
-            console.log('  %s', src.swagger ? (src.host ? src.host : 'relative') : (src.servers && src.servers.length ? src.servers[0].url : 'relative'),common.colour.normal);
+            console.warn(colour + '  %s %s', src.info.title, src.info.version);
+            if (src["x-testcase"]) console.warn(' ',src["x-testcase"]);
+            console.warn('  %s', src.swagger ? (src.host ? src.host : 'relative') : (src.servers && src.servers.length ? src.servers[0].url : 'relative'),common.colour.normal);
         }
     }
     if (result) {
@@ -189,7 +189,7 @@ function handleResult(err, options) {
         });
     }
     catch (ex) {
-        console.log(common.colour.normal + options.file);
+        console.warn(common.colour.normal + options.file);
         console.warn(common.colour.red + (options.context.length ? options.context.pop() : 'No context')+ '\n' + ex.message);
         if (ex.stack && ex.name !== 'AssertionError' && ex.name !== 'CLIError') {
             console.warn(ex.stack);
@@ -228,7 +228,7 @@ function* check(file, force, expectFailure) {
                 }
                 catch (ex) {
                     let warning = 'Could not parse file ' + file + '\n' + ex.message;
-                    console.log(common.colour.red + warning);
+                    console.warn(common.colour.red + warning);
                     if (ex.stack && ex.message.indexOf('stack')>=0) {
                         console.warn(ex.stack);
                     }
@@ -324,7 +324,7 @@ function processPathSpec(pathspec, expectFailure) {
     }
     else {
         readfiles(pathspec, { readContents: false, filenameFormat: readfiles.FULL_PATH }, function (err) {
-            if (err) console.log(yaml.stringify(err));
+            if (err) console.warn(yaml.stringify(err));
         })
         .then(files => {
             files = files.sort();
@@ -340,7 +340,7 @@ function processPathSpec(pathspec, expectFailure) {
 }
 
 process.exitCode = 1;
-console.log('Gathering...');
+console.warn('Gathering...');
 for (let pathspec of argv._) {
     processPathSpec(pathspec, false);
 }
@@ -356,19 +356,19 @@ process.on('unhandledRejection', r => console.warn('UPR',r));
 process.on('exit', function () {
     if (warnings.length) {
         warnings.sort();
-        console.log(common.colour.normal + '\nWarnings:' + common.colour.yellow);
+        console.warn(common.colour.normal + '\nWarnings:' + common.colour.yellow);
         for (let w in warnings) {
-            console.log(warnings[w]);
+            console.warn(warnings[w]);
         }
     }
     if (failures.length) {
         failures.sort();
-        console.log(common.colour.normal + '\nFailures:' + common.colour.red);
+        console.warn(common.colour.normal + '\nFailures:' + common.colour.red);
         for (let f in failures) {
-            console.log(failures[f]);
+            console.warn(failures[f]);
         }
     }
-    console.log(common.colour.normal);
-    console.log('Tests: %s passing, %s failing, %s warnings', pass, fail, warnings.length);
+    console.warn(common.colour.normal);
+    console.warn('Tests: %s passing, %s failing, %s warnings', pass, fail, warnings.length);
     process.exitCode = ((fail === 0 || options.fail) && (pass > 0)) ? 0 : 1;
 });

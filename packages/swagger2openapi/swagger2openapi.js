@@ -104,7 +104,7 @@ function processResult(err, options) {
     }
 
     if (argv.components) {
-        console.log(JSON.stringify(options.externals, null, options.indent||4));
+        console.warn(JSON.stringify(options.externals, null, options.indent||4));
     }
 }
 

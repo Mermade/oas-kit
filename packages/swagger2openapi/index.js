@@ -1531,7 +1531,7 @@ function convertUrl(url, options, callback) {
             options.source = url;
         }
         if (options.verbose) {
-            console.log('GET ' + url);
+            console.warn('GET ' + url);
         }
         fetch(url, {agent:options.agent}).then(function (res) {
             if (res.status !== 200) throw new S2OError(`Received status code ${res.status}`);
