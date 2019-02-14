@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="5.1.0"></a>
+## [5.2.0](https://github.com/mermade/oas-kit/compare/v5.1.0...v5.2.0) (2019-02-05)
 ## [5.1.0](https://github.com/mermade/oas-kit/compare/v5.0.0...v5.1.0) (2019-01-22)
 ## [5.0.0](https://github.com/mermade/oas-kit/compare/v4.0.0...v5.0.0) (2019-01-17)
 

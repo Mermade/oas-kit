@@ -18,8 +18,8 @@ Currently tracking [v3.0.x](https://github.com/OAI/OpenAPI-Specification/blob/ma
 
 ## Installation:
 This is a node.js module, which you can run on the command line. First ensure you have npm installed (tested on version 6.1+), and then install as follows:
-```
-$ npm install -g swagger2openapi
+```bash
+npm install -g swagger2openapi
 ```
 Or, add it to your node.js projects as shown below in option B.
 
