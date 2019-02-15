@@ -1,0 +1,16 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Example
+produces:
+  - application/json
+paths:
+  /pets:
+    get:
+      responses:
+        '200':
+          description: Example
+          schema:
+            type: number
+            x-nullable: true
+            default: null
