@@ -266,7 +266,12 @@ function checkSubSchema(schema, parent, state) {
         let schemaType = schema.type;
         if (Array.isArray(schema.default)) realType = 'array';
         if (schemaType === 'integer') schemaType = 'number';
-        should(schemaType).equal(realType);
+        if ((schema.default === null) && (schema.nullable)) {
+            // nop
+        }
+        else {
+            should(schemaType).equal(realType);
+        }
     }
     if (typeof schema.format !== 'undefined') {
         should(schema.format).be.a.String();

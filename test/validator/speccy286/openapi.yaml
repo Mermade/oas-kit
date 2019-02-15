@@ -1,0 +1,16 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Example
+paths:
+  /pets:
+    get:
+      responses:
+        '200':
+          description: Example
+          content:
+            application/json:
+              schema:
+                type: number
+                nullable: true
+                default: null
