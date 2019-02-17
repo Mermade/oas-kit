@@ -27,6 +27,7 @@ Any LTS version from 8.4.0 (with `--expose-http2`) or 8.8.1 without flags, onwar
 
 * clone the repository
 * `npm i` in the top level directory
+* `npm i -g lerna`
 * `lerna bootstrap` or `npx lerna bootstrap`
 
 Please try and keep commits related to a single package or piece of functionality. PR in the usual way.

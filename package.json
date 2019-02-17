@@ -1,6 +1,8 @@
 {
   "license": "BSD-3-Clause",
   "devDependencies": {
+    "@babel/runtime": "^7.3.1",
+    "babel": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.9.0",
