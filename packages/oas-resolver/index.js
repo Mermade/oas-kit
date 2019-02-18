@@ -97,7 +97,6 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
     recurse(obj,{},function(obj,key,state){
         if (isRef(obj, key)) {
             if (typeof obj.$fixed !== 'undefined') delete obj.$fixed;
-            if (!options.preserveMiro) delete obj['x-miro'];
         }
     });
 
@@ -426,6 +425,11 @@ function loopReferences(options, res, rej) {
                                 options.openapi = deRef(options.openapi,options.original,{verbose:options.verbose-1});
                                 if (options.verbose>1) console.warn(common.colour.yellow+'Finished internal resolution!',common.colour.normal);
                             }
+                            recurse(options.openapi,{},function(obj,key,state){
+                                if (isRef(obj, key)) {
+                                    if (!options.preserveMiro) delete obj['x-miro'];
+                                }
+                            });
                             res(options);
                         }
                     }
