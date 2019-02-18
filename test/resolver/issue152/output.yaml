@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+tags:
+  - name: test
+    description: a test tag
+paths:
+  /foo:
+    post:
+      operationId: postFoo
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          description: Success post
+          content:
+            application/json:
+              schema:
+                title: XYZ
+                description: this is xyz
+                type: object
+                properties:
+                  id:
+                    description: the local identifier (not necessarily globally unique)
+                    type: string
+  /bar:
+    post:
+      operationId: postBar
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          $ref: '#/paths/~1foo/post/responses/201'

@@ -1,0 +1,14 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Common Response schemas
+  description: Response definitions commonly used in API-docs in a separate reference file
+paths: {}
+components:
+  responses:
+    Post201:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas.yaml#/components/schemas/xyz'

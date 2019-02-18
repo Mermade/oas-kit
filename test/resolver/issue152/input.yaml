@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+tags:
+  - name: test
+    description: a test tag
+paths:
+  /foo:
+    post:
+      operationId: postFoo
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          $ref: 'responses.yaml#/components/responses/Post201'
+  /bar:
+    post:
+      operationId: postBar
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          $ref: 'responses.yaml#/components/responses/Post201'
