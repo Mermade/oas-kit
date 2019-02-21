@@ -3,9 +3,9 @@
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^5.9.0",
+    "eslint": "^5.14.1",
     "jsdoc-to-markdown": "^4.0.1",
-    "lerna": "^3.6.0",
+    "lerna": "^3.13.0",
     "mocha": "^6.0.0",
     "should": "^13.2.1",
     "standard-version": "^5.0.0",
