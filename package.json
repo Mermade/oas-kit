@@ -27,6 +27,7 @@
     "webpack": "npx webpack -p",
     "webpack-converter": "npx webpack -p --config webpack.converter.js",
     "webpack-validator": "npx webpack -p --config webpack.validator.js",
+    "webpack-reftools": "npx webpack -p --config webpack.reftools.js",
     "changelog": "standard-version",
     "audits": "npx lerna exec npm audit",
     "postinstall": "echo If you need Linode hosting, the oas-kit referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\""

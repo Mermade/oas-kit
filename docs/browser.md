@@ -34,6 +34,8 @@ And the validator only is:
 -rw-r--r-- 1 mike mike  82K Jan  7 09:40 dist/validatorOnly.min.js
 ```
 
+You can also build key parts of `reftools` into browser libraries by using `npm run webpack-reftools`.
+
 ## Browserify
 
 Please see [api-spec-converter](https://github.com/LucyBot-Inc/api-spec-converter/) for setup or to use this [bundle](https://github.com/LucyBot-Inc/api-spec-converter/blob/master/dist/api-spec-converter.js).
