@@ -296,11 +296,15 @@ function checkSubSchema(schema, parent, state) {
     }
     if (typeof schema.readOnly !== 'undefined') {
         should(schema.readOnly).be.type('boolean','readOnly must be a boolean');
-        should(schema).not.have.property('writeOnly');
+        if (schema.readOnly && schema.writeOnly) {
+            should(schema).not.have.property('writeOnly');
+        }
     }
     if (typeof schema.writeOnly !== 'undefined') {
         should(schema.writeOnly).be.type('boolean','writeOnly must be a boolean');
-        should(schema).not.have.property('readOnly');
+        if (schema.readOnly && schema.writeOnly) {
+            should(schema).not.have.property('readOnly');
+        }
     }
     if (typeof schema.deprecated !== 'undefined') {
         should(schema.deprecated).be.type('boolean','deprecated must be a boolean');
