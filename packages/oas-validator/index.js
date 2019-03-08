@@ -101,7 +101,7 @@ function validateSchema(schema, openapi, options) {
             const errorStr = bae(schema, openapi, errors);
             throw (new CLIError(errorStr));
         }
-        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringfy(errors)));
+        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringify(errors)));
     }
     options.schema = schema;
     return !(errors && errors.length);
