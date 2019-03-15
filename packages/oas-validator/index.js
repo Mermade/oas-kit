@@ -1024,6 +1024,9 @@ function validateSync(openapi, options, callback) {
 
     if (typeof openapi.paths !== 'undefined'){
         if (options.lint) options.linter('paths',openapi.paths,'paths',options);
+        for (let path in openapi.paths) {
+            if (options.lint) options.linter('path',openapi.paths[path],path,options);
+        }
     }
 
     if (typeof openapi.tags !== 'undefined') {
