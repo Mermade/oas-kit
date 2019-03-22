@@ -450,7 +450,7 @@ function setupOptions(options) {
 
     if (options.source) {
         let srcUrl = url.parse(options.source);
-        if (!srcUrl.protocol) {
+        if (!srcUrl.protocol || srcUrl.protocol.length <= 2) { // windows drive-letters
             options.source = path.resolve(options.source);
         }
     }
