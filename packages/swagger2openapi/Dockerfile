@@ -1,4 +1,4 @@
-FROM node:carbon-alpine
+FROM node:dubnium-alpine
 LABEL maintainer="mike.ralphson@gmail.com" description="Swagger to OpenAPI"
 ENV NODE_ENV=production
 
