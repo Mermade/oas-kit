@@ -1305,9 +1305,9 @@ function validateSync(openapi, options, callback) {
                     checkPathItem(cbPi, exp, openapi, options);
                     options.isCallback = false;
                 }
-                if (options.lint) options.linter('reference',cb,'$ref',options);
             }
             else {
+                if (options.lint) options.linter('reference',cb,'$ref',options);
             }
             options.context.pop();
         }

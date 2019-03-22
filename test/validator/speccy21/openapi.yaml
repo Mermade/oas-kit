@@ -1,0 +1,62 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://127.0.0.1:8080'
+info:
+  title: 'Callback'
+  version: '1'
+  description: 'Callback test'
+  contact:
+    name: Test User
+    url: https://example.com
+    email: test@example.com
+tags:
+  - name: callbackEx
+    description: Callback Example
+paths:
+  /hooks:
+    post:
+      operationId: postHook
+      summary: POST to hooks
+      tags:
+      - callbackEx
+      requestBody:
+        $ref: '#/components/requestBodies/HooksPost'
+      responses:
+        '201':
+          description: 'Successfully registered'
+      callbacks:
+        data_event:
+          $ref: '#/components/callbacks/DataEvent'
+components:
+  callbacks:
+    DataEvent:
+      '{$request.body#/callbackUrl}':
+        post:
+          operationId: callbackPost
+          summary: Callback POST operation
+          requestBody:
+            $ref: '#/components/requestBodies/CallBackBody'
+          responses:
+            '200':
+              description: 'Your callback should answer with 200'
+  requestBodies:
+    HooksPost:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+               - callbackUrl
+              properties:
+                callbackUrl:
+                  type: string
+    CallBackBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - subscriptionId
+            type: object
+            properties:
+              subscriptionId:
+                type: string
