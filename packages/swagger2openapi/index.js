@@ -1421,7 +1421,7 @@ function convertObj(swagger, options, callback) {
         if (swagger['x-ms-parameterized-host']) {
             let xMsPHost = swagger['x-ms-parameterized-host'];
             let server = {};
-            server.url = xMsPHost.hostTemplate;
+            server.url = xMsPHost.hostTemplate + (swagger.basePath ? swagger.basePath : '');
             server.variables = {};
             for (let msp in xMsPHost.parameters) {
                 let param = xMsPHost.parameters[msp];
