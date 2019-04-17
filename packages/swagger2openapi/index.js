@@ -1421,7 +1421,7 @@ function convertObj(swagger, options, callback) {
         if (swagger['x-ms-parameterized-host']) {
             let xMsPHost = swagger['x-ms-parameterized-host'];
             let server = {};
-            server.url = xMsPHost.hostTemplate;
+            server.url = xMsPHost.hostTemplate + (swagger.basePath ? swagger.basePath : '');
             server.variables = {};
             for (let msp in xMsPHost.parameters) {
                 let param = xMsPHost.parameters[msp];
@@ -1445,7 +1445,17 @@ function convertObj(swagger, options, callback) {
                 }
             }
             if (!openapi.servers) openapi.servers = [];
-            openapi.servers.push(server);
+            if (xMsPHost.useSchemePrefix === false) {
+                // The server URL already includes a protocol scheme
+                openapi.servers.push(server);
+            } else {
+                // Define this server once for each given protocol scheme
+                swagger.schemes.forEach((scheme) => {
+                    openapi.servers.push(
+                        Object.assign({}, server, { url: scheme + '://' + server.url })
+                    )
+                });
+            }
             delete openapi['x-ms-parameterized-host'];
         }
 
