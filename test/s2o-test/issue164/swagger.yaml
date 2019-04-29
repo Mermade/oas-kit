@@ -1,0 +1,15 @@
+---
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Swagger 2.0 With Example
+produces:
+  - application/json
+paths:
+  /:
+    get:
+      responses:
+        '200':
+           description: OK
+           schema:
+             example: null

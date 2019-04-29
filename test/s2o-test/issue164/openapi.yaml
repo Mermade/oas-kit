@@ -1,0 +1,15 @@
+---
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Swagger 2.0 With Example
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                example: null
