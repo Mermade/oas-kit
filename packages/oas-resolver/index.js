@@ -112,6 +112,12 @@ function filterData(data, options) {
     return data;
 }
 
+function testProtocol(input, backup) {
+    if (input && input.length > 2) return input;
+    if (backup && backup.length > 2) return backup;
+    return 'file:';
+}
+
 function resolveExternal(root, pointer, options, callback) {
     var u = url.parse(options.source);
     var base = options.source.split('\\').join('/').split('/');
@@ -126,7 +132,7 @@ function resolveExternal(root, pointer, options, callback) {
     base = base.join('/');
 
     let u2 = url.parse(pointer);
-    let effectiveProtocol = (u2.protocol ? u2.protocol : (u.protocol ? u.protocol : 'file:'));
+    let effectiveProtocol = testProtocol(u2.protocol, u.protocol);
 
     let target;
     if (effectiveProtocol === 'file:') {
