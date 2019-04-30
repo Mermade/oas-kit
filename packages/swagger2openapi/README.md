@@ -124,7 +124,7 @@ every item, as with some model-based parsers. The exception is internal referenc
 ### Specification extensions
 
 `swagger2openapi` has support for a limited number of real-world [specification extensions](/docs/extensions.md) which have a direct bearing on the conversion. All other specification extensions are left untouched. swagger2openapi is [swaggerplusplus](https://github.com/mermade/swaggerplusplus)-compatible.
-`
+
 It is expected to be able to configure the process of specification-extension modification using options or a plugin mechanism in a future release.
 
 ## Tests
