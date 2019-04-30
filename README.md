@@ -31,6 +31,20 @@ Any LTS version from 8.4.0 (with `--expose-http2`) or 8.8.1 without flags, onwar
 
 Please try and keep commits related to a single package or piece of functionality. PR in the usual way.
 
+
+## Live support
+
+### Get help
+
+If you have an urgent problem, hire a mentor for a 1:1 live session on Git-Start:
+[![Get 1:1 live support for your issue.](https://git-start.com/assets/git-start-mentee-banner-medium.svg?sanitize=true)](https://git-start.com/help-request/create/Mermade%2Foas-kit)
+
+### Provide help
+
+Help others in paid 1:1 live sessions to get started.
+[![Give paid 1:1 live support.](https://git-start.com/assets/git-start-mentor-banner-medium.svg?sanitize=true)](https://git-start.com/help-request/overview/Mermade%2Foas-kit)
+
+
 ## Supporting development
 
 * [APIs.guru open-collective](https://opencollective.com/openapi-directory)
