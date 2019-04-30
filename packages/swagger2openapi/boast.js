@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// this example requires async/await
+// this tool requires async/await, and therefore Node.js 8.3+
 
 'use strict';
 
@@ -32,6 +32,9 @@ let argv = require('yargs')
     .boolean('internal')
     .alias('i','internal')
     .describe('internal','resolve internal $refs also')
+    .boolean('json')
+    .alias('j','json')
+    .describe('json','output validation/lint errors in JSON format')
     .boolean('lint')
     .describe('lint','also lint the document')
     .alias('l','lint')
@@ -73,6 +76,7 @@ function main(){
         }
         let options = {};
         let result = false;
+        let jsonOutput = {};
         try {
           if (argv.source.startsWith('http')) {
               options = await swagger2openapi.convertUrl(argv.source,argv);
@@ -83,17 +87,33 @@ function main(){
           result = await validator.validateSync(options.openapi,options);
         }
         catch (ex) {
-            console.warn(ex.message);
-            if (options.verbose > 1) console.warn(ex.stack);
+            let path;
             if (options.context) {
-                let path = options.context.pop();
-                console.warn(path);
+                path = options.context.pop();
             }
+            if (options.json) {
+                jsonOutput.error = ex.message;
+                if (options.verbose > 1) jsonOutput.stacktrace = ex.stack;
+                if (path) {
+                    jsonOutput.path = path;
+                }
+            }
+            else {
+                console.warn(ex.message);
+                if (options.verbose > 1) console.warn(ex.stack);
+                if (path) {
+                    console.warn(path);
+                }
+            }
+            jsonOutput.warnings = [];
             if (options.warnings) {
                 for (let warning of options.warnings) {
                     if (argv.bae) {
                         const display = bae(options.schema,options.openapi,[warning]);
                         console.warn(display);
+                    }
+                    else if (options.json) {
+                        jsonOutput.warnings.push({ message:warning.message, pointer:warning.pointer, ruleName:warning.ruleName, ruleUrl:warning.ruleUrl });
                     }
                     else {
                         console.warn(warning.message,warning.pointer,warning.ruleName);
@@ -103,15 +123,23 @@ function main(){
             }
             reject(ex);
         }
-        if (ruleUrls.size > 0) {
+        if ((ruleUrls.size > 0) && (!options.json)) {
             console.warn('For more information, visit:');
             for (let url of ruleUrls) {
                 console.warn(url);
             }
         }
         if (argv.dumpMeta) {
-            console.warn('\n#Definition metadata:');
-            console.warn(yaml.stringify(options.metadata,{depth:Math.INFINITY}));
+            if (options.json) {
+                jsonOutput.metadata = options.metadata;
+            }
+            else {
+                console.warn('\n#Definition metadata:');
+                console.warn(yaml.stringify(options.metadata,{depth:Math.INFINITY}));
+            }
+        }
+        if (options.json) {
+            console.warn(JSON.stringify(jsonOutput, null, 2));
         }
         if (result || argv.force) {
             if (options.output) {
@@ -140,6 +168,6 @@ main()
     process.exitCode = 0;
 })
 .catch(function(err){
-    console.warn(err.message);
+    if (!argv.json) console.warn(err.message);
 });
 
