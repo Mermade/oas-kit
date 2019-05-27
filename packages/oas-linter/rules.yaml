@@ -60,7 +60,7 @@ rules:
     property: $ref
     omit: '#'
     split: /
-    value: '^[a-zA-Z0-9\.\-_]+$'
+    value: '^(?:[a-zA-Z0-9\.\-_{}]|(?:~[01]))+$'
 - name: no-script-tags-in-markdown
   object: '*'
   description: markdown descriptions should not contain <script> tags
