@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                p1:
+                  type: string
+      responses:
+        default:
+          description: OK

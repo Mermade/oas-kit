@@ -627,8 +627,13 @@ function processParameter(param, op, path, method, index, openapi, options) {
         singularRequestBody = false;
         result.content = {};
         let contentType = 'application/x-www-form-urlencoded';
-        if ((consumes.length) && (consumes.indexOf('multipart/form-data') >= 0)) {
-            contentType = 'multipart/form-data';
+        if (consumes.length) {
+            if (consumes.indexOf('multipart/form-data') >= 0) {
+                 contentType = 'multipart/form-data';
+            }
+            else if (consumes.indexOf('application/json') >= 0) {
+                 contentType = 'application/json';
+            }
         }
 
         result.content[contentType] = {};
