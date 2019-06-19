@@ -70,6 +70,8 @@ converter.convertObj(swagger, options, function(err, options){
 // if you omit the callback parameter, you will instead receive a Promise
 ```
 
+Note that the `options` object passed in is modified/extended by the `convert*` functions.
+
 See the [boast command-line tool](./boast.js) for a fuller CLI tool for converting, validating and linting.
 
 See here for complete [documentation](/docs/options.md) of the `options` object.
