@@ -1,0 +1,55 @@
+swagger: '2.0'
+basePath: /an/api
+host: example.com
+schemes:
+  - https
+info:
+  version: '1.0'
+  title: 'Root vendor extensions'
+  description: 'Should be copied over without generating additional schemas'
+x-something:
+  one:
+    identifier: "1"
+    url: "https://one.com"
+  another:
+    identifier: "Not1"
+    url: "https://another.com"
+x-something-groups:
+  first:
+    - color: green
+      default:
+        backend:
+          $ref: "#/x-something/one"
+      options:
+        - backend:
+            $ref: "#/x-something/another"
+          criteria:
+            - in: "header"
+              name: "x-value-id"
+              value: [42]
+    - color: blue
+      default:
+        backend:
+          $ref: "#/x-something/one"
+      options:
+        - backend:
+            $ref: "#/x-something/another"
+          criteria:
+            - in: "header"
+              name: "x-value-id"
+              value: [17]
+paths:
+  /v1/check:
+    get:
+      operationId: one
+      summary: 'Gets check'
+      description: 'Cf. summary.'
+      x-backends:
+        $ref: "#/x-something-groups/first"
+      consumes:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful request.'
+        '400':
+          description: 'Bad request.'

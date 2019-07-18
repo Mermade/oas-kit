@@ -248,7 +248,8 @@ function fixupRefs(obj, key, state) {
                 type = (oldRef.indexOf('/headers/')>schemaIndex) ? 'headers' :
                     ((oldRef.indexOf('/responses/')>schemaIndex) ? 'responses' :
                     ((oldRef.indexOf('/example')>schemaIndex) ? 'examples' :
-                    ((oldRef.indexOf('/parameters/')>schemaIndex) ? 'parameters' : 'schemas')));
+                    ((oldRef.indexOf('/x-')>schemaIndex) ? 'extensions' :
+                    ((oldRef.indexOf('/parameters/')>schemaIndex) ? 'parameters' : 'schemas'))));
 
                 // non-body/form parameters have not moved in the overall structure (like responses)
                 // but extracting the requestBodies can cause the *number* of parameters to change
@@ -257,7 +258,7 @@ function fixupRefs(obj, key, state) {
                     fixUpSchema(target,options);
                 }
 
-                if (type !== 'responses') {
+                if ((type !== 'responses') && (type !== 'extensions')) {
                     let prefix = type.substr(0,type.length-1);
                     if ((prefix === 'parameter') && target.name && (target.name === common.sanitise(target.name))) {
                         prefix = encodeURIComponent(target.name);
