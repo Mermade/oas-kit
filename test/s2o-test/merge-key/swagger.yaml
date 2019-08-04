@@ -1,0 +1,19 @@
+swagger: 2.0
+info:
+  version: '1.0'
+  title: Demo API
+x-DefaultParameters: &DEFAULT_HEADERS
+  parameters:
+  - $ref: '#/parameters/RequestIdParam'
+paths:
+  /test:
+    get:
+      <<: *DEFAULT_HEADERS
+      responses:
+        200:
+          description: OK
+parameters:
+  RequestIdParam:
+    name: X-Request-ID
+    in: header
+    type: string

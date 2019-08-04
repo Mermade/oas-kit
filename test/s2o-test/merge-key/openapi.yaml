@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  version: "1.0"
+  title: Demo API
+x-DefaultParameters:
+  parameters:
+    - $ref: "#/components/parameters/RequestIdParam"
+paths:
+  /test:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/RequestIdParam"
+      responses:
+        "200":
+          description: OK
+components:
+  parameters:
+    RequestIdParam:
+      name: X-Request-ID
+      in: header
+      schema:
+        type: string

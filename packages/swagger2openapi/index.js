@@ -1518,7 +1518,7 @@ function convertStr(str, options, callback) {
         }
         catch (ex) {
             try {
-                obj = yaml.parse(str, { schema: 'core' });
+                obj = yaml.parse(str, { schema: 'core', merge:true });
                 options.sourceYaml = true;
                 options.text = str;
             }

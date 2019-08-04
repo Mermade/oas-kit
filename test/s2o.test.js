@@ -17,9 +17,6 @@ describe('Converter tests', () => {
 tests.forEach((test) => {
     describe(test, () => {
         it('should match expected output', (done) => {
-            const swagger = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'swagger.yaml'),'utf8'),{schema:'core'});
-            const openapi = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'openapi.yaml'),'utf8'),{schema:'core'});
-
             let options = {};
             try {
                 options = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'options.yaml'),'utf8'),{schema:'core'});
@@ -27,9 +24,10 @@ tests.forEach((test) => {
             }
             catch (ex) {}
 
-            swagger2openapi.convertObj(swagger, options, (err, result) => {
+            swagger2openapi.convertFile(path.join(__dirname, 's2o-test', test, 'swagger.yaml'), options, (err, result) => {
                 if (err) return done(err);
 
+                const openapi = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'openapi.yaml'),'utf8'),{schema:'core'});
                 assert.deepEqual(result.openapi, openapi);
 
                 return done();
