@@ -385,40 +385,38 @@ function processHeader(header, options) {
             header.schema = {};
         }
         if (header.type) header.schema.type = header.type;
-        if (header.items && header.items.collectionFormat) {
-            if (header.items.type && header.items.type != 'array') {
-                if (header.items.collectionFormat != header.collectionFormat) {
-                    throwOrWarn('Nested collectionFormats are not supported', header, options);
-                }
-                delete header.items.collectionFormat;
+        if (header.items && header.items.type !== 'array') {
+            if (header.items.collectionFormat !== header.collectionFormat) {
+                throwOrWarn('Nested collectionFormats are not supported', header, options);
             }
+            delete header.items.collectionFormat;
         }
-        if (typeof header.collectionFormat !== 'undefined') {
-            if (header.type != 'array') {
-                if (options.patch) {
-                    delete header.collectionFormat;
-                }
-                else {
-                    throwError('(Patchable) collectionFormat is only applicable to header.type array', options);
-                }
-            }
-            if (header.collectionFormat === 'csv') {
-                header.style = 'simple';
-            }
+        if (header.type === 'array') {
             if (header.collectionFormat === 'ssv') {
                 throwOrWarn('collectionFormat:ssv is no longer supported for headers', header, options); // not lossless
             }
-            if (header.collectionFormat === 'pipes') {
+            else if (header.collectionFormat === 'pipes') {
                 throwOrWarn('collectionFormat:pipes is no longer supported for headers', header, options); // not lossless
             }
-            if (header.collectionFormat === 'multi') {
+            else if (header.collectionFormat === 'multi') {
                 header.explode = true;
             }
-            if (header.collectionFormat === 'tsv') {
+            else if (header.collectionFormat === 'tsv') {
                 throwOrWarn('collectionFormat:tsv is no longer supported', header, options); // not lossless
                 header["x-collectionFormat"] = 'tsv';
             }
+            else { // 'csv'
+                header.style = 'simple';
+            }
             delete header.collectionFormat;
+        }
+        else if (header.collectionFormat) {
+            if (options.patch) {
+                delete header.collectionFormat;
+            }
+            else {
+                throwError('(Patchable) collectionFormat is only applicable to header.type array', options);
+            }
         }
         delete header.type;
         for (let prop of common.parameterTypeProperties) {
@@ -541,7 +539,10 @@ function processParameter(param, op, path, method, index, openapi, options) {
         if (param.description === null) delete param.description;
 
         let oldCollectionFormat = param.collectionFormat;
-        if (param.collectionFormat) {
+        if ((param.type === 'array') && !oldCollectionFormat) {
+            oldCollectionFormat = 'csv';
+        }
+        if (oldCollectionFormat) {
             if (param.type != 'array') {
                 if (options.patch) {
                     delete param.collectionFormat;
@@ -550,14 +551,14 @@ function processParameter(param, op, path, method, index, openapi, options) {
                     throwError('(Patchable) collectionFormat is only applicable to param.type array', options);
                 }
             }
-            if ((param.collectionFormat === 'csv') && ((param.in === 'query') || (param.in === 'cookie'))) {
+            if ((oldCollectionFormat === 'csv') && ((param.in === 'query') || (param.in === 'cookie'))) {
                 param.style = 'form';
                 param.explode = false;
             }
-            if ((param.collectionFormat === 'csv') && ((param.in === 'path') || (param.in === 'header'))) {
+            if ((oldCollectionFormat === 'csv') && ((param.in === 'path') || (param.in === 'header'))) {
                 param.style = 'simple';
             }
-            if (param.collectionFormat === 'ssv') {
+            if (oldCollectionFormat === 'ssv') {
                 if (param.in === 'query') {
                     param.style = 'spaceDelimited';
                 }
@@ -565,7 +566,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
                     throwOrWarn('collectionFormat:ssv is no longer supported except for in:query parameters', param, options); // not lossless
                 }
             }
-            if (param.collectionFormat === 'pipes') {
+            if (oldCollectionFormat === 'pipes') {
                 if (param.in === 'query') {
                     param.style = 'pipeDelimited';
                 }
@@ -573,10 +574,10 @@ function processParameter(param, op, path, method, index, openapi, options) {
                     throwOrWarn('collectionFormat:pipes is no longer supported except for in:query parameters', param, options); // not lossless
                 }
             }
-            if (param.collectionFormat === 'multi') {
+            if (oldCollectionFormat === 'multi') {
                 param.explode = true;
             }
-            if (param.collectionFormat === 'tsv') {
+            if (oldCollectionFormat === 'tsv') {
                 throwOrWarn('collectionFormat:tsv is no longer supported', param, options); // not lossless
                 param["x-collectionFormat"] = 'tsv';
             }
@@ -600,8 +601,8 @@ function processParameter(param, op, path, method, index, openapi, options) {
                             }
                             delete obj[key]; // not lossless
                         }
-                        // items in 2.0 was a subset of JSON-Schema items object, it gets
-                        // fixed up below
+                        // items in 2.0 was a subset of the JSON-Schema items
+                        // object, it gets fixed up below
                     });
                 }
                 for (let prop of common.parameterTypeProperties) {

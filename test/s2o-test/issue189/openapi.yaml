@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: Sample with query parameter without collectionFormat
+  version: "1.0"
+paths:
+  /system/group_membership:
+    get:
+      summary: Invoke the foo.
+      operationId: getFoo
+      parameters:
+        - name: users
+          in: query
+          description: foo
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "202":
+          description: foo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  description:
+                    type: string
+                    description: Details about the accepted request.
+servers:
+  - url: https://haible.de/bruno/ibm

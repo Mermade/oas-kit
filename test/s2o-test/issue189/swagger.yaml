@@ -1,0 +1,36 @@
+swagger: '2.0'
+info:
+  title: Sample with query parameter without collectionFormat
+  version: '1.0'
+host: haible.de
+basePath: /bruno/ibm
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /system/group_membership:
+    get:
+      summary: Invoke the foo.
+      operationId: getFoo
+      produces:
+        - application/json
+      parameters:
+        - name: users
+          in: query
+          description: foo
+          required: true
+          type: array
+          items:
+            type: string
+      responses:
+        '202':
+          description: foo
+          schema:
+            type: object
+            properties:
+              description:
+                type: string
+                description: Details about the accepted request.
