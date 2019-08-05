@@ -9,7 +9,7 @@
     "lerna": "^3.15.0",
     "mocha": "^6.1.4",
     "should": "^13.2.1",
-    "standard-version": "^6.0.1",
+    "standard-version": "^7.0.0",
     "webpack": "^4.14.0",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.0.8",
