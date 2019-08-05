@@ -30,7 +30,7 @@ tests.forEach((test) => {
             swagger2openapi.convertObj(swagger, options, (err, result) => {
                 if (err) return done(err);
 
-                assert.deepEqual(result.openapi, openapi);
+                assert.deepStrictEqual(result.openapi, openapi);
 
                 return done();
             });

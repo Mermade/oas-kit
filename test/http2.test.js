@@ -76,7 +76,7 @@ tests.forEach((test) => {
 
             resolver.resolve(input, options.source, options)
             .then(function(result){
-                assert.deepEqual(result.openapi, output);
+                assert.deepStrictEqual(result.openapi, output);
                 return done();
             })
             .catch(function(err){
