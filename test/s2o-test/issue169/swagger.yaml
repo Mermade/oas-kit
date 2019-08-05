@@ -1,0 +1,58 @@
+swagger: '2.0'
+
+info:
+  title: Random title
+  description: Random description
+  version: "0.0.1"
+  contact:
+    email: qvidal@random.com
+
+host: www.random.com
+
+schemes:
+  - https
+
+paths:
+  /random:
+    post:
+      summary: Random summary.
+      parameters:
+        - name: body
+          description: Random body.
+          in: body
+          schema:
+            $ref: '#/definitions/RandomRequest'
+          required: true
+      responses:
+        204:
+          description: No Content.
+        400:
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error400'
+
+definitions:
+  RandomRequest:
+    type: object
+    properties:
+      random_phone_number:
+        description: Some string number.
+        type: string
+        example: "0681924019"
+      other_random_phone_number:
+        description: Some string number.
+        type: string
+        example: "681924019"
+    required: [random_phone_number]
+  Error400:
+    type: object
+    properties:
+      code:
+        type: string
+        example: "400"
+      label:
+        type: string
+        example: Bad Request
+      description:
+        type: string
+        example: Property "random_date" is required
