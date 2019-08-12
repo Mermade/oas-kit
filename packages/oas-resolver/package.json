@@ -1,6 +1,6 @@
 {
   "name": "oas-resolver",
-  "version": "2.2.5 (StueyNZ)",
+  "version": "2.2.5",
   "description": "Resolve external $refs in OpenAPI (swagger) 2.0 / 3.x definitions",
   "main": "index.js",
   "scripts": {
