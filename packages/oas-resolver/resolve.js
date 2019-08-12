@@ -23,6 +23,8 @@ let argv = require('yargs')
     .default('verbose',2)
     .alias('v','verbose')
     .describe('verbose','increase verbosity')
+    .string('droprefs')
+    .describe('droprefs', 'regexp for $refs to be left unresolved')
     .demand(1)
     .argv;
 
@@ -33,6 +35,8 @@ let options = {resolve: true};
 options.verbose = argv.verbose;
 if (argv.quiet) options.verbose = options.verbose - argv.quiet;
 options.fatal = true;
+
+options.dropRefs = argv.droprefs ? new RegExp(argv.droprefs, 'g') : null;
 
 if (filespec.startsWith('https')) options.agent = new https.Agent({ keepAlive: true })
 else if (filespec.startsWith('http')) options.agent = new http.Agent({ keepAlive: true });

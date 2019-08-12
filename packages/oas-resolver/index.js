@@ -79,16 +79,20 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                     }
                 }
                 else if (baseUrl.protocol) {
-                    let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
-                    obj['x-miro'] = obj[key];
-                    obj[key] = newRef;
+                    if( !options.dropRefs || obj[key].toString().match(options.dropRefs) == null) {
+                        let newRef = url.resolve(base,obj[key]).toString();
+                        if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
+                        obj['x-miro'] = obj[key];
+                        obj[key] = newRef;
+                    }
                 }
                 else if (!obj['x-miro']) {
-                    let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
-                    obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
-                    obj[key] = newRef;
+                    if ( !options.dropRefs || obj[key].toString().match(options.dropRefs) == null) {
+                        let newRef = url.resolve(base,obj[key]).toString();
+                        if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
+                        obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
+                        obj[key] = newRef;
+                    }
                 }
             }
         });
@@ -270,6 +274,10 @@ function scanExternalRefs(options) {
         function inner(obj,key,state){
             if (obj[key] && isRef(obj[key],'$ref')) {
                 let $ref = obj[key].$ref;
+
+                if (options.dropRefs && $ref.match(options.dropRefs) != null) {
+                    if (options.verbose>1) console.warn(common.colour.yellow+'Dropped reference '+$ref+common.colour.normal);
+                } else
                 if (!$ref.startsWith('#')) { // is external
 
                     let $extra = '';
