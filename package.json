@@ -4,7 +4,7 @@
     "@babel/runtime": "^7.3.1",
     "babel-preset-env": "^1.7.0",
     "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.0.1",
+    "eslint": "^6.2.2",
     "jsdoc-to-markdown": "^5.0.0",
     "lerna": "^3.15.0",
     "mocha": "^6.1.4",
@@ -24,6 +24,7 @@
   },
   "scripts": {
     "test": "npx mocha",
+    "lint": "npx eslint packages/*/*.js",
     "webpack": "npx webpack -p",
     "webpack-converter": "npx webpack -p --config webpack.converter.js",
     "webpack-validator": "npx webpack -p --config webpack.validator.js",
