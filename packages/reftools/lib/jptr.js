@@ -34,7 +34,7 @@ function jpunescape(s) {
 */
 function jptr(obj, prop, newValue) {
     if (typeof obj === 'undefined') return false;
-    if (!prop || (prop === '#')) return (typeof newValue !== 'undefined' ? newValue : obj);
+    if (!prop || typeof prop !== 'string' || (prop === '#')) return (typeof newValue !== 'undefined' ? newValue : obj);
 
     if (prop.indexOf('#')>=0) {
         let parts = prop.split('#');

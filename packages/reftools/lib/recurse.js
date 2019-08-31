@@ -34,7 +34,9 @@ function recurse(object, state, callback) {
         state.path = state.path + '/' + encodeURIComponent(jpescape(key));
         state.identityPath = state.seen.get(object[key]);
         state.identity = (typeof state.identityPath !== 'undefined');
-        callback(object, key, state);
+        if (object.hasOwnProperty(key)) {
+            callback(object, key, state);
+        }
         if ((typeof object[key] === 'object') && (!state.identity)) {
             if (state.identityDetection && !Array.isArray(object[key]) && object[key] !== null) {
                 state.seen.set(object[key],state.path);

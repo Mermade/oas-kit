@@ -465,12 +465,11 @@ function checkServer(server, options) {
 function checkServers(servers, options) {
     should(servers).be.an.Array();
     //should(common.distinctArray(servers)).be.exactly(true,'servers array must be distinct'); // TODO move to linter
-    for (let s in servers) {
+    servers.forEach(function(server, s) {
         contextAppend(options, s);
-        let server = servers[s];
         checkServer(server, options);
         options.context.pop();
-    }
+    });
 }
 
 function checkLink(link, openapi, options) {
