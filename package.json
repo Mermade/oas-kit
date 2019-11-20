@@ -6,7 +6,7 @@
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.2.2",
     "jsdoc-to-markdown": "^5.0.0",
-    "lerna": "^3.15.0",
+    "lerna": "^3.19.0",
     "mocha": "^6.1.4",
     "should": "^13.2.1",
     "standard-version": "^7.0.0",
