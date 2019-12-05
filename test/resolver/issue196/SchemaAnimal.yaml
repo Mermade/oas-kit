@@ -1,0 +1,6 @@
+type: object
+properties:
+  colour:
+    $ref: "./Parameters.yaml#/parameter_colour/schema"
+  size:
+    $ref: "./Parameters.yaml#/parameter_size/schema"

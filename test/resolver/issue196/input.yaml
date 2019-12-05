@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: Resolve Test
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      parameters:
+        - $ref: "./Parameters.yaml#/parameter_colour"
+        - $ref: "./Parameters.yaml#/parameter_size"
+      responses:
+        '200':
+          description: OK
+components:
+  parameters:
+    $ref: './Parameters.yaml'
+  schemas:
+    Cat:
+      $ref: './SchemaAnimal.yaml'
+    Dog:
+      $ref: './SchemaAnimal.yaml'

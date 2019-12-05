@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: Resolve Test
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      parameters:
+        - name: parameter_colour
+          description: Colour
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: parameter_size
+          in: query
+          description: Size
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+components:
+  parameters:
+    parameter_colour:
+      name: parameter_colour
+      description: Colour
+      in: query
+      required: true
+      schema:
+        type: string
+    parameter_size:
+      name: parameter_size
+      in: query
+      description: Size
+      required: true
+      schema:
+        type: string
+  schemas:
+    Cat:
+      type: object
+      properties:
+        size:
+          type: string
+        colour:
+          type: string
+    Dog:
+      $ref: '#/components/schemas/Cat'

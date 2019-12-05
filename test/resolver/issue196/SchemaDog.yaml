@@ -1,0 +1,4 @@
+type: object
+allOf:
+  - $ref: "./Parameters.yaml#/parameter_colour/schema"
+  - $ref: "./Parameters.yaml#/parameter_size/schema"

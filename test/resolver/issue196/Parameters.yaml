@@ -1,0 +1,14 @@
+parameter_colour:
+  name: parameter_colour
+  description: Colour
+  in: query
+  required: true
+  schema:
+    type: string
+parameter_size:
+  name: parameter_size
+  in: query
+  description: Size
+  required: true
+  schema:
+    type: string
