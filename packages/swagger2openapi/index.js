@@ -1513,17 +1513,21 @@ function convertObj(swagger, options, callback) {
 function convertStr(str, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         let obj = null;
+        let error = null;
         try {
             obj = JSON.parse(str);
             options.text = JSON.stringify(obj,null,2);
         }
         catch (ex) {
+            error = ex;
             try {
                 obj = yaml.parse(str, { schema: 'core' });
                 options.sourceYaml = true;
                 options.text = str;
             }
-            catch (ex) { }
+            catch (ex) {
+                error = ex;
+            }
         }
         if (obj) {
             convertObj(obj, options)
@@ -1531,7 +1535,7 @@ function convertStr(str, options, callback) {
             .catch(ex => reject(ex));
         }
         else {
-            reject(new S2OError('Could not parse string'));
+            reject(new S2OError(error ? error.message : 'Could not parse string'));
         }
     }));
 }
