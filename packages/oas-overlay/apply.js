@@ -3,7 +3,7 @@
 'use strict';
 
 const fs = require('fs');
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 
 const applicator = require('./index.js');
 
@@ -11,19 +11,19 @@ const argv = require('tiny-opts-parser')(process.argv);
 if (argv.v) argv.verbose = argv.v;
 
 if (argv._.length>=3) {
-    const overlay = yaml.safeLoad(fs.readFileSync(argv._[2],'utf8'),{json:true});
+    const ovfile = yaml.parse(fs.readFileSync(argv._[2],'utf8'));
     const openapiStr = fs.readFileSync(argv._[3],'utf8');
     const json = (openapiStr.startsWith('{'));
-    const openapi = yaml.safeLoad(openapiStr,{json:true});
-    if (overlay.overlay) {
-        if (overlay.overlay.description) {
-            console.warn('Applying',overlay.overlay.description);
+    const openapi = yaml.parse(openapiStr);
+    if (ovfile.overlay) {
+        if (ovfile.info && ovfile.info.title) {
+            console.warn('Applying',ovfile.info.title);
         }
-        const result = applicator.apply(overlay,openapi,argv);
+        const result = applicator.apply(ovfile,openapi,argv);
         if (json)
             console.log(JSON.stringify(result,null,2));
         else
-            console.log(yaml.safeDump(result));
+            console.log(yaml.stringify(result));
     }
     else {
         console.warn(argv._[2],'does not seem to be a valid overlay document');

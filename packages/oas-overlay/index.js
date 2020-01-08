@@ -10,7 +10,7 @@ const findObj = require('reftools/lib/findObj.js').findObj;
 const jmespath = require('jmespath');
 
 function truetype(v){
-    return Array.isArray(v) ? 'array' :  typeof v;
+    return Array.isArray(v) ? 'array' : typeof v;
 }
 
 function process(result,src,update,options){
@@ -21,13 +21,16 @@ function process(result,src,update,options){
             console.warn('item',util.inspect({update:update,result:item,rtype:itype,locn:present},{depth:null,colors:true}));
         }
         if (itype === 'array') {
-            if (update.concat) item = item.concat(update.concat);
-            if (update.splice) item.splice.apply(update,update.splice);
+            //if (update.concat) item = item.concat(update.concat);
+            //if (update.splice) item.splice.apply(update,update.splice);
             process(item,src,update,options);
         }
         else {
             if (typeof update.value !== 'undefined') {
                 Object.assign(item,update.value);
+            }
+            if (update.remove === true) {
+                delete item;
             }
        }
     }
@@ -69,9 +72,6 @@ function apply(overlay,openapi,options){
             console.warn(update.target,'cannot be parsed',ex.message);
         }
     }
-    recurse(src,{},function(obj,key,state){
-        if (obj[key] === null) delete obj[key];
-    });
     return reref(src);
 }
 
