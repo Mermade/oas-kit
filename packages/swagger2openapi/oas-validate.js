@@ -224,7 +224,7 @@ function* check(file, force, expectFailure) {
             }
             catch (ex) {
                 try {
-                    src = yaml.parse(srcStr, { schema: 'core' });
+                    src = yaml.parse(srcStr, { schema: 'core', prettyErrors: true });
                 }
                 catch (ex) {
                     let warning = 'Could not parse file ' + file + '\n' + ex.message;
