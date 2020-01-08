@@ -191,7 +191,7 @@ function resolveExternal(root, pointer, options, callback) {
             })
             .then(function (data) {
                 try {
-                    let context = yaml.parse(data, { schema:'core' });
+                    let context = yaml.parse(data, { schema:'core', prettyErrors: true });
                     data = options.externalRef = context;
                     options.cache[target] = clone(data);
                     /* resolutionSource:B, from the network, data is fresh, but we clone it into the cache */
@@ -228,7 +228,7 @@ function resolveExternal(root, pointer, options, callback) {
         return readFileAsync(target, options.encoding || 'utf8')
             .then(function (data) {
                 try {
-                    let context = yaml.parse(data, { schema:'core' });
+                    let context = yaml.parse(data, { schema:'core', prettyErrors: true });
                     data = options.externalRef = context;
                     /*
                         resolutionSource:C from a file, data is fresh but we clone it into the cache
