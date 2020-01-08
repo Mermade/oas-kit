@@ -21,7 +21,7 @@ This is the mono-repo for the following related projects
 
 ## Supported Node.js versions
 
-Any LTS version from 8.4.0 (with `--expose-http2`) or 8.8.1 without flags, onwards.
+Any LTS version.
 
 ## Development
 
