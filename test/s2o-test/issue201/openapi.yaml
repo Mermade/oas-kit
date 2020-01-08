@@ -1,0 +1,9 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: 1.0.0
+  description: |
+    This call returns all payment accounts that are relevant the PSU on behalf of whom the AISP is connected.
+    Thanks to HYPERMEDIA, each account is returned with the links aiming to ease access to the relevant transactions and balances.
+    The result may be subject to pagination (i.e. retrieving a partial result in case of having too many results) through a set of pages by the ASPSP. Thereafter, the AISP may ask for the first, next, previous or last page of results.
+paths: {}
