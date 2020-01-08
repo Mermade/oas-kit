@@ -2,5 +2,5 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: Minimal Valid OpenAPI 3.0
+  title: Minimal valid OpenAPI document
 paths: {}
