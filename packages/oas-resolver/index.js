@@ -80,6 +80,12 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                 }
                 else if (baseUrl.protocol) {
                     let newRef = url.resolve(base,obj[key]).toString();
+                    let u2 = url.parse(obj[key]);
+
+                    if(testProtocol(baseUrl.protocol, u2.protocol) === 'file:') {
+                        newRef = url.fileURLToPath('file:\\' + newRef);
+                    }
+
                     if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key];
                     obj[key] = newRef;
