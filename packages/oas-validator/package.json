@@ -17,7 +17,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "^5.5.2",
-    "better-ajv-errors": "^0.5.2",
+    "better-ajv-errors": "^0.6.7",
     "call-me-maybe": "^1.0.1",
     "oas-kit-common": "^1.0.7",
     "oas-linter": "^3.0.2",
