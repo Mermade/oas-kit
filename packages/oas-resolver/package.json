@@ -1,6 +1,6 @@
 {
   "name": "oas-resolver",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Resolve external $refs in OpenAPI (swagger) 2.0 / 3.x definitions",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "dependencies": {
     "node-fetch-h2": "^2.3.0",
     "oas-kit-common": "^1.0.7",
-    "reftools": "^1.0.9",
+    "reftools": "^1.0.10",
     "yaml": "^1.7.2",
     "yargs": "^12.0.5"
   },
