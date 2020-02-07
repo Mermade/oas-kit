@@ -3,13 +3,18 @@
 Usage:
 
 ```javascript
-var validator = require('oas-validator');
-var options = {};
+const validator = require('oas-validator');
+const options = {};
 validator.validate(openapi, options, function(err, options){
   // options.valid contains the result of the validation
   // options.context now contains a stack (array) of JSON-Pointer strings
 });
-// also available is a synchronous validateSync method which returns a boolean
 ```
+
+If the callback argument of `validate` is omitted, a Promise is returned instead.
+
+Please note the `validateSync` function is now a misnomer, as it also returns
+a Promise or takes a callback. It will likely be renamed `validateInner`
+or similar in the next major release.
 
 See here for complete [documentation](/docs/options.md) of the `options` object.
