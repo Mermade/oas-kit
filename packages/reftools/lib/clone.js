@@ -1,6 +1,5 @@
 'use strict';
 
-const deepCopy = require('deep-copy')
 const cloneDeep = require('lodash.clonedeep')
 
 /**
@@ -19,6 +18,15 @@ function nop(obj) {
 }
 
 /**
+* clones the given object using JSON.parse and JSON.stringify
+* @param obj the object to clone
+* @return the cloned object
+*/
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+/**
 * clones the given object's properties shallowly, ignores properties from prototype
 * @param obj the object to clone
 * @return the cloned object
@@ -34,6 +42,22 @@ function shallowClone(obj) {
 }
 
 /**
+* clones the given object's properties deeply, ignores properties from prototype
+* @param obj the object to clone
+* @return the cloned object
+*/
+function deepClone(obj) {
+    let result = Array.isArray(obj) ? [] : {};
+    for (let p in obj) {
+        if (obj.hasOwnProperty(p) || Array.isArray(obj)) {
+            result[p] = (typeof obj[p] === 'object') ? deepClone(obj[p]) : obj[p];
+        }
+    }
+    return result;
+}
+
+
+/**
 * clones the given object's properties shallowly, using Object.assign
 * @param obj the object to clone
 * @return the cloned object
@@ -44,9 +68,9 @@ function fastClone(obj) {
 
 module.exports = {
     nop : nop,
-    clone : deepCopy,
+    clone : clone,
     shallowClone : shallowClone,
-    deepClone : deepCopy,
+    deepClone : deepClone,
     fastClone : fastClone,
     circularClone : cloneDeep
 };
