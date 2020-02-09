@@ -50,8 +50,8 @@ describe('clone',function(){
     });
     describe('circular',function(){
         function Foo() {
-            this.container = { child: { value: true } }
-            this.container.child2 = this;
+            this.container = { some: { value: true } }
+            this.container.child = this;
           }
 
           var foo = new Foo();
