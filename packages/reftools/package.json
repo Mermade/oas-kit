@@ -43,6 +43,7 @@
     "yaml": "^1.7.2"
   },
   "dependencies": {
-    "deep-copy": "^1.4.2"
+    "deep-copy": "^1.4.2",
+    "lodash.clonedeep": "^4.5.0"
   }
 }

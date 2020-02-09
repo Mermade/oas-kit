@@ -49,16 +49,19 @@ describe('clone',function(){
         });
     });
     describe('circular',function(){
-        let a
-        a = {some: a}
-        const input = { container: { child: { value: a } } };
+        function Foo() {
+            this.container = { child: { value: true } }
+            this.container.child2 = this;
+          }
+
+          var foo = new Foo();
 
         it('should produce a deep clone of a given object',function(){
-            let output = clone.circularClone(input);
+            let output = clone.circularClone(foo);
             output.should.have.type('object');
-            output.should.not.equal(input);
-            output.should.deepEqual(input);
-            output.container.should.not.equal(input.container);
+            output.should.not.equal(foo);
+            output.should.deepEqual(foo);
+            output.container.should.not.equal(foo.container);
         });
     });
 });
