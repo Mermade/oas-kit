@@ -56,7 +56,6 @@ function deepClone(obj) {
     return result;
 }
 
-
 /**
 * clones the given object's properties shallowly, using Object.assign
 * @param obj the object to clone
