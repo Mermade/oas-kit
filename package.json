@@ -3,6 +3,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.3.1",
     "babel-preset-env": "^1.7.0",
+    "benchmark": "^2.1.4",
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.2.2",
     "jsdoc-to-markdown": "^5.0.0",
@@ -55,7 +56,6 @@
     "oas",
     "swagger"
   ],
-  "dependencies": {},
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

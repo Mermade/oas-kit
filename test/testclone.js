@@ -49,6 +49,10 @@ describe('clone',function(){
         });
     });
     describe('circular',function(){
+        let a
+        a = {some: a}
+        const input = { container: { child: { value: a } } };
+
         it('should produce a deep clone of a given object',function(){
             let output = clone.circularClone(input);
             output.should.have.type('object');

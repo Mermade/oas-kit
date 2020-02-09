@@ -1,0 +1,1 @@
+var Benchmark = require('benchmark');

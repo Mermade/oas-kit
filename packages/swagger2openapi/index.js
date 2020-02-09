@@ -7,7 +7,7 @@ const pathlib = require('path');
 
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch-h2');
-const yaml = require('yaml');
+const yaml = require('js-yaml')
 
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
@@ -1335,7 +1335,7 @@ function convertObj(swagger, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         if (!swagger) swagger = {};
         options.original = swagger;
-        if (!options.text) options.text = yaml.stringify(swagger);
+        if (!options.text) options.text = yaml.safeDump(swagger);
         options.externals = [];
         options.externalRefs = {};
         options.rewriteRefs = true; // avoids stack explosions
@@ -1521,7 +1521,7 @@ function convertStr(str, options, callback) {
         catch (ex) {
             error = ex;
             try {
-                obj = yaml.parse(str, { schema: 'core', prettyErrors: true });
+                obj = yaml.safeLoad(str);
                 options.sourceYaml = true;
                 options.text = str;
             }

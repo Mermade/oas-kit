@@ -41,5 +41,8 @@
     "nyc": "^15.0.0",
     "should": "^13.2.1",
     "yaml": "^1.7.2"
+  },
+  "dependencies": {
+    "deep-copy": "^1.4.2"
   }
 }
