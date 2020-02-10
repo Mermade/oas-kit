@@ -7,7 +7,7 @@ const pathlib = require('path');
 
 const maybe = require('call-me-maybe');
 const fetch = require('node-fetch-h2');
-const yaml = require('yaml')
+const yaml = require('yaml');
 
 const jptr = require('reftools/lib/jptr.js');
 const resolveInternal = jptr.jptr;
