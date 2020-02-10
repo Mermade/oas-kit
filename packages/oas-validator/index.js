@@ -1396,7 +1396,7 @@ function setupOptions(options,openapi) {
     if (!options.cache) options.cache = {};
     options.schema = openapi3Schema;
     options.metadata = { lines: -1 };
-    if (options.text) options.metadata.lines = options.text.split('\n').length;
+    if ((options.text) && (typeof options.text === 'string')) options.metadata.lines = options.text.split('\n').length;
     options.ajv = ajv;
 }
 

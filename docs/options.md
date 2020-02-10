@@ -31,6 +31,7 @@ linterResults|Function|Input|A function to return the set of linter warnings
 lintLimit|Integer|Input|Controls how many linter warnings are logged in verbose mode
 lintSkip|Array|Input|A list of lint rule names which will not be tested
 mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
+metadata|Object|Output|Used by the validator, if `options.text` is a string, will have a property `lines` containing the number of lines in the input document. Has a property `count`, an Object keyed by the object-type within the document having values summarising the number of times that object appears in total.
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds
@@ -56,6 +57,7 @@ stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Input|The source filename or url of the definition, used by the resolver
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
 targetVersion|String|Input|Used to override the default target OpenAPI version of `3.0.0`
+text|String|Both|If not already a truthy value, will be set to the input text of the conversion
 url|String|Input|URL of the original definition, used when reading a file to create `x-origin` extension
 valid|Boolean|Output|The result of a validation step
 validateSchema|String|Input|Set to 'first', 'last' or 'never' to control ordering of validation strategies
