@@ -116,7 +116,7 @@ function finalise(err, options) {
     }
     if (options.warnings) {
         for (let warning of options.warnings) {
-            warnings.push(options.file + ' ' + warning);
+            warnings.push(options.file + ' ' + warning.message);
         }
     }
 
