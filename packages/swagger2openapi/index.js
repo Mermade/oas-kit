@@ -686,7 +686,10 @@ function processParameter(param, op, path, method, index, openapi, options) {
     }
     if (param && param.in === 'body') {
         result.content = {};
-        if (param.name) result['x-s2o-name'] = (op && op.operationId ? common.sanitiseAll(op.operationId) : '') + ('_' + param.name).toCamelCase();
+        if (param.name) {
+            result['x-s2o-name'] = (op && op.operationId ? common.sanitiseAll(op.operationId) : '') + ('_' + param.name).toCamelCase();
+            result.name = param.name
+        }
         if (param.description) result.description = param.description;
         if (param.required) result.required = param.required;
 
