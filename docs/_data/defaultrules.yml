@@ -249,4 +249,13 @@ default:
 
                 You can even put *markdown* in here!
         ```
+  - name: operations-must-exist
+    object: metadata.count
+    description: One or more operation objects must be present
+    more: ''
+
+  - name: document-max-length
+    object: metadata
+    description: Document should have a max length of 1000 lines
+    more: ''
 

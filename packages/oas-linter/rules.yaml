@@ -1,4 +1,4 @@
-url: http://speccy.io/rules/1-rulesets
+url: https://mermade.github.io/oas-kit/default-rules.html
 rules:
 - name: parameter-description
   object: parameter
