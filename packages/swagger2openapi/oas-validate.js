@@ -70,6 +70,7 @@ let argv = yargs
     .alias('w', 'whatwg')
     .describe('whatwg', 'enable WHATWG URL parsing')
     .boolean('yaml')
+    .default('yaml', true)
     .alias('y', 'yaml')
     .describe('yaml', 'skip YAML-safe test')
     .help('h')
@@ -165,12 +166,12 @@ function handleResult(err, options) {
         if (!options.yaml) {
             try {
                 resultStr = yaml.stringify(result); // should be representable safely in yaml
-                let resultStr2 = yaml.stringify(result); // FIXME dropped 'noRefs:true' here
+                //let resultStr2 = yaml.stringify(result); // FIXME dropped 'noRefs:true' here
                 should(resultStr).not.be.exactly('{}','Result should not be empty');
-                should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
+                //should(resultStr).equal(resultStr2,'Result should have no object identity ref_s');
             }
             catch (ex) {
-                if (options.verbose>1) {
+                if (options.debug) {
                     fs.writeFileSync('./debug.yaml',resultStr,'utf8');
                     console.warn('Result dumped to debug.yaml fixed.yaml');
                     let fix = reref(result);
@@ -217,8 +218,9 @@ function* check(file, force, expectFailure) {
 
     if ((name.indexOf('.yaml') >= 0) || (name.indexOf('.yml') >= 0) || (name.indexOf('.json') >= 0) || force) {
 
+        let srcStr;
         if (!file.startsWith('http')) {
-            let srcStr = fs.readFileSync(path.resolve(file), options.encoding);
+            srcStr = fs.readFileSync(path.resolve(file), options.encoding);
             try {
                 src = JSON.parse(srcStr);
             }
@@ -244,6 +246,7 @@ function* check(file, force, expectFailure) {
 
         options.original = src;
         options.source = file;
+        options.text = srcStr;
         options.expectFailure = false;
         options.allowFailure = false;
 
@@ -257,7 +260,6 @@ function* check(file, force, expectFailure) {
             options.expectFailure = false; // because some things are corrected
             options.allowFailure = true;
         }
-
 
         if (file.startsWith('http')) {
             swagger2openapi.convertUrl(file, clone(options))

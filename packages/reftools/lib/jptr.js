@@ -6,9 +6,7 @@
 * @return the escaped string
 */
 function jpescape(s) {
-    s = s.split('~').join('~0');
-    s = s.split('/').join('~1');
-    return s;
+    return s.replace(/\~/g, '~0').replace(/\//g, '~1');
 }
 
 /**
@@ -17,9 +15,7 @@ function jpescape(s) {
 * @return the unescaped string
 */
 function jpunescape(s) {
-    s = s.split('~1').join('/');
-    s = s.split('~0').join('~');
-    return s;
+    return s.replace(/\~1/g, '/').replace(/~0/g, '~');
 }
 
 // JSON Pointer specification: http://tools.ietf.org/html/rfc6901
