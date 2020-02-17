@@ -10,6 +10,7 @@
       <td>Description</td>
     </tr>
   </thead>
+  <tbody>
   {% for rule in site.data.defaultrules.default %}
   <tr>
     <td id="{{ rule.name }}">
@@ -24,9 +25,10 @@
     </td>
     <td>{{ rule.description }}</td>
   </tr>
-  <tr>
+  <!-- <tr>
     <td colspan=3>{{ rule.more | markdownify }}</td>
-  </tr>
+  </tr> -->
   {% endfor %}
+  </tbody>
 </table>
 
