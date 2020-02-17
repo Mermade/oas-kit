@@ -10,7 +10,7 @@
       <td>Description</td>
     </tr>
   </thead>
-  {% for rule in site.rules.default %}
+  {% for rule in site.defaultrules.default %}
   <tr>
     <td id="{{ rule.name }}">
       <a href="#{{ rule.name }}">{{ rule.name }}</a>
