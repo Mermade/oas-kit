@@ -459,6 +459,11 @@ function checkServer(server, options) {
         should(Object.keys(server.variables).length).be.exactly(srvVars);
         options.context.pop();
     }
+    for (let k in server) {
+        if (!k.startsWith('x-')) {
+            should(['url','description','variables'].indexOf(k)).be.greaterThan(-1,'server object cannot have additionalProperty: '+k);
+        }
+    }
     if (options.lint) options.linter('server',server,'server',options);
 }
 
