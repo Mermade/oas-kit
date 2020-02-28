@@ -85,7 +85,7 @@ function processResult(err, options) {
     let s;
     try {
         if (options.yaml) {
-            s = options.debug ? yaml.stringify(options.openapi) : yaml.stringify(options.openapi, {noRefs:true});
+            s = yaml.stringify(options.openapi); // removed noRefs here
         }
         else {
             s = JSON.stringify(options.openapi, null, options.indent||4);
@@ -109,6 +109,7 @@ function processResult(err, options) {
 }
 
 argv.source = argv._[0];
+argv.text = true;
 let u = url.parse(argv.source);
 if (u.protocol && u.protocol.startsWith('http')) {
     converter.convertUrl(argv.source, argv, processResult);
