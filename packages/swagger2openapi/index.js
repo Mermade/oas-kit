@@ -212,7 +212,9 @@ function fixupRefs(obj, key, state) {
         else if (obj[key].startsWith('#/definitions/')) {
             //only the first part of a schema component name must be sanitised
             let keys = obj[key].replace('#/definitions/', '').split('/');
-            let newKey = componentNames.schemas[decodeURIComponent(keys[0])]; // lookup, resolves a $ref
+            const ref = jptr.jpunescape(keys[0]);
+
+            let newKey = componentNames.schemas[decodeURIComponent(ref)]; // lookup, resolves a $ref
             if (newKey) {
                 keys[0] = newKey;
             }
