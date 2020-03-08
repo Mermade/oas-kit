@@ -1,0 +1,46 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: API
+paths:
+  /post:
+    post:
+      parameters:
+        - name: body
+          description: Random body.
+          in: body
+          schema:
+            $ref: '#/definitions/Random~1Request'
+          required: true
+      responses:
+        204:
+          description: No Content.
+        400:
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Error~1400'
+definitions:
+  Random/Request:
+    type: object
+    properties:
+      random_phone_number:
+        description: Some string number.
+        type: string
+        example: "0681924019"
+      other_random_phone_number:
+        description: Some string number.
+        type: string
+        example: "681924019"
+    required: [random_phone_number]
+  Error/400:
+    type: object
+    properties:
+      code:
+        type: string
+        example: "400"
+      label:
+        type: string
+        example: Bad Request
+      description:
+        type: string
+        example: Property "random_date" is required
