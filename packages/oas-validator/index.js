@@ -796,6 +796,9 @@ function checkPathItem(pathItem, path, openapi, options) {
             for (let r in op.responses) {
                 if (!r.startsWith('x-')) {
                     contextAppend(options, r);
+                    if ((r !== 'default') && (!r.match('^[1-5](?:\\d{2}|XX)$'))) {
+                        should.fail(false,true,'Responses object should not have additional property '+r);
+}
                     let response = op.responses[r];
                     checkResponse(response, r, contextServers, openapi, options);
                     options.context.pop();
