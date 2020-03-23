@@ -16,7 +16,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "should": "^13.2.1",
-    "yaml": "^1.8.0"
+    "yaml": "^1.8.3"
   },
   "repository": {
     "type": "git",
