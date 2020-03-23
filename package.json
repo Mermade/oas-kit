@@ -7,7 +7,7 @@
     "eslint": "^6.2.2",
     "jsdoc-to-markdown": "^5.0.0",
     "lerna": "^3.19.0",
-    "mocha": "^7.0.1",
+    "mocha": "^7.1.1",
     "should": "^13.2.1",
     "standard-version": "^7.0.0",
     "webpack": "^4.42.0",
@@ -22,6 +22,7 @@
   "directories": {
     "test": "test"
   },
+  "funding": "https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa",
   "scripts": {
     "test": "npx mocha",
     "lint": "npx eslint packages/*/*.js",
@@ -31,8 +32,7 @@
     "webpack-reftools": "npx webpack -p --config webpack.reftools.js",
     "changelog": "standard-version",
     "audits": "npx lerna exec npm audit",
-    "outdated": "npx lerna exec --no-bail npm outdated",
-    "postinstall": "echo If you need Linode hosting, the oas-kit referral code: \"https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa\""
+    "outdated": "npx lerna exec --no-bail npm outdated"
   },
   "standard-version": {
     "skip": {
