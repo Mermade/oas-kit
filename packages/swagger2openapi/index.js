@@ -1552,7 +1552,7 @@ function convertUrl(url, options, callback) {
             console.warn('GET ' + url);
         }
         fetch(url, {agent:options.agent}).then(function (res) {
-            if (res.status !== 200) throw new S2OError(`Received status code ${res.status}`);
+            if (res.status !== 200) throw new S2OError(`Received status code ${res.status}: ${url}`);
             return res.text();
         }).then(function (body) {
             convertStr(body, options)
