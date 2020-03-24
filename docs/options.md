@@ -5,6 +5,7 @@ Parameter|Type|Input/Output|Description
 agent|Object|Input|Optional http(s).Agent to be used when fetching resources
 ajv|Object|Input|Used to pass the instance of the `ajv` JSON Schema validator from the validator to the linter
 allScopes|Object|Internal|Cache of scopes by securityScheme for validation
+anchors|Boolean|Input|Allow use of YAML anchors/aliases. May break things
 cache|Object|Input|Optional cache of external resources
 components|Boolean|Input|Command-line flag to indicate unresolve information should be displayed
 context|Array|Output|The context stack of associated with errors in a validation step, you normally want the last entry only
@@ -58,6 +59,7 @@ source|String|Input|The source filename or url of the definition, used by the re
 sourceYaml|Boolean|Output|Flag set if the source string, URL or stream contained a YAML formatted definition
 targetVersion|String|Input|Used to override the default target OpenAPI version of `3.0.0`
 text|String|Both|If not already a truthy value, will be set to the input text of the conversion
+throws|Boolean|Input|Used by tests only to indicate the fixture should throw an exception
 url|String|Input|URL of the original definition, used when reading a file to create `x-origin` extension
 valid|Boolean|Output|The result of a validation step
 validateSchema|String|Input|Set to 'first', 'last' or 'never' to control ordering of validation strategies

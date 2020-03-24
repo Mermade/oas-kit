@@ -933,7 +933,7 @@ function processPaths(container, containerName, options, requestBodyCache, opena
                         delete op[options.rbname];
                     }
                     if (!options.debug) {
-                        op.parameters = op.parameters.filter(keepParameters);
+                        if (op.parameters) op.parameters = op.parameters.filter(keepParameters);
                     }
                 }
 
@@ -1333,6 +1333,25 @@ function fixPaths(openapi, options, reject) {
     }
 }
 
+function detectObjectReferences(obj, options) {
+    const seen = new WeakSet();
+    recurse(obj, {identityDetection:true}, function (obj, key, state) {
+        if ((typeof obj[key] === 'object') && (obj[key] != null)) {
+            if (seen.has(obj[key])) {
+                if (options.anchors) {
+                    obj[key] = clone(obj[key]);
+                }
+                else {
+                    throwError('YAML anchor or merge key at '+state.path, options);
+                }
+            }
+            else {
+                seen.add(obj[key]);
+            }
+        }
+    });
+}
+
 function convertObj(swagger, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
         if (!swagger) swagger = {};
@@ -1347,6 +1366,9 @@ function convertObj(swagger, options, callback) {
         options.promise.reject = reject;
         if (!options.cache) options.cache = {};
         if (options.source) options.cache[options.source] = options.original;
+
+        detectObjectReferences(swagger, options);
+
         if (swagger.openapi && (typeof swagger.openapi === 'string') && swagger.openapi.startsWith('3.')) {
             options.openapi = cclone(swagger);
             fixInfo(options.openapi, options, reject);

@@ -23,6 +23,8 @@ const baseName = path.basename(process.argv[1]);
 const yargs = require('yargs');
 let argv = yargs
     .usage(baseName+' [options] {path-to-docs}...')
+    .boolean('anchors')
+    .describe('anchors','allow use of YAML anchors/aliases')
     .string('encoding')
     .alias('e', 'encoding')
     .default('encoding', 'utf8')

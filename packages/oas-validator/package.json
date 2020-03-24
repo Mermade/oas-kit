@@ -3,6 +3,7 @@
   "version": "3.4.0",
   "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
+  "funding": "https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

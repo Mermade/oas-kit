@@ -918,7 +918,7 @@ function checkSecurity(security,openapi,options) {
     options.context.pop();
 }
 
-function validateSync(openapi, options, callback) {
+function validateInner(openapi, options, callback) {
     return maybe(callback, new Promise(function (resolve, reject) {
     try {
     setupOptions(options,openapi);
@@ -1156,7 +1156,18 @@ function validateSync(openapi, options, callback) {
         options.context.pop();
     }
 
+    let seen = new WeakSet();
     recurse(openapi, {identityDetection:true}, function (obj, key, state) {
+        if (!options.anchors && (typeof obj[key] === 'object') && (obj[key] != null)) {
+            if (seen.has(obj[key])) {
+                options.context.push(state.path);
+                should.fail(true,false,'Definition contains YAML anchor or merge key');
+                options.context.pop(); // won't actually get here
+            }
+            else {
+                seen.add(obj[key]);
+            }
+        }
         if (isRef(obj,key)) {
             options.context.push(state.path);
             should(obj[key]).not.startWith('#/definitions/');
@@ -1168,6 +1179,7 @@ function validateSync(openapi, options, callback) {
             options.context.pop();
         }
     });
+    seen = null;
 
     let paths = {};
 
@@ -1417,7 +1429,7 @@ function validate(openapi, options, callback) {
         resolver.optionalResolve(options)
         .then(function(){
             options.context = [];
-            validateSync(openapi, options)
+            validateInner(openapi, options)
             .then(function(){
                 return resolve(options);
             })
@@ -1439,7 +1451,7 @@ function microValidate(openapi, options) {
 function optionallyValidate(openapi, options) {
     const target = options.externalRef||openapi;
     if (microValidate(target, options)) {
-        validateSync(target, options, function(err, options) {
+        validateInner(target, options, function(err, options) {
             if (err) throw err;
         });
     }
@@ -1447,7 +1459,7 @@ function optionallyValidate(openapi, options) {
 }
 
 module.exports = {
-    validateSync: validateSync,
+    validateInner: validateInner,
     validate: validate,
     microValidate: microValidate,
     optionallyValidate: optionallyValidate,

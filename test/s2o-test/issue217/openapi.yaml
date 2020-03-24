@@ -1,0 +1,57 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: My API
+  description: My API
+  termsOfService: https://hello.world/terms/
+  contact:
+    name: My API Owner
+    email: myapi@example.com
+    url: https://www.example.com
+  license:
+    name: My API. All rights reserved
+    url: https://www.example.com
+tags:
+  - name: example
+    description: example endpoints
+paths:
+  /example:
+    get:
+      tags:
+        - example
+      summary: Get example
+      description: Get example
+      operationId: getExample
+      parameters:
+        - in: header
+          name: token
+          description: Token
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExampleResponse"
+servers:
+  - url: http://example.com/v1
+components:
+  parameters:
+    tokenParam:
+      in: header
+      name: token
+      description: Token
+      required: false
+      schema:
+        type: string
+  schemas:
+    ExampleResponse:
+      type: object
+      required:
+        - description
+      properties:
+        description:
+          type: string

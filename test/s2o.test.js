@@ -28,9 +28,10 @@ tests.forEach((test) => {
             catch (ex) {}
 
             swagger2openapi.convertObj(swagger, options, (err, result) => {
-                if (err) return done(err);
+                if (err && !options.throws) return done(err);
+                if (!err && options.throws) return done(new Error('Test should have thrown an exception'));
 
-                assert.deepStrictEqual(result.openapi, openapi);
+                if (!options.throws) assert.deepStrictEqual(result.openapi, openapi);
 
                 return done();
             });

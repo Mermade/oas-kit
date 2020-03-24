@@ -11,6 +11,8 @@ const converter = require('./index.js');
 
 // @ts-ignore
 let argv = require('yargs')
+    .boolean('anchors')
+    .describe('anchors','allow use of YAML anchors/aliases')
     .boolean('components')
     .alias('c', 'components')
     .describe('components', 'output information to unresolve a definition')

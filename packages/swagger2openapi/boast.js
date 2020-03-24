@@ -16,6 +16,8 @@ const validator = require('oas-validator');
 process.exitCode = 1;
 
 let argv = require('yargs')
+    .boolean('anchors')
+    .describe('anchors','allow use of YAML anchors/aliases')
     .boolean('all')
     .alias('a','all')
     .describe('all','show all lint warnings')
@@ -74,6 +76,7 @@ function main(){
         if (argv.internal) {
             argv.resolveInternal = true;
         }
+        argv.verbose = argv.verbose - argv.quiet;
         let options = {};
         let result = false;
         let jsonOutput = {};
@@ -84,7 +87,7 @@ function main(){
           else {
               options = await swagger2openapi.convertFile(argv.source,argv);
           }
-          result = await validator.validateSync(options.openapi,options);
+          result = await validator.validateInner(options.openapi,options);
         }
         catch (ex) {
             let path;
@@ -150,7 +153,7 @@ function main(){
                     fs.writeFileSync(options.output, JSON.stringify(options.openapi,null,2),options.encoding);
                 }
             }
-            else {
+            else if (argv.verbose >= 1) {
                 if (options.sourceYaml) {
                     console.log(yaml.stringify(options.openapi));
                 }
@@ -168,6 +171,6 @@ main()
     process.exitCode = 0;
 })
 .catch(function(err){
-    if (!argv.json) console.warn(err.message);
+    //if (!argv.json) console.warn(err.message);
 });
 
