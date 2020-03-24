@@ -1336,7 +1336,7 @@ function fixPaths(openapi, options, reject) {
 function detectObjectReferences(obj, options) {
     const seen = new WeakSet();
     recurse(obj, {identityDetection:true}, function (obj, key, state) {
-        if ((typeof obj[key] === 'object') && (obj[key] != null)) {
+        if ((typeof obj[key] === 'object') && (obj[key] !== null)) {
             if (seen.has(obj[key])) {
                 if (options.anchors) {
                     obj[key] = clone(obj[key]);

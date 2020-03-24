@@ -1158,7 +1158,7 @@ function validateInner(openapi, options, callback) {
 
     let seen = new WeakSet();
     recurse(openapi, {identityDetection:true}, function (obj, key, state) {
-        if (!options.anchors && (typeof obj[key] === 'object') && (obj[key] != null)) {
+        if (!options.anchors && (typeof obj[key] === 'object') && (obj[key] !== null)) {
             if (seen.has(obj[key])) {
                 options.context.push(state.path);
                 should.fail(true,false,'Definition contains YAML anchor or merge key');
