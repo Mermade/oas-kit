@@ -1,6 +1,6 @@
 'use strict';
 
-const sjs = require('safe-json-stringify');
+const sjs = require('fast-safe-stringify');
 
 const colour = process.env.NODE_DISABLE_COLORS ?
     { red: '', yellow: '', green: '', normal: '' } :
