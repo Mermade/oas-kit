@@ -9,6 +9,8 @@ const obj = {
     name : 'obj',
     'x/y': 'x',
     '~': 'tilde',
+    '~0': 'tilde2',
+    '~1': 'tilde3',
     '#': {
       '': true
     },
@@ -159,4 +161,13 @@ describe('encoding edge cases',function(){
     });
 });
 
+describe('escaping tests',function(){
+  it('should work with ~0',function(){
+    should(jptr(obj,'/~00')).equal('tilde2');
+  });
+  it('should work with ~1',function(){
+    should(jptr(obj,'/~01')).equal('tilde3');
+  });
+
+});
 });
