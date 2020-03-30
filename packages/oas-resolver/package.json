@@ -3,9 +3,13 @@
   "version": "2.3.1",
   "description": "Resolve external $refs in OpenAPI (swagger) 2.0 / 3.x definitions",
   "main": "index.js",
+  "bin": {
+    "resolve": "resolve.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "funding": "https://github.com/Mermade/oas-kit?sponsor=1",
   "keywords": [
     "openapi",
     "swagger",

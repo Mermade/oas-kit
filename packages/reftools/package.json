@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/Mermade/oas-kit.git"
   },
+  "funding": "https://github.com/Mermade/oas-kit?sponsor=1",
   "keywords": [
     "json-reference",
     "json-pointer",

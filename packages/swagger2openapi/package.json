@@ -8,7 +8,7 @@
     "oas-validate": "./oas-validate.js",
     "boast": "./boast.js"
   },
-  "funding": "https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa",
+  "funding": "https://github.com/Mermade/oas-kit?sponsor=1",
   "scripts": {
     "test": "mocha"
   },
