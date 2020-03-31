@@ -1,6 +1,6 @@
 {
   "name": "oas-linter",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Default linter plugin for oas-validator",
   "main": "index.js",
   "scripts": {
