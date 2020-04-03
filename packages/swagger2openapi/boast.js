@@ -116,7 +116,7 @@ function main(){
                         console.warn(display);
                     }
                     else if (options.json) {
-                        jsonOutput.warnings.push({ message:warning.message, pointer:warning.pointer, ruleName:warning.ruleName, ruleUrl:warning.ruleUrl });
+                        jsonOutput.warnings.push({ message:warning.message, pointer:warning.pointer, ruleName:warning.ruleName, ruleUrl:warning.rule.url });
                     }
                     else {
                         console.warn(warning.message,warning.pointer,warning.ruleName);
