@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: API
+  version: 1.0.0
+  contact:
+    name: example.com
+    email: foo@bar.com
+    url: https://foobar.com
+tags:
+  - name: tag
+    description: A tag
+paths:
+  x-foo/bar:
+    get:
+      responses:
+        '200':
+          description: OK
+  /test:
+    $ref: '#/paths/x-foo~1bar'

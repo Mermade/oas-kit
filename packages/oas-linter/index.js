@@ -163,21 +163,23 @@ function lint(objectName,object,key,options) {
             }
             if (rule.pattern) {
                 matched = true;
-                let components = [];
                 const property = (rule.pattern.property === '$key') ? key : object[rule.pattern.property];
-                if (rule.pattern.split) {
-                    components = property.split(rule.pattern.split);
-                }
-                else {
-                    components.push(property);
-                }
-                let re = new RegExp(rule.pattern.value);
-                for (let component of components) {
-                    if (rule.pattern.omit) component = component.split(rule.pattern.omit).join('');
-                    if (component) {
-                        ensure(rule, () => {
-                            should(re.test(component)).be.exactly(true,rule.description);
-                        });
+                if (!rule.pattern.startsWith || property.startsWith(rule.pattern.startsWith)) {
+                    let components = [];
+                    if (rule.pattern.split) {
+                        components = property.split(rule.pattern.split);
+                    }
+                    else {
+                        components.push(property);
+                    }
+                    let re = new RegExp(rule.pattern.value);
+                    for (let component of components) {
+                        if (rule.pattern.omit) component = component.split(rule.pattern.omit).join('');
+                        if (component) {
+                            ensure(rule, () => {
+                                should(re.test(component)).be.exactly(true,rule.description);
+                            });
+                        }
                     }
                 }
             }

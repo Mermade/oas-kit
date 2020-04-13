@@ -58,6 +58,7 @@ rules:
   description: reference components should all match spec. regex
   pattern:
     property: $ref
+    startsWith: '#/components/'
     omit: '#'
     split: /
     value: '^[a-zA-Z0-9\.\-_]+$'
