@@ -22,6 +22,7 @@ paths:
                     type: string
               required:
                 - referenced_form_param
+        required: true
       responses:
         "201":
           description: Successful request.
@@ -45,6 +46,7 @@ paths:
                     type: string
               required:
                 - inline_form_param
+        required: true
       responses:
         "201":
           description: Successful request.

@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: swagger2openapi bug
+  description: Swagger doc that reproduces a bug in swagger2openapi
+paths:
+  "/cloud_directory/resend/{templateName}":
+    post:
+      security:
+        - Token: []
+      operationId: resendNotification
+      summary: Resend user notifications
+      description: Resend user email notifications
+      parameters:
+        - $ref: "#/components/parameters/templateName"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                uuid:
+                  description: The Cloud Directory unique user Id.
+                  type: string
+              required:
+                - uuid
+        required: true
+      responses:
+        "202":
+          description: The notification will be send
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Email is queued to be delivered.
+        "400":
+          description: The tenantId or request body is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  parameters:
+    templateName:
+      name: templateName
+      in: path
+      description: The type of email template.
+      required: true
+      schema:
+        type: string
+        enum:
+          - USER_VERIFICATION
+          - RESET_PASSWORD
+          - WELCOME
+          - PASSWORD_CHANGED
+  securitySchemes:
+    Token:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Security

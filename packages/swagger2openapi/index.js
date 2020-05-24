@@ -659,6 +659,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
             if (param.required === true) {
                 if (!schema.required) schema.required = [];
                 schema.required.push(param.name);
+                result.required = true;
             }
             if (typeof param.default !== 'undefined') target.default = param.default;
             if (target.properties) target.properties = param.properties;
