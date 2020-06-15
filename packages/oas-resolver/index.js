@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
+const path = require('path-browserify');
 const url = require('url');
 
 const fetch = require('node-fetch-h2');
@@ -18,14 +18,25 @@ function unique(arr) {
     return [... new Set(arr)];
 }
 
-function readFileAsync(filename, encoding) {
+function readFileAsync(filename, encoding, files = null) {
     return new Promise(function (resolve, reject) {
-        fs.readFile(filename, encoding, function (err, data) {
-            if (err)
-                reject(err);
-            else
-                resolve(data);
-        });
+        filename = decodeURI(filename);
+        if (files) {
+            if (files[filename]) {
+                resolve(files[filename]);
+            }
+            else {
+                reject('Could not read file.');
+            }
+        }
+        else {
+            fs.readFile(filename, encoding, function (err, data) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(data);
+            });
+        }
     });
 }
 
@@ -225,7 +236,7 @@ function resolveExternal(root, pointer, options, callback) {
             });
     }
     else {
-        return readFileAsync(target, options.encoding || 'utf8')
+        return readFileAsync(target, options.encoding || 'utf8', options.files)
             .then(function (data) {
                 try {
                     let context = yaml.parse(data, { schema:'core', prettyErrors: true });
