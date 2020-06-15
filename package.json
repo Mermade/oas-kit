@@ -55,7 +55,9 @@
     "oas",
     "swagger"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "path-browserify": "^1.0.1"
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
