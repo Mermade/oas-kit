@@ -1,0 +1,7 @@
+overlay: 1.0.0
+info:
+  title: Remove a array element
+  version: 1.0.0
+updates:
+- target: paths.*.get.parameters[?name == 'dummy']
+  remove: true

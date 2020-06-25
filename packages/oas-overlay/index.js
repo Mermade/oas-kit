@@ -41,11 +41,12 @@ function mergeDeep(target, ...sources) {
   return mergeDeep(target, ...sources);
 }
 
-function truetype(v){
+function truetype(v) {
+    if (v === null) return 'null';
     return Array.isArray(v) ? 'array' : typeof v;
 }
 
-function process(result,src,update,options){
+function process(result,src,update,options) {
     for (let i in result) {
         let item = result[i];
         const itype = truetype(item);
@@ -67,7 +68,7 @@ function process(result,src,update,options){
     }
 }
 
-function apply(overlay,openapi,options){
+function apply(overlay,openapi,options) {
     let src = clone(openapi);
     if (options.deref) src = deref(src);
     for (let update of overlay.updates) {
@@ -79,7 +80,12 @@ function apply(overlay,openapi,options){
                 console.warn('result',util.inspect({update:update,result:result,rtype:rtype,locn:present},{depth:Infinity,colors:true}));
             }
             if (rtype === 'object') {
-                result = mergeDeep(result,update.value);
+                if (update.remove) {
+                  delete present.parent[present.path.split('/').pop()];
+                }
+                else {
+                  result = mergeDeep(result,update.value);
+                }
             }
             else if (rtype === 'array') {
                 if (present.found) {

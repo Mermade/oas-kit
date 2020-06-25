@@ -1,0 +1,12 @@
+overlay: 1.0.0
+info:
+  title: Add an array element
+  version: 1.0.0
+updates:
+#- target: paths.*.get.parameters[length(@)]
+- target: paths.*.get.parameters[-0]
+  value:
+    name: newParam
+    in: query
+    schema:
+      type: string
