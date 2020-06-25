@@ -1,5 +1,5 @@
-overlay:
-  updates:
-  - target: paths."/".get.responses."200".content."application/json".schema
-    value:
-      title: Hello
+overlay: 1.0.0
+updates:
+- target: paths."/".get.responses."200".content."application/json".schema
+  value:
+    title: Hello

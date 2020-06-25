@@ -1,0 +1,16 @@
+overlay: 1.0.0
+info:
+  title: Targeted Overlay
+  version: 1.0.0
+updates:
+- target: paths."/foo".get
+  value:
+    description: This is the new description
+- target: paths."/bar".get
+  value:
+    description: This is the updated description
+- target: paths."/bar"
+  value:
+    post:
+      description: This is an updated description of a child object
+      x-safe: false

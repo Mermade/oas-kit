@@ -1,0 +1,22 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: API
+  description: Hello sailor
+tags:
+  - name: posts
+  - name: comments
+  - name: newposts
+  - name: newcomments
+paths:
+  /posts:
+    get:
+      responses:
+        "200":
+          description: OK
+  /comments:
+    get:
+      responses:
+        "200":
+          description: OK
+

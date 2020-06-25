@@ -1,14 +1,14 @@
-overlay:
-  description: A test
-  updates:
-  - target: info
-    value:
-      description: Hello sailor
-  - target: "paths.*.*.responses"
-    value:
-      '200':
-        description: OK
-  - target: tags
-    value:
-    - name: newposts
-    - name: newcomments
+overlay: 1.0.0
+description: A test
+updates:
+- target: info
+  value:
+    description: Hello sailor
+- target: "paths.*.*.responses"
+  value:
+    '200':
+      description: OK
+- target: tags
+  value:
+  - name: newposts
+  - name: newcomments
