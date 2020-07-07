@@ -34,6 +34,7 @@
   "author": "Mike Ralphson <mike.ralphson@gmail.com>",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "ajv": "^6.12.3",
     "better-ajv-errors": "^0.6.1",
     "call-me-maybe": "^1.0.1",
     "node-fetch-h2": "^2.3.0",
