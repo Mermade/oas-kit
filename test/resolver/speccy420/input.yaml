@@ -1,0 +1,23 @@
+openapi: 3.0.2
+info:
+  title: api
+  description: |
+    description!
+  contact:
+    name: 'team'
+    url: 'https://test.com/'
+    email: 'test@test.com'
+  version: 0.0.1
+servers:
+  - url: https://test.com
+paths: {}
+components:
+  responses:
+    Request:
+      description: request
+      content:
+        application/json:
+          schema:
+            $ref: temp.json#/definitions/person
+tags: []
+
