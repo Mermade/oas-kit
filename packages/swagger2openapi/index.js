@@ -1574,7 +1574,11 @@ function convertUrl(url, options, callback) {
         if (options.verbose) {
             console.warn('GET ' + url);
         }
-        fetch(url, {agent:options.agent}).then(function (res) {
+        if (!options.fetch) {
+          options.fetch = fetch;
+        }
+        const fetchOptions = Object.assign({}, options.fetchOptions, {agent:options.agent});
+        options.fetch(url, fetchOptions).then(function (res) {
             if (res.status !== 200) throw new S2OError(`Received status code ${res.status}: ${url}`);
             return res.text();
         }).then(function (body) {

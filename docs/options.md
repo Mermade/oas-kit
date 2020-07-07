@@ -19,6 +19,8 @@ fail|Boolean|Input|Command-line flag used by `testRunner`
 fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
 file|String|Input|Used to pass filename back to `testRunner`
 filters|Array\[function\]|Input|Input filters for the resolver (e.g. to convert JSON schema dialects)
+fetch|function|Input|Used to override the internal `fetch` implementation
+fetchOptions|Object|Input|Additional options to be passed to `fetch` calls
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting

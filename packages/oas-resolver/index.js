@@ -184,7 +184,8 @@ function resolveExternal(root, pointer, options, callback) {
             });
     }
     else if (effectiveProtocol && effectiveProtocol.startsWith('http')) {
-        return fetch(target, { agent: options.agent })
+        const fetchOptions = Object.assign({}, options.fetchOptions, { agent: options.agent });
+        return options.fetch(target, fetchOptions)
             .then(function (res) {
                 if (res.status !== 200) throw new Error(`Received status code ${res.status}: ${target}`);
                 return res.text();
@@ -453,6 +454,7 @@ function loopReferences(options, res, rej) {
 
 function setupOptions(options) {
     if (!options.cache) options.cache = {};
+    if (!options.fetch) options.fetch = fetch;
 
     if (options.source) {
         let srcUrl = url.parse(options.source);
