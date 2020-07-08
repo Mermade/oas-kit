@@ -1,6 +1,6 @@
 {
   "name": "oas-validator",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
   "funding": "https://github.com/Mermade/oas-kit?sponsor=1",
