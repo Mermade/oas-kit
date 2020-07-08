@@ -865,7 +865,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                             let cbPi = callback[p];
                             options.isCallback = true;
                             checkPathItem(cbPi, p, openapi, options);
-                            options.isCallBack = false;
+                            options.isCallback = false;
                         }
                         options.context.pop();
                     }
