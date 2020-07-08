@@ -32,7 +32,8 @@
     "webpack-reftools": "npx webpack -p --config webpack.reftools.js",
     "changelog": "standard-version",
     "audits": "npx lerna exec --no-bail npm audit",
-    "outdated": "npx lerna exec --no-bail npm outdated"
+    "outdated": "npx lerna exec --no-bail npm outdated",
+    "rescue": "npx lerna publish from-package"
   },
   "standard-version": {
     "skip": {
