@@ -42,7 +42,8 @@ origin|Boolean\|String|Input|`true` or a URL, to indicate an `x-origin` extensio
 original|Object|Bi-directional|Used by `testRunner` to round-trip the original definition, set by non-object `ConvertXXX` methods
 outfile|String|Input|The output file to write to
 output|Boolean|Input|Internal flag to testRunner to write output openapi.yaml files
-patch|Boolean|Input|Flag to fix-up minor errors in the source definition before conversion
+patch|Boolean|Input|Flag to fix-up minor errors in the source definition during conversion
+patches|Integer|Output|Count of number of patches applied during conversion
 preserveMiro|Boolean|Input|Flag to resolver as to whether to preserve old value of `$ref` in `x-miro`, default: `false`
 prettify|Boolean|Input|Flag to validator to generate pretty (but potentially misleading) schema validation error reports
 prevalidate|Boolean|Input|Whether to validate each externally `$ref`d file separately

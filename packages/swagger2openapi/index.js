@@ -71,6 +71,7 @@ function fixUpSubSchema(schema,parent,options) {
 
     if (schema.type && Array.isArray(schema.type)) {
         if (options.patch) {
+            options.patches++;
             if (schema.type.length === 0) {
                 delete schema.type;
             }
@@ -365,6 +366,7 @@ function processSecurityScheme(scheme, options) {
         delete scheme.scopes;
         if (typeof scheme.name !== 'undefined') {
             if (options.patch) {
+                options.patches++;
                 delete scheme.name;
             }
             else {
@@ -414,6 +416,7 @@ function processHeader(header, options) {
         }
         else if (header.collectionFormat) {
             if (options.patch) {
+                options.patches++;
                 delete header.collectionFormat;
             }
             else {
@@ -469,6 +472,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
 
     if (op && op.consumes && (typeof op.consumes === 'string')) {
         if (options.patch) {
+            options.patches++;
             op.consumes = [op.consumes];
         }
         else {
@@ -520,6 +524,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
 
         if ((param.in != 'body') && (!param.type)) {
             if (options.patch) {
+                options.patches++;
                 param.type = 'string';
             }
             else {
@@ -547,6 +552,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
         if (oldCollectionFormat) {
             if (param.type != 'array') {
                 if (options.patch) {
+                    options.patches++;
                     delete param.collectionFormat;
                 }
                 else {
@@ -591,6 +597,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
                 throwOrWarn('parameter has array,items and schema', param, options);
             }
             else {
+                if (param.schema) options.patches++; // already present
                 if ((!param.schema) || (typeof param.schema !== 'object')) param.schema = {};
                 param.schema.type = param.type;
                 if (param.items) {
@@ -774,6 +781,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
 
         if ((param.in === 'path') && ((typeof param.required === 'undefined') || (param.required !== true))) {
             if (options.patch) {
+                options.patches++;
                 param.required = true;
             }
             else {
@@ -811,6 +819,7 @@ function processResponse(response, name, op, openapi, options) {
             || ((response.description === '') && options.patch)) {
             if (options.patch) {
                 if ((typeof response === 'object') && (!Array.isArray(response))) {
+                    options.patches++;
                     response.description = (statusCodes[response] || '');
                 }
             }
@@ -828,6 +837,7 @@ function processResponse(response, name, op, openapi, options) {
 
             if (op && op.produces && (typeof op.produces === 'string')) {
                 if (options.patch) {
+                    options.patches++;
                     op.produces = [op.produces];
                 }
                 else {
@@ -870,6 +880,7 @@ function processResponse(response, name, op, openapi, options) {
             for (let h in response.headers) {
                 if (h.toLowerCase() === 'status code') {
                     if (options.patch) {
+                        options.patches++;
                         delete response.headers[h];
                     }
                     else {
@@ -1138,6 +1149,7 @@ function main(openapi, options) {
             for (let h in response.headers) {
                 if (h.toLowerCase() === 'status code') {
                     if (options.patch) {
+                        options.patches++;
                         delete response.headers[h];
                     }
                     else {
@@ -1260,6 +1272,7 @@ function extractServerParameters(server) {
 function fixInfo(openapi, options, reject) {
     if ((typeof openapi.info === 'undefined') || (openapi.info === null)) {
         if (options.patch) {
+            options.patches++;
             openapi.info = { version: '', title: '' };
         }
         else {
@@ -1271,6 +1284,7 @@ function fixInfo(openapi, options, reject) {
     }
     if ((typeof openapi.info.title === 'undefined') || (openapi.info.title === null)) {
         if (options.patch) {
+            options.patches++;
             openapi.info.title = '';
         }
         else {
@@ -1279,6 +1293,7 @@ function fixInfo(openapi, options, reject) {
     }
     if ((typeof openapi.info.version === 'undefined') || (openapi.info.version === null)) {
         if (options.patch) {
+            options.patches++;
             openapi.info.version = '';
         }
         else {
@@ -1287,6 +1302,7 @@ function fixInfo(openapi, options, reject) {
     }
     if (typeof openapi.info.version !== 'string') {
         if (options.patch) {
+            options.patches++;
             openapi.info.version = openapi.info.version.toString();
         }
         else {
@@ -1295,6 +1311,7 @@ function fixInfo(openapi, options, reject) {
     }
     if (typeof openapi.info.logo !== 'undefined') {
         if (options.patch) {
+            options.patches++;
             openapi.info['x-logo'] = openapi.info.logo;
             delete openapi.info.logo;
         }
@@ -1303,6 +1320,7 @@ function fixInfo(openapi, options, reject) {
     if (typeof openapi.info.termsOfService !== 'undefined') {
         if (openapi.info.termsOfService === null) {
             if (options.patch) {
+                options.patches++;
                 openapi.info.termsOfService = '';
             }
             else {
@@ -1315,6 +1333,7 @@ function fixInfo(openapi, options, reject) {
             }
             catch (ex) {
                 if (options.patch) {
+                    options.patches++;
                     delete openapi.info.termsOfService;
                 }
                 else return reject(new S2OError('(Patchable) info.termsOfService must be a URL'));
@@ -1326,6 +1345,7 @@ function fixInfo(openapi, options, reject) {
 function fixPaths(openapi, options, reject) {
     if (typeof openapi.paths === 'undefined') {
         if (options.patch) {
+            options.patches++;
             openapi.paths = {};
         }
         else {
@@ -1365,6 +1385,7 @@ function convertObj(swagger, options, callback) {
         options.promise = {};
         options.promise.resolve = resolve;
         options.promise.reject = reject;
+        options.patches = 0;
         if (!options.cache) options.cache = {};
         if (options.source) options.cache[options.source] = options.original;
 
