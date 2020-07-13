@@ -56,6 +56,7 @@ function throwOrWarn(message, container, options) {
 }
 
 function fixUpSubSchema(schema,parent,options) {
+    if (schema.nullable) options.patches++;
     if (schema.discriminator && typeof schema.discriminator === 'string') {
         schema.discriminator = { propertyName: schema.discriminator };
     }
