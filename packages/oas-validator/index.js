@@ -118,7 +118,7 @@ function checkSubSchema(schema, parent, state) {
         should(schema.$ref).be.a.String();
         if (state.options.lint) state.options.linter('reference',schema,'$ref',state.options);
         if (prop) state.options.context.pop();
-        return; // all other properties SHALL be ignored
+        return; // all other properties SHALL be ignored (3.0)
     }
 
     for (let k in schema) {
@@ -336,11 +336,18 @@ function checkSubSchema(schema, parent, state) {
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
-    let state = sw.getDefaultState();
-    state.openapi = openapi;
-    state.options = options;
-    state.property = prop;
-    sw.walkSchema(schema,parent,state,checkSubSchema);
+    if (schema.$ref) {
+      // check if the $reffed thing is actually a schema object (and not a response etc)
+      // all other properties SHALL be ignored (3.0)
+      checkSchema(jptr.jptr(openapi,schema.$ref),parent,prop,openapi,options);
+    }
+    else {
+      let state = sw.getDefaultState();
+      state.openapi = openapi;
+      state.options = options;
+      state.property = prop;
+      sw.walkSchema(schema,parent,state,checkSubSchema);
+    }
 }
 
 function checkExample(ex, contextServers, openapi, options) {
@@ -1419,7 +1426,7 @@ function setupOptions(options,openapi) {
     }
     if (!options.cache) options.cache = {};
     options.schema = openapi3Schema;
-    options.metadata = { lines: -1 };
+    options.metadata = { lines: -1, count: {} };
     if ((options.text) && (typeof options.text === 'string')) options.metadata.lines = options.text.split('\n').length;
     options.ajv = ajv;
 }
