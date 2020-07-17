@@ -260,7 +260,7 @@ function checkSubSchema(schema, parent, state) {
     if (typeof schema.description !== 'undefined') {
         should(schema.description).be.a.String();
     }
-    if (typeof schema.default !== 'undefined') {
+    if (!state.options.laxDefaults && typeof schema.default !== 'undefined') {
         should(schema).have.property('type');
         let realType = typeof schema.default;
         let schemaType = schema.type;
@@ -1198,8 +1198,8 @@ function validateInner(openapi, options, callback) {
         options.context.push('#/paths/' + jptr.jpescape(p));
         if (!p.startsWith('x-')) {
             should(p).startWith('/');
-            should(p).not.containEql('?');
-            //should(p).not.containEql('#');
+            if (!options.laxurls) should(p).not.containEql('?');
+            if (!options.laxurls) should(p).not.containEql('#');
             let pCount = 0;
             let template = p.replace(/\{(.+?)\}/g, function (match, group1) {
                 return '{'+(pCount++)+'}';
@@ -1223,8 +1223,8 @@ function validateInner(openapi, options, callback) {
         for (let p in openapi["x-ms-paths"]) {
             options.context.push('#/x-ms-paths/' + jptr.jpescape(p));
             should(p).startWith('/');
-            should(p).not.containEql('?');
-            //should(p).not.containEql('#');
+            //if (!options.laxurls) should(p).not.containEql('?');
+            if (!options.laxurls) should(p).not.containEql('#');
             checkPathItem(openapi["x-ms-paths"][p], p, openapi, options);
             options.context.pop();
         }

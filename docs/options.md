@@ -14,6 +14,7 @@ direct|Boolean|Input|Flag to indicate that only the converted OpenApi definition
 encoding|String|Input|Encoding to use when reading/writing files
 expectFailure|Boolean|Input|Flag to invert the status of a validation step
 externalRef|Object|Internal|When `prevalidate` is true, holds the entire object representing an externally `$ref`d file
+externalRefs|Object|Internal|Used to track resolved external references
 externals|[Array](externals.md)|Output|Information required to unresolve a resolved definition back into its component parts
 fail|Boolean|Input|Command-line flag used by `testRunner`
 fatal|Boolean|Input|Treat ENOTFOUND and 404 errors as fatal during resolution, otherwise returns empty objects
@@ -26,8 +27,9 @@ help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting
 isCallback|Boolean|Input|Hint to the linter that we are within a `callback` object
 jsonschema|String|Input|Path to alternative JSON schema (in JSON or YAML) for validation
+laxDefaults|Boolean|Input|Flag to validation step to ignore default/type mismatches
 laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
-laxurls|Boolean|Input|Flag to validation step to ignore empty URLs
+laxurls|Boolean|Input|Flag to validation step to ignore empty URLs and # ? in paths
 lint|Boolean|Input|Whether to lint the document during validation
 linter|Function|Input|A linter plugin to use in place of the default linter
 linterResults|Function|Input|A function to return the set of linter warnings
