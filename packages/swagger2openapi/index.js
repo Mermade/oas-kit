@@ -338,7 +338,7 @@ function processSecurity(securityObject) {
     for (let s in securityObject) {
         for (let k in securityObject[s]) {
             let sname = common.sanitise(k);
-            if (k != sname) {
+            if (k !== sname) {
                 securityObject[s][sname] = securityObject[s][k];
                 delete securityObject[s][k];
             }
@@ -523,7 +523,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
             delete param['x-example'];
         }
 
-        if ((param.in != 'body') && (!param.type)) {
+        if ((param.in !== 'body') && (!param.type)) {
             if (options.patch) {
                 options.patches++;
                 param.type = 'string';
@@ -551,7 +551,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
             oldCollectionFormat = 'csv';
         }
         if (oldCollectionFormat) {
-            if (param.type != 'array') {
+            if (param.type !== 'array') {
                 if (options.patch) {
                     options.patches++;
                     delete param.collectionFormat;
@@ -593,7 +593,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
             delete param.collectionFormat;
         }
 
-        if (param.type && (param.type != 'object') && (param.type != 'body') && (param.in != 'formData')) {
+        if (param.type && (param.type !== 'body') && (param.in !== 'formData')) {
             if (param.items && param.schema) {
                 throwOrWarn('parameter has array,items and schema', param, options);
             }
@@ -1092,7 +1092,7 @@ function main(openapi, options) {
 
     for (let s in openapi.components.securitySchemes) {
         let sname = common.sanitise(s);
-        if (s != sname) {
+        if (s !== sname) {
             if (openapi.components.securitySchemes[sname]) {
                 throwError('Duplicate sanitised securityScheme name ' + sname, options);
             }
@@ -1105,7 +1105,7 @@ function main(openapi, options) {
     for (let s in openapi.components.schemas) {
         let sname = common.sanitiseAll(s);
         let suffix = '';
-        if (s != sname) {
+        if (s !== sname) {
             while (openapi.components.schemas[sname + suffix]) {
                 // @ts-ignore
                 suffix = (suffix ? ++suffix : 2);
@@ -1124,7 +1124,7 @@ function main(openapi, options) {
 
     for (let p in openapi.components.parameters) {
         let sname = common.sanitise(p);
-        if (p != sname) {
+        if (p !== sname) {
             if (openapi.components.parameters[sname]) {
                 throwError('Duplicate sanitised parameter name ' + sname, options);
             }
@@ -1137,7 +1137,7 @@ function main(openapi, options) {
 
     for (let r in openapi.components.responses) {
         let sname = common.sanitise(r);
-        if (r != sname) {
+        if (r !== sname) {
             if (openapi.components.responses[sname]) {
                 throwError('Duplicate sanitised response name ' + sname, options);
             }
