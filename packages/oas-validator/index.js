@@ -13,17 +13,16 @@ let ajv = require('ajv')({
     allErrors: true,
     verbose: true,
     jsonPointers: true,
-    patternGroups: true,
-    extendRefs: true // optional, current default is to 'fail', spec behaviour is to 'ignore'
+    extendRefs: true, // optional, current default is to 'fail', spec behaviour is to 'ignore'
+    schemaId: 'id'
 });
 //meta: false, // optional, to prevent adding draft-06 meta-schema
 
 let ajvFormats = require('ajv/lib/compile/formats.js');
+let metaSchema = require('ajv/lib/refs/json-schema-draft-04.json');
 ajv.addFormat('uriref', ajvFormats.full['uri-reference']);
-ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema'; // optional, using unversioned URI is out of spec
-let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
 ajv.addMetaSchema(metaSchema);
+ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema'; // optional, using unversioned URI is out of spec
 ajv._opts.defaultMeta = metaSchema.id;
 
 const bae = require('better-ajv-errors');
@@ -52,8 +51,7 @@ const sw = require('oas-schema-walker');
 const linter = require('oas-linter');
 const resolver = require('oas-resolver');
 
-const jsonSchema = require('./schemas/json_v5.json');
-const validateMetaSchema = ajv.compile(jsonSchema);
+const validateMetaSchema = ajv.compile(metaSchema);
 let openapi3Schema = require('./schemas/openapi-3.0.json');
 let validateOpenAPI3 = ajv.compile(openapi3Schema);
 

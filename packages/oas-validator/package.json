@@ -17,7 +17,7 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "^5.5.2",
+    "ajv": "^6.12.3",
     "better-ajv-errors": "^0.6.7",
     "call-me-maybe": "^1.0.1",
     "oas-kit-common": "^1.0.8",
