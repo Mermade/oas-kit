@@ -1,6 +1,6 @@
 {
   "name": "oas-schema-walker",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Library to walk OAS 3 schema objects and call a callback",
   "main": "index.js",
   "scripts": {
