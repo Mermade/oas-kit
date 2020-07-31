@@ -68,6 +68,8 @@ function main(){
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
+        argv.fatal = true;
+        argv.laxurls = true;
         if (argv.all) argv.lintLimit = Number.MAX_SAFE_INTEGER;
         if (argv.bae) {
             argv.validateSchema = 'first';
