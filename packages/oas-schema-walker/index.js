@@ -16,6 +16,7 @@ function getDefaultState() {
 
 /**
 * begins the walk of a schema object
+* @param schema the schema object to walk
 * @param parent the parent schema, if any. Use empty object if none
 * @param state the initial starting state of the walker, usually obtained from `getDefaultState`. Use empty object to auto-initialise
 * @param callback a function taking a schema, parent and state to be called on this and all subschemas
