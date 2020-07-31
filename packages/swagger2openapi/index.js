@@ -1472,6 +1472,7 @@ function convertObj(swagger, options, callback) {
             let server = {};
             server.url = xMsPHost.hostTemplate + (swagger.basePath ? swagger.basePath : '');
             server.variables = {};
+            const paramNames = server.url.match(/\{\w+\}/g);
             for (let msp in xMsPHost.parameters) {
                 let param = xMsPHost.parameters[msp];
                 if (param.$ref) {
@@ -1488,6 +1489,9 @@ function convertObj(swagger, options, callback) {
                         else {
                             param.default = '';
                         }
+                    }
+                    if (!param.name) {
+                      param.name = paramNames[msp].replace('{','').replace('}','');
                     }
                     server.variables[param.name] = param;
                     delete param.name;
