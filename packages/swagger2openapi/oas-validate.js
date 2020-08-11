@@ -69,6 +69,7 @@ let argv = yargs
     .boolean('warnOnly')
     .describe('warnOnly','Do not throw on non-patchable errors')
     .boolean('whatwg')
+    .default('whatwg',true)
     .alias('w', 'whatwg')
     .describe('whatwg', 'enable WHATWG URL parsing')
     .boolean('yaml')

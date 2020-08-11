@@ -3,7 +3,6 @@
 
 const fs = require('fs');
 const url = require('url');
-const URL = url.URL;
 
 const yaml = require('yaml');
 const should = require('should/as-function');
@@ -59,8 +58,6 @@ let validateOpenAPI3 = ajv.compile(openapi3Schema);
 
 const dummySchema = { anyOf: {} };
 const emptySchema = {};
-const urlRegexStr = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
-const urlRegex = new RegExp(urlRegexStr, 'i');
 
 function contextAppend(options, s) {
     options.context.push((options.context[options.context.length - 1] + '/' + s).split('//').join('/'));
@@ -80,8 +77,7 @@ function validateUrl(s, contextServers, context, options) {
     if (s.indexOf('://') > 0) { // FIXME HACK
         base = undefined;
     }
-    // should(s).match(urlRegex); // doesn't allow for templated urls
-    let u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
+    let u = new URL(s, base);
     return true; // if we haven't thrown
 }
 

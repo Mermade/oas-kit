@@ -1328,17 +1328,15 @@ function fixInfo(openapi, options, reject) {
                 return reject(new S2OError('(Patchable) info.termsOfService cannot be null'));
             }
         }
-        if (url.URL && options.whatwg) {
-            try {
-                url.URL.parse(openapi.info.termsOfService);
+        try {
+            let u = new URL(openapi.info.termsOfService);
+        }
+        catch (ex) {
+            if (options.patch) {
+                options.patches++;
+                delete openapi.info.termsOfService;
             }
-            catch (ex) {
-                if (options.patch) {
-                    options.patches++;
-                    delete openapi.info.termsOfService;
-                }
-                else return reject(new S2OError('(Patchable) info.termsOfService must be a URL'));
-            }
+            else return reject(new S2OError('(Patchable) info.termsOfService must be a URL'));
         }
     }
 }
