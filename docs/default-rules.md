@@ -20,7 +20,7 @@
         {% if rule.object == "*" %}
         <em>everything</em>
         {% else %}
-        <a href="https://spec.openapis.org/oas/v3.0.2.html#{{ rule.object }}-object">{{ rule.object }}</a>
+        <a href="https://spec.openapis.org/oas/v3.0.3.html#{{ rule.object }}-object">{{ rule.object }}</a>
         {% endif %}
     </td>
     <td>{{ rule.description }}</td>
