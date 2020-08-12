@@ -335,7 +335,9 @@ function checkSchema(schema,parent,prop,openapi,options) {
     if (schema.$ref) {
       // check if the $reffed thing is actually a schema object (and not a response etc)
       // all other properties SHALL be ignored (3.0)
-      checkSchema(jptr.jptr(openapi,schema.$ref),parent,prop,openapi,options);
+      const refSchema = resolveInternal(openapi,schema.$ref);
+      should(refSchema).not.be.exactly(false, 'Cannot resolve reference: ' + schema.$ref);
+      checkSchema(refSchema,parent,prop,openapi,options);
     }
     else {
       let state = sw.getDefaultState();
