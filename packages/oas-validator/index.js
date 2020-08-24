@@ -67,7 +67,7 @@ function validateUrl(s, contextServers, context, options) {
     should(s).be.a.String();
     should(s).not.be.Null();
     if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
-    let base = options.origin || 'http://localhost/';
+    let base = options.source || 'http://localhost/';
     let variables = {};
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
