@@ -68,10 +68,15 @@ function validateUrl(s, contextServers, context, options) {
     should(s).not.be.Null();
     if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
     let base = options.origin || 'http://localhost/';
+    let variables = {};
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
         if (servers && servers.length) {
             base = servers[0].url;
+            variables = servers[0].variables;
+            for (let v in variables) {
+              base = base.replace('{'+v+'}',variables[v].default);
+            }
         }
     }
     if (s.indexOf('://') > 0) { // FIXME HACK
@@ -428,10 +433,10 @@ function checkContent(content, contextServers, openapi, options) {
 
 function checkServer(server, options) {
     should(server).have.property('url');
-    should.doesNotThrow(function () { validateUrl(server.url, [], 'server.url', options) },'Invalid server.url');
     if (typeof server.description !== 'undefined') {
         should(server.description).be.a.String();
     }
+    let u = server.url;
     let srvVars = 0;
     server.url.replace(/\{(.+?)\}/g, function (match, group1) {
         srvVars++;
@@ -447,6 +452,7 @@ function checkServer(server, options) {
             should(server.variables[v]).be.an.Object();
             should(server.variables[v]).have.key('default');
             should(server.variables[v].default).be.a.String();
+            u = u.replace('{'+v+'}',server.variables[v].default);
             if (typeof server.variables[v].enum !== 'undefined') {
                 contextAppend(options, 'enum');
                 should(server.variables[v].enum).be.an.Array();
@@ -464,6 +470,9 @@ function checkServer(server, options) {
         should(Object.keys(server.variables).length).be.exactly(srvVars,'Missing template variable in server url');
         options.context.pop();
     }
+
+    should.doesNotThrow(function () { validateUrl(u, [], 'server.url', options) },'Invalid server.url');
+
     for (let k in server) {
         if (!k.startsWith('x-')) {
             should(['url','description','variables'].indexOf(k)).be.greaterThan(-1,'server object cannot have additionalProperty: '+k);
@@ -966,6 +975,14 @@ function validateInner(openapi, options, callback) {
         }
     }
 
+    if (typeof openapi.servers !== 'undefined') {
+        should(openapi.servers).be.an.Object();
+        contextAppend(options, 'servers');
+        checkServers(openapi.servers, options);
+        options.context.pop();
+        contextServers.push(openapi.servers);
+    }
+
     should(openapi).have.key('info');
     should(openapi.info).be.an.Object();
     should(openapi.info).not.be.an.Array();
@@ -974,13 +991,6 @@ function validateInner(openapi, options, callback) {
     should(openapi.info.title).be.type('string', 'title should be of type string');
     should(openapi.info).have.key('version');
     should(openapi.info.version).be.type('string', 'version should be of type string');
-    if (typeof openapi.servers !== 'undefined') {
-        should(openapi.servers).be.an.Object();
-        contextAppend(options, 'servers');
-        checkServers(openapi.servers, options);
-        options.context.pop();
-        contextServers.push(openapi.servers);
-    }
     if (typeof openapi.info.license !== 'undefined') {
         should(openapi.info.license).be.an.Object();
         should(openapi.info.license).not.be.an.Array();
