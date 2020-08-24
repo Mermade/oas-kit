@@ -461,7 +461,7 @@ function checkServer(server, options) {
             if (options.lint) options.linter('serverVariable',server.variables[v],v,options);
             options.context.pop();
         }
-        should(Object.keys(server.variables).length).be.exactly(srvVars);
+        should(Object.keys(server.variables).length).be.exactly(srvVars,'Missing template variable in server url');
         options.context.pop();
     }
     for (let k in server) {
