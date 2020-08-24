@@ -58,6 +58,7 @@ let validateOpenAPI3 = ajv.compile(openapi3Schema);
 
 const dummySchema = { anyOf: {} };
 const emptySchema = {};
+let refSeen = {};
 
 function contextAppend(options, s) {
     options.context.push((options.context[options.context.length - 1] + '/' + s).split('//').join('/'));
@@ -337,12 +338,12 @@ function checkSubSchema(schema, parent, state) {
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
-    if (schema.$ref) {
+    if ((typeof schema.$ref === 'string') && (!refSeen[schema.$ref])) {
       // check if the $reffed thing is actually a schema object (and not a response etc)
       // all other properties SHALL be ignored (3.0)
       const refSchema = resolveInternal(openapi,schema.$ref);
       should(refSchema).not.be.exactly(false, 'Cannot resolve reference: ' + schema.$ref);
-      checkSchema(refSchema,parent,prop,openapi,options);
+      refSeen[schema.$ref] = checkSchema(refSchema,parent,prop,openapi,options);
     }
     else {
       let state = sw.getDefaultState();
@@ -351,6 +352,7 @@ function checkSchema(schema,parent,prop,openapi,options) {
       state.property = prop;
       sw.walkSchema(schema,parent,state,checkSubSchema);
     }
+    return true;
 }
 
 function checkExample(ex, contextServers, openapi, options) {
@@ -494,7 +496,9 @@ function checkServers(servers, options) {
 function checkLink(link, openapi, options) {
     if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
-        should(link.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true;
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',link,'$ref',options);
         link = resolveInternal(openapi, ref);
         should(link).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -531,7 +535,9 @@ function checkLink(link, openapi, options) {
 function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
-        should(header.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true;
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',header,'$ref',options);
         header = resolveInternal(openapi, ref);
         should(header).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -575,7 +581,9 @@ function checkResponse(response, key, contextServers, openapi, options) {
     should(response).not.be.null();
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
-        should(response.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true;
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',response,'$ref',options);
         response = resolveInternal(openapi, ref);
         should(response).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -613,10 +621,11 @@ function checkResponse(response, key, contextServers, openapi, options) {
 
 function checkParam(param, index, path, contextServers, openapi, options) {
     contextAppend(options, index);
+    const ref = param.$ref;
     if (typeof param.$ref !== 'undefined') {
-        should(param.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return refSeen[ref];
         if (options.lint) options.linter('reference',param,'$ref',options);
-        let ref = param.$ref;
         param = resolveInternal(openapi, ref);
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
@@ -708,6 +717,9 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     }
     if (options.lint) options.linter('parameter',param,index,options);
     options.context.pop();
+    if (ref) {
+      refSeen[ref] = param;
+    }
     return param;
 }
 
@@ -722,8 +734,8 @@ function checkPathItem(pathItem, path, openapi, options) {
 
     let pathParameters = {};
     if (typeof pathItem.parameters !== 'undefined') should(pathItem.parameters).be.an.Array();
+    contextAppend(options, 'parameters');
     for (let p in pathItem.parameters) {
-        contextAppend(options, 'parameters');
         let param = checkParam(pathItem.parameters[p], p, path, contextServers, openapi, options);
         if (pathParameters[param.in+':'+param.name]) {
             should.fail(false,true,'Duplicate path-level parameter '+param.name);
@@ -731,8 +743,8 @@ function checkPathItem(pathItem, path, openapi, options) {
         else {
             pathParameters[param.in+':'+param.name] = param;
         }
-        options.context.pop();
     }
+    options.context.pop();
 
     for (let o in pathItem) {
         contextAppend(options, o);
@@ -1187,7 +1199,7 @@ function validateInner(openapi, options, callback) {
                 seen.add(obj[key]);
             }
         }
-        if (isRef(obj,key)) {
+        if (isRef(obj,key) && (!refSeen[obj[key]])) {
             options.context.push(state.path);
             should(obj[key]).not.startWith('#/definitions/');
             let refUrl = url.parse(obj[key]);
@@ -1419,6 +1431,7 @@ function schemaValidate(openapi, options) {
 }
 
 function setupOptions(options,openapi) {
+    refSeen = {};
     options.valid = false;
     options.context = [ '#/' ];
     options.warnings = [];
