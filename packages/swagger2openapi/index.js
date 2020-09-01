@@ -142,6 +142,10 @@ function fixUpSubSchema(schema,parent,options) {
     if (schema.xml && typeof schema.xml.namespace === 'string') {
         if (!schema.xml.namespace) delete schema.xml.namespace;
     }
+    if (typeof schema.allowEmptyValue !== 'undefined') {
+      options.patches++;
+      delete schema.allowEmptyValue;
+    }
 }
 
 function fixUpSubSchemaExtensions(schema,parent) {

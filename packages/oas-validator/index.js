@@ -7,39 +7,6 @@ const url = require('url');
 const yaml = require('yaml');
 const should = require('should/as-function');
 const maybe = require('call-me-maybe');
-let ajv = require('ajv')({
-    $data: true,
-    allErrors: true,
-    verbose: true,
-    jsonPointers: true,
-    patternGroups: true,
-    extendRefs: true // optional, current default is to 'fail', spec behaviour is to 'ignore'
-});
-//meta: false, // optional, to prevent adding draft-06 meta-schema
-
-let ajvFormats = require('ajv/lib/compile/formats.js');
-ajv.addFormat('uriref', ajvFormats.full['uri-reference']);
-ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema'; // optional, using unversioned URI is out of spec
-let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
-ajv.addMetaSchema(metaSchema);
-ajv._opts.defaultMeta = metaSchema.id;
-
-const bae = require('better-ajv-errors');
-
-class JSONSchemaError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'JSONSchemaError';
-  }
-}
-
-class CLIError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'CLIError';
-  }
-}
 
 const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
@@ -50,11 +17,6 @@ const isRef = require('reftools/lib/isref.js').isRef;
 const sw = require('oas-schema-walker');
 const linter = require('oas-linter');
 const resolver = require('oas-resolver');
-
-const jsonSchema = require('./schemas/json_v5.json');
-const validateMetaSchema = ajv.compile(jsonSchema);
-let openapi3Schema = require('./schemas/openapi-3.0.json');
-let validateOpenAPI3 = ajv.compile(openapi3Schema);
 
 const dummySchema = { anyOf: {} };
 const emptySchema = {};
@@ -93,20 +55,6 @@ function validateComponentName(name) {
 
 function validateHeaderName(name) {
     return /^[A-Za-z0-9!#\-\$%&'\*\+\\\.\^_`\|~]+$/.test(name);
-}
-
-function validateSchema(schema, openapi, options) {
-    validateMetaSchema(schema);
-    let errors = validateSchema.errors;
-    if (errors && errors.length) {
-        if (options.prettify) {
-            const errorStr = bae(schema, openapi, errors);
-            throw (new CLIError(errorStr));
-        }
-        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringify(errors)));
-    }
-    options.schema = schema;
-    return !(errors && errors.length);
 }
 
 function checkSubSchema(schema, parent, state) {
@@ -334,7 +282,6 @@ function checkSubSchema(schema, parent, state) {
         if (state.options.lint) state.options.linter('externalDocs',schema.externalDocs,'externalDocs',state.options);
     }
     if (prop) state.options.context.pop();
-    if (!prop || prop === 'schema') validateSchema(schema, state.openapi, state.options); // top level only
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
@@ -497,7 +444,7 @@ function checkLink(link, openapi, options) {
     if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
         should(ref).be.type('string');
-        if (refSeen[ref]) return true;
+        if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',link,'$ref',options);
         link = resolveInternal(openapi, ref);
@@ -536,7 +483,7 @@ function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
         should(ref).be.type('string');
-        if (refSeen[ref]) return true;
+        if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',header,'$ref',options);
         header = resolveInternal(openapi, ref);
@@ -582,7 +529,7 @@ function checkResponse(response, key, contextServers, openapi, options) {
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
         should(ref).be.type('string');
-        if (refSeen[ref]) return true;
+        if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',response,'$ref',options);
         response = resolveInternal(openapi, ref);
@@ -620,13 +567,16 @@ function checkResponse(response, key, contextServers, openapi, options) {
 }
 
 function checkParam(param, index, path, contextServers, openapi, options) {
-    contextAppend(options, index);
     const ref = param.$ref;
+    contextAppend(options, index);
     if (typeof param.$ref !== 'undefined') {
         should(ref).be.type('string');
-        if (refSeen[ref]) return refSeen[ref];
         if (options.lint) options.linter('reference',param,'$ref',options);
         param = resolveInternal(openapi, ref);
+        if (refSeen[ref] && (param.in !== 'path')) {
+          options.context.pop();
+          return param; // bail out
+        }
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
     should(param).have.property('name');
@@ -953,16 +903,6 @@ function validateInner(openapi, options, callback) {
     try {
     setupOptions(options,openapi);
     let contextServers = [];
-
-    if (options.jsonschema) {
-        let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
-        openapi3Schema = yaml.parse(schemaStr, { schema:'core' });
-        validateOpenAPI3 = ajv.compile(openapi3Schema);
-    }
-
-    if (options.validateSchema === 'first') {
-        schemaValidate(openapi, options);
-    }
 
     should(openapi).be.an.Object();
     should(openapi).not.have.key('swagger');
@@ -1383,10 +1323,6 @@ function validateInner(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (!options.validateSchema || (options.validateSchema === 'last')) {
-        schemaValidate(openapi, options);
-    }
-
     options.valid = !options.expectFailure;
     if (options.lint) options.linter('openapi',openapi,'',options);
 
@@ -1418,18 +1354,6 @@ function validateInner(openapi, options, callback) {
     }));
 }
 
-function schemaValidate(openapi, options) {
-    validateOpenAPI3(openapi);
-    let errors = validateOpenAPI3.errors;
-    if (errors && errors.length) {
-        if (options.prettify) {
-            const errorStr = bae(options.schema, openapi, errors, { indent: 2 });
-            throw (new CLIError(errorStr));
-        }
-        throw (new JSONSchemaError('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
-    }
-}
-
 function setupOptions(options,openapi) {
     refSeen = {};
     options.valid = false;
@@ -1446,10 +1370,8 @@ function setupOptions(options,openapi) {
         options.linterResults = linter.getResults;
     }
     if (!options.cache) options.cache = {};
-    options.schema = openapi3Schema;
     options.metadata = { lines: -1, count: {} };
     if ((options.text) && (typeof options.text === 'string')) options.metadata.lines = options.text.split('\n').length;
-    options.ajv = ajv;
 }
 
 function validate(openapi, options, callback) {
@@ -1494,7 +1416,5 @@ module.exports = {
     validateInner: validateInner,
     validate: validate,
     microValidate: microValidate,
-    optionallyValidate: optionallyValidate,
-    JSONSchemaError: JSONSchemaError,
-    CLIError: CLIError
+    optionallyValidate: optionallyValidate
 }

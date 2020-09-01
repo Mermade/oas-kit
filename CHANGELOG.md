@@ -1,5 +1,9 @@
 # Change Log
 
+## swagger2openapi v7.0 and oas-validator v5.0
+
+* remove use of `ajv` for fallback schema validation
+
 ## swagger2openapi v6.1.0 and oas-resolver v2.4.0
 
 New properties on the `options` object:

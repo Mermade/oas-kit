@@ -49,9 +49,6 @@ let argv = yargs
     .string('output')
     .alias('o', 'output')
     .describe('output', 'output conversion result')
-    .boolean('prettify')
-    .alias('p','prettify')
-    .describe('prettify','pretty schema validation errors')
     .boolean('quiet')
     .alias('q', 'quiet')
     .describe('quiet', 'do not show test passes on console, for CI')
@@ -87,8 +84,6 @@ let pass = 0;
 let fail = 0;
 let failures = [];
 let warnings = [];
-
-let genStack = [];
 
 let options = argv;
 options.patch = !argv.nopatch;
@@ -148,7 +143,6 @@ function finalise(err, options) {
         if (options.file != 'unknown') failures.push(options.file);
         if (argv.stop) process.exit(1);
     }
-    genStackNext();
 }
 
 function handleResult(err, options) {
@@ -203,14 +197,7 @@ function handleResult(err, options) {
     }
 }
 
-function genStackNext() {
-    if (!genStack.length) return false;
-    let gen = genStack.shift();
-    gen.next();
-    return true;
-}
-
-function* check(file, force, expectFailure) {
+async function check(file, force, expectFailure) {
     let result = false;
     options.context = [];
     options.expectFailure = expectFailure;
@@ -242,7 +229,6 @@ function* check(file, force, expectFailure) {
             }
 
             if (!src || ((!src.swagger && !src.openapi))) {
-                genStackNext();
                 return true;
             }
         }
@@ -278,7 +264,6 @@ function* check(file, force, expectFailure) {
                     failures.push('Converter failed ' + options.source);
                     fail++;
                 }
-                genStackNext();
                 result = false;
             });
         }
@@ -297,46 +282,40 @@ function* check(file, force, expectFailure) {
                     failures.push('Converter failed ' + options.source);
                     fail++;
                 }
-                genStackNext();
                 result = false;
             });
         }
     }
     else {
-        genStackNext();
         result = true;
     }
     return result;
 }
 
-function processPathSpec(pathspec, expectFailure) {
+async function processPathSpec(pathspec, expectFailure) {
     globalExpectFailure = expectFailure;
     if (pathspec.startsWith('@')) {
         pathspec = pathspec.substr(1, pathspec.length - 1);
         let list = fs.readFileSync(pathspec, 'utf8').split('\r').join('').split('\n');
         for (let file of list) {
-            genStack.push(check(file, false, expectFailure));
+            await check(file, false, expectFailure);
         }
-        genStackNext();
     }
     else if (pathspec.startsWith('http')) {
-        genStack.push(check(pathspec, true, expectFailure));
-        genStackNext();
+        await check(pathspec, true, expectFailure);
     }
     else if (fs.statSync(path.resolve(pathspec)).isFile()) {
-        genStack.push(check(pathspec, true, expectFailure));
-        genStackNext();
+        await check(pathspec, true, expectFailure);
     }
     else {
         readfiles(pathspec, { readContents: false, filenameFormat: readfiles.FULL_PATH }, function (err) {
             if (err) console.warn(yaml.stringify(err));
         })
-        .then(files => {
+        .then(async function(files) {
             files = files.sort();
             for (let file of files) {
-                genStack.push(check(file, false, expectFailure));
+                await check(file, false, expectFailure);
             }
-            genStackNext();
         })
         .catch(err => {
             handleResult(err,options);
@@ -344,17 +323,21 @@ function processPathSpec(pathspec, expectFailure) {
     }
 }
 
-process.exitCode = 1;
-console.warn('Gathering...');
-for (let pathspec of argv._) {
-    processPathSpec(pathspec, false);
-}
-if (argv.fail) {
+async function main() {
+  process.exitCode = 1;
+  console.warn('Gathering...');
+  for (let pathspec of argv._) {
+    await processPathSpec(pathspec, false);
+  }
+  if (argv.fail) {
     if (!Array.isArray(argv.fail)) argv.fail = [argv.fail];
     for (let pathspec of argv.fail) {
-        processPathSpec(pathspec, true);
+      await processPathSpec(pathspec, true);
     }
+  }
 }
+
+main();
 
 process.on('unhandledRejection', r => console.warn('UPR',r));
 
