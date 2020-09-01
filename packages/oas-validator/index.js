@@ -31,6 +31,9 @@ function validateUrl(s, contextServers, context, options) {
     should(s).not.be.Null();
     if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
     let base = options.source || 'http://localhost/';
+    if (base.indexOf('://') < 0) {
+      base = url.pathToFileURL(base);
+    }
     let variables = {};
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
