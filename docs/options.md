@@ -26,7 +26,6 @@ help|Boolean|Reserved|Command-line flag to display help
 indent|String|Input|Command-line flag to control JSON indenting
 isCallback|Boolean|Input|Hint to the linter that we are within a `callback` object
 laxDefaults|Boolean|Input|Flag to validation step to ignore default/type mismatches
-laxRefs|Boolean|Input|**No longer has any effect as this is now the default**
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs and # ? in paths
 lint|Boolean|Input|Whether to lint the document during validation
 linter|Function|Input|A linter plugin to use in place of the default linter

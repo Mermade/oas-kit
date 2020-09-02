@@ -317,16 +317,10 @@ function checkExample(ex, contextServers, openapi, options) {
     if (typeof ex.value !== 'undefined') {
         should(ex).not.have.property('externalValue');
     }
-    //else { // not mandated by the spec. moved to linter rule
-    //    should(ex).have.property('externalValue');
-    //}
     if (typeof ex.externalValue !== 'undefined') {
         should(ex).not.have.property('value');
         should.doesNotThrow(function () { validateUrl(ex.externalValue, contextServers, 'examples..externalValue', options) },'Invalid examples..externalValue');
     }
-    //else { // not mandated by the spec. moved to linter rule
-    //    should(ex).have.property('value');
-    //}
     for (let k in ex) {
         if (!k.startsWith('x-')) {
             should(['summary','description','value','externalValue'].indexOf(k)).be.greaterThan(-1,'Example object cannot have additionalProperty: '+k);
