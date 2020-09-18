@@ -23,6 +23,7 @@ fetch|function|Input|Used to override the internal `fetch` implementation
 fetchOptions|Object|Input|Additional options to be passed to `fetch` calls
 handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md), must be functions which return a Promise
 help|Boolean|Reserved|Command-line flag to display help
+ignoreIOErrors|Boolean|Input|Set to `true` to ignore IO errors when resolving
 indent|String|Input|Command-line flag to control JSON indenting
 isCallback|Boolean|Input|Hint to the linter that we are within a `callback` object
 laxDefaults|Boolean|Input|Flag to validation step to ignore default/type mismatches

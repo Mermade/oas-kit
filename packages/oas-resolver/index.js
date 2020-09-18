@@ -18,13 +18,21 @@ function unique(arr) {
     return [... new Set(arr)];
 }
 
-function readFileAsync(filename, encoding) {
+function readFileAsync(filename, encoding, options, pointer, def) {
     return new Promise(function (resolve, reject) {
         fs.readFile(filename, encoding, function (err, data) {
-            if (err)
-                reject(err);
-            else
+            if (err) {
+                if (options.ignoreIOErrors && def) {
+                    options.externalRefs[pointer].failed = true;
+                    resolve(def);
+                }
+                else {
+                    reject(err);
+                }
+            }
+            else {
                 resolve(data);
+            }
         });
     });
 }
@@ -82,13 +90,23 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                     let newRef = url.resolve(base,obj[key]).toString();
                     if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key];
+                    if (!options.externalRefs[newRef]) {
+                      options.externalRefs[newRef] = options.externalRefs[obj[key]];
+                    }
+                    options.externalRefs[newRef].failed = options.externalRefs[obj[key]].failed;
                     obj[key] = newRef;
                 }
                 else if (!obj['x-miro']) {
                     let newRef = url.resolve(base,obj[key]).toString();
-                    if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
-                    obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
-                    obj[key] = newRef;
+                    let failed = false;
+                    if (options.externalRefs[obj[key]]) {
+                        failed = options.externalRefs[obj[key]].failed;
+                    }
+                    if (!failed) {
+                        if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external ref',obj[key],'as',newRef,common.colour.normal);
+                        obj['x-miro'] = obj[key]; // we use x-miro as a flag so we don't do this > once
+                        obj[key] = newRef;
+                    }
                 }
             }
         });
@@ -187,7 +205,15 @@ function resolveExternal(root, pointer, options, callback) {
         const fetchOptions = Object.assign({}, options.fetchOptions, { agent: options.agent });
         return options.fetch(target, fetchOptions)
             .then(function (res) {
-                if (res.status !== 200) throw new Error(`Received status code ${res.status}: ${target}`);
+                if (res.status !== 200) {
+                  if (!options.ignoreIOErrors) {
+                    throw new Error(`Received status code ${res.status}: ${target}`);
+                  }
+                  else {
+                    options.externalRefs[pointer].failed = true;
+                    return '{"$ref":"'+pointer+'"}';
+                  }
+                }
                 return res.text();
             })
             .then(function (data) {
@@ -226,7 +252,8 @@ function resolveExternal(root, pointer, options, callback) {
             });
     }
     else {
-        return readFileAsync(target, options.encoding || 'utf8')
+        const def = '{"$ref":"'+pointer+'"}';
+        return readFileAsync(target, options.encoding || 'utf8', options, pointer, def)
             .then(function (data) {
                 try {
                     let context = yaml.parse(data, { schema:'core', prettyErrors: true });
@@ -291,8 +318,11 @@ function scanExternalRefs(options) {
                         refs[$ref] = { resolved: false, paths: [], extras:{}, description: obj[key].description };
                     }
                     if (refs[$ref].resolved) {
-                        if (options.rewriteRefs) {
-                            // we've already seen it
+                        // we've already seen it
+                        if (refs[$ref].failed) {
+                          // do none
+                        }
+                        else if (options.rewriteRefs) {
                             let newRef = refs[$ref].resolvedAt;
                             if (options.verbose>1) console.warn('Rewriting ref', $ref, newRef);
                             obj[key]['x-miro'] = $ref;
