@@ -206,12 +206,12 @@ function resolveExternal(root, pointer, options, callback) {
         return options.fetch(target, fetchOptions)
             .then(function (res) {
                 if (res.status !== 200) {
-                  if (!options.ignoreIOErrors) {
-                    throw new Error(`Received status code ${res.status}: ${target}`);
-                  }
-                  else {
+                  if (options.ignoreIOErrors) {
                     options.externalRefs[pointer].failed = true;
                     return '{"$ref":"'+pointer+'"}';
+                  }
+                  else {
+                    throw new Error(`Received status code ${res.status}: ${target}`);
                   }
                 }
                 return res.text();
