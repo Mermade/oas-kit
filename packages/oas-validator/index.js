@@ -27,13 +27,14 @@ function contextAppend(options, s) {
 }
 
 function validateUrl(s, contextServers, context, options) {
+    let effSource = options.source || 'http://localhost/';
+    if (effSource.indexOf('://') < 0) {
+        effSource = url.pathToFileURL(effSource);
+    }
     should(s).be.a.String();
     should(s).not.be.Null();
     if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
-    let base = options.source || 'http://localhost/';
-    if (base.indexOf('://') < 0) {
-      base = url.pathToFileURL(base);
-    }
+    let base = effSource;
     let variables = {};
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
@@ -41,7 +42,10 @@ function validateUrl(s, contextServers, context, options) {
             base = servers[0].url;
             variables = servers[0].variables;
             for (let v in variables) {
-              base = base.replace('{'+v+'}',variables[v].default);
+                base = base.replace('{'+v+'}',variables[v].default);
+            }
+            if (base.indexOf('://') < 0) {
+                base = new URL(base, effSource).toString();
             }
         }
     }
@@ -1081,7 +1085,9 @@ function validateInner(openapi, options, callback) {
             if (scheme.type === 'oauth2') {
                 should(scheme).not.have.property('flow');
                 should(scheme).have.property('flows');
+                contextAppend(options,'flows');
                 for (let f in scheme.flows) {
+                    contextAppend(options,f);
                     let flow = scheme.flows[f];
                     should(['implicit','password','authorizationCode','clientCredentials'].indexOf(f)).be.greaterThan(-1,'Unknown flow type: '+f);
 
@@ -1106,7 +1112,9 @@ function validateInner(openapi, options, callback) {
                     should(flow).have.property('scopes');
                     should(flow.scopes).be.an.Object();
                     should(flow.scopes).not.be.an.Array();
+                    options.context.pop();
                 }
+                options.context.pop();
             }
             else {
                 should(scheme).not.have.property('flows');
