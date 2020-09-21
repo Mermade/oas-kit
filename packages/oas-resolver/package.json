@@ -25,6 +25,7 @@
   "dependencies": {
     "node-fetch-h2": "^2.3.0",
     "oas-kit-common": "^1.0.8",
+    "path-browserify": "^1.0.1",
     "reftools": "^1.1.1",
     "yaml": "^1.8.3",
     "yargs": "^15.3.1"
