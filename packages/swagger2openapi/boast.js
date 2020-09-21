@@ -7,8 +7,7 @@
 const fs = require('fs');
 
 const yaml = require('yaml');
-const fetch = require('node-fetch-h2');
-const bae = require('better-ajv-errors');
+const fetch = require('node-fetch');
 
 const swagger2openapi = require('./index.js');
 const validator = require('oas-validator');
@@ -21,9 +20,6 @@ let argv = require('yargs')
     .boolean('all')
     .alias('a','all')
     .describe('all','show all lint warnings')
-    .boolean('bae')
-    .alias('b','bae')
-    .describe('bae','enable better-ajv-errors')
     .string('encoding')
     .alias('e','encoding')
     .default('encoding','utf8')
@@ -68,11 +64,11 @@ function main(){
         argv.resolve = true;
         argv.patch = true;
         argv.source = argv._[0];
+        argv.fatal = true;
+        argv.laxurls = true;
+        argv.laxDefaults = true;
+        argv.fetch = fetch;
         if (argv.all) argv.lintLimit = Number.MAX_SAFE_INTEGER;
-        if (argv.bae) {
-            argv.validateSchema = 'first';
-            argv.prettify = true;
-        }
         if (argv.internal) {
             argv.resolveInternal = true;
         }
@@ -111,11 +107,7 @@ function main(){
             jsonOutput.warnings = [];
             if (options.warnings) {
                 for (let warning of options.warnings) {
-                    if (argv.bae) {
-                        const display = bae(options.schema,options.openapi,[warning]);
-                        console.warn(display);
-                    }
-                    else if (options.json) {
+                    if (options.json) {
                         jsonOutput.warnings.push({ message:warning.message, pointer:warning.pointer, ruleName:warning.ruleName, ruleUrl:warning.rule.url });
                     }
                     else {

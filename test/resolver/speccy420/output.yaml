@@ -1,0 +1,39 @@
+openapi: 3.0.2
+info:
+  title: api
+  description: |
+    description!
+  contact:
+    name: team
+    url: https://test.com/
+    email: test@test.com
+  version: 0.0.1
+servers:
+  - url: https://test.com
+paths: {}
+components:
+  responses:
+    Request:
+      description: request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              children:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    children:
+                      type: array
+                      items:
+                        $ref: "#/components/responses/Request/content/application~1json/schema/properti\
+                          es/children/items"
+                      default: []
+                default: []
+tags: []

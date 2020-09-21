@@ -3,44 +3,10 @@
 
 const fs = require('fs');
 const url = require('url');
-const URL = url.URL;
 
 const yaml = require('yaml');
 const should = require('should/as-function');
 const maybe = require('call-me-maybe');
-let ajv = require('ajv')({
-    $data: true,
-    allErrors: true,
-    verbose: true,
-    jsonPointers: true,
-    patternGroups: true,
-    extendRefs: true // optional, current default is to 'fail', spec behaviour is to 'ignore'
-});
-//meta: false, // optional, to prevent adding draft-06 meta-schema
-
-let ajvFormats = require('ajv/lib/compile/formats.js');
-ajv.addFormat('uriref', ajvFormats.full['uri-reference']);
-ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-ajv._refs['http://json-schema.org/schema'] = 'http://json-schema.org/draft-04/schema'; // optional, using unversioned URI is out of spec
-let metaSchema = require('ajv/lib/refs/json-schema-v5.json');
-ajv.addMetaSchema(metaSchema);
-ajv._opts.defaultMeta = metaSchema.id;
-
-const bae = require('better-ajv-errors');
-
-class JSONSchemaError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'JSONSchemaError';
-  }
-}
-
-class CLIError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'CLIError';
-  }
-}
 
 const common = require('oas-kit-common');
 const jptr = require('reftools/lib/jptr.js');
@@ -52,36 +18,41 @@ const sw = require('oas-schema-walker');
 const linter = require('oas-linter');
 const resolver = require('oas-resolver');
 
-const jsonSchema = require('./schemas/json_v5.json');
-const validateMetaSchema = ajv.compile(jsonSchema);
-let openapi3Schema = require('./schemas/openapi-3.0.json');
-let validateOpenAPI3 = ajv.compile(openapi3Schema);
-
 const dummySchema = { anyOf: {} };
 const emptySchema = {};
-const urlRegexStr = '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$';
-const urlRegex = new RegExp(urlRegexStr, 'i');
+let refSeen = {};
 
 function contextAppend(options, s) {
     options.context.push((options.context[options.context.length - 1] + '/' + s).split('//').join('/'));
 }
 
 function validateUrl(s, contextServers, context, options) {
+    let effSource = options.source || 'http://localhost/';
+    if (effSource.indexOf('://') < 0) {
+        effSource = url.pathToFileURL(effSource);
+    }
     should(s).be.a.String();
     should(s).not.be.Null();
     if (!options.laxurls) should(s).not.be.exactly('', 'Invalid empty URL ' + context);
-    let base = options.origin || 'http://localhost/';
+    let base = effSource;
+    let variables = {};
     if (contextServers && contextServers.length) {
         let servers = contextServers[0];
         if (servers && servers.length) {
             base = servers[0].url;
+            variables = servers[0].variables;
+            for (let v in variables) {
+                base = base.replace('{'+v+'}',variables[v].default);
+            }
+            if (base.indexOf('://') < 0) {
+                base = new URL(base, effSource).toString();
+            }
         }
     }
     if (s.indexOf('://') > 0) { // FIXME HACK
         base = undefined;
     }
-    // should(s).match(urlRegex); // doesn't allow for templated urls
-    let u = (URL && options.whatwg) ? new URL(s, base) : url.parse(s);
+    let u = new URL(s, base);
     return true; // if we haven't thrown
 }
 
@@ -91,20 +62,6 @@ function validateComponentName(name) {
 
 function validateHeaderName(name) {
     return /^[A-Za-z0-9!#\-\$%&'\*\+\\\.\^_`\|~]+$/.test(name);
-}
-
-function validateSchema(schema, openapi, options) {
-    validateMetaSchema(schema);
-    let errors = validateSchema.errors;
-    if (errors && errors.length) {
-        if (options.prettify) {
-            const errorStr = bae(schema, openapi, errors);
-            throw (new CLIError(errorStr));
-        }
-        throw (new JSONSchemaError('Schema invalid:\n'+ yaml.stringify(errors)));
-    }
-    options.schema = schema;
-    return !(errors && errors.length);
 }
 
 function checkSubSchema(schema, parent, state) {
@@ -118,7 +75,7 @@ function checkSubSchema(schema, parent, state) {
         should(schema.$ref).be.a.String();
         if (state.options.lint) state.options.linter('reference',schema,'$ref',state.options);
         if (prop) state.options.context.pop();
-        return; // all other properties SHALL be ignored
+        return; // all other properties SHALL be ignored (3.0)
     }
 
     for (let k in schema) {
@@ -260,7 +217,7 @@ function checkSubSchema(schema, parent, state) {
     if (typeof schema.description !== 'undefined') {
         should(schema.description).be.a.String();
     }
-    if (typeof schema.default !== 'undefined') {
+    if (!state.options.laxDefaults && typeof schema.default !== 'undefined') {
         should(schema).have.property('type');
         let realType = typeof schema.default;
         let schemaType = schema.type;
@@ -332,15 +289,24 @@ function checkSubSchema(schema, parent, state) {
         if (state.options.lint) state.options.linter('externalDocs',schema.externalDocs,'externalDocs',state.options);
     }
     if (prop) state.options.context.pop();
-    if (!prop || prop === 'schema') validateSchema(schema, state.openapi, state.options); // top level only
 }
 
 function checkSchema(schema,parent,prop,openapi,options) {
-    let state = sw.getDefaultState();
-    state.openapi = openapi;
-    state.options = options;
-    state.property = prop;
-    sw.walkSchema(schema,parent,state,checkSubSchema);
+    if ((typeof schema.$ref === 'string') && (!refSeen[schema.$ref])) {
+      // check if the $reffed thing is actually a schema object (and not a response etc)
+      // all other properties SHALL be ignored (3.0)
+      const refSchema = resolveInternal(openapi,schema.$ref);
+      should(refSchema).not.be.exactly(false, 'Cannot resolve reference: ' + schema.$ref);
+      refSeen[schema.$ref] = checkSchema(refSchema,parent,prop,openapi,options);
+    }
+    else {
+      let state = sw.getDefaultState();
+      state.openapi = openapi;
+      state.options = options;
+      state.property = prop;
+      sw.walkSchema(schema,parent,state,checkSubSchema);
+    }
+    return true;
 }
 
 function checkExample(ex, contextServers, openapi, options) {
@@ -355,16 +321,10 @@ function checkExample(ex, contextServers, openapi, options) {
     if (typeof ex.value !== 'undefined') {
         should(ex).not.have.property('externalValue');
     }
-    //else { // not mandated by the spec. moved to linter rule
-    //    should(ex).have.property('externalValue');
-    //}
     if (typeof ex.externalValue !== 'undefined') {
         should(ex).not.have.property('value');
         should.doesNotThrow(function () { validateUrl(ex.externalValue, contextServers, 'examples..externalValue', options) },'Invalid examples..externalValue');
     }
-    //else { // not mandated by the spec. moved to linter rule
-    //    should(ex).have.property('value');
-    //}
     for (let k in ex) {
         if (!k.startsWith('x-')) {
             should(['summary','description','value','externalValue'].indexOf(k)).be.greaterThan(-1,'Example object cannot have additionalProperty: '+k);
@@ -423,10 +383,10 @@ function checkContent(content, contextServers, openapi, options) {
 
 function checkServer(server, options) {
     should(server).have.property('url');
-    should.doesNotThrow(function () { validateUrl(server.url, [], 'server.url', options) },'Invalid server.url');
     if (typeof server.description !== 'undefined') {
         should(server.description).be.a.String();
     }
+    let u = server.url;
     let srvVars = 0;
     server.url.replace(/\{(.+?)\}/g, function (match, group1) {
         srvVars++;
@@ -442,6 +402,7 @@ function checkServer(server, options) {
             should(server.variables[v]).be.an.Object();
             should(server.variables[v]).have.key('default');
             should(server.variables[v].default).be.a.String();
+            u = u.replace('{'+v+'}',server.variables[v].default);
             if (typeof server.variables[v].enum !== 'undefined') {
                 contextAppend(options, 'enum');
                 should(server.variables[v].enum).be.an.Array();
@@ -456,9 +417,12 @@ function checkServer(server, options) {
             if (options.lint) options.linter('serverVariable',server.variables[v],v,options);
             options.context.pop();
         }
-        should(Object.keys(server.variables).length).be.exactly(srvVars);
+        should(Object.keys(server.variables).length).be.exactly(srvVars,'Missing template variable in server url');
         options.context.pop();
     }
+
+    should.doesNotThrow(function () { validateUrl(u, [], 'server.url', options) },'Invalid server.url');
+
     for (let k in server) {
         if (!k.startsWith('x-')) {
             should(['url','description','variables'].indexOf(k)).be.greaterThan(-1,'server object cannot have additionalProperty: '+k);
@@ -480,7 +444,9 @@ function checkServers(servers, options) {
 function checkLink(link, openapi, options) {
     if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
-        should(link.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true; // bail out
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',link,'$ref',options);
         link = resolveInternal(openapi, ref);
         should(link).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -517,7 +483,9 @@ function checkLink(link, openapi, options) {
 function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
-        should(header.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true; // bail out
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',header,'$ref',options);
         header = resolveInternal(openapi, ref);
         should(header).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -561,7 +529,9 @@ function checkResponse(response, key, contextServers, openapi, options) {
     should(response).not.be.null();
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
-        should(response.$ref).be.type('string');
+        should(ref).be.type('string');
+        if (refSeen[ref]) return true; // bail out
+        refSeen[ref] = true;
         if (options.lint) options.linter('reference',response,'$ref',options);
         response = resolveInternal(openapi, ref);
         should(response).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
@@ -598,12 +568,16 @@ function checkResponse(response, key, contextServers, openapi, options) {
 }
 
 function checkParam(param, index, path, contextServers, openapi, options) {
+    const ref = param.$ref;
     contextAppend(options, index);
     if (typeof param.$ref !== 'undefined') {
-        should(param.$ref).be.type('string');
+        should(ref).be.type('string');
         if (options.lint) options.linter('reference',param,'$ref',options);
-        let ref = param.$ref;
         param = resolveInternal(openapi, ref);
+        if (refSeen[ref] && (param.in !== 'path')) {
+          options.context.pop();
+          return param; // bail out
+        }
         should(param).not.be.exactly(false, 'Cannot resolve reference: ' + ref);
     }
     should(param).have.property('name');
@@ -694,6 +668,9 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     }
     if (options.lint) options.linter('parameter',param,index,options);
     options.context.pop();
+    if (ref) {
+      refSeen[ref] = param;
+    }
     return param;
 }
 
@@ -708,8 +685,8 @@ function checkPathItem(pathItem, path, openapi, options) {
 
     let pathParameters = {};
     if (typeof pathItem.parameters !== 'undefined') should(pathItem.parameters).be.an.Array();
+    contextAppend(options, 'parameters');
     for (let p in pathItem.parameters) {
-        contextAppend(options, 'parameters');
         let param = checkParam(pathItem.parameters[p], p, path, contextServers, openapi, options);
         if (pathParameters[param.in+':'+param.name]) {
             should.fail(false,true,'Duplicate path-level parameter '+param.name);
@@ -717,8 +694,8 @@ function checkPathItem(pathItem, path, openapi, options) {
         else {
             pathParameters[param.in+':'+param.name] = param;
         }
-        options.context.pop();
     }
+    options.context.pop();
 
     for (let o in pathItem) {
         contextAppend(options, o);
@@ -865,7 +842,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                             let cbPi = callback[p];
                             options.isCallback = true;
                             checkPathItem(cbPi, p, openapi, options);
-                            options.isCallBack = false;
+                            options.isCallback = false;
                         }
                         options.context.pop();
                     }
@@ -928,16 +905,6 @@ function validateInner(openapi, options, callback) {
     setupOptions(options,openapi);
     let contextServers = [];
 
-    if (options.jsonschema) {
-        let schemaStr = fs.readFileSync(options.jsonschema, 'utf8');
-        openapi3Schema = yaml.parse(schemaStr, { schema:'core' });
-        validateOpenAPI3 = ajv.compile(openapi3Schema);
-    }
-
-    if (options.validateSchema === 'first') {
-        schemaValidate(openapi, options);
-    }
-
     should(openapi).be.an.Object();
     should(openapi).not.have.key('swagger');
     should(openapi).have.key('openapi');
@@ -961,6 +928,14 @@ function validateInner(openapi, options, callback) {
         }
     }
 
+    if (typeof openapi.servers !== 'undefined') {
+        should(openapi.servers).be.an.Object();
+        contextAppend(options, 'servers');
+        checkServers(openapi.servers, options);
+        options.context.pop();
+        contextServers.push(openapi.servers);
+    }
+
     should(openapi).have.key('info');
     should(openapi.info).be.an.Object();
     should(openapi.info).not.be.an.Array();
@@ -969,13 +944,6 @@ function validateInner(openapi, options, callback) {
     should(openapi.info.title).be.type('string', 'title should be of type string');
     should(openapi.info).have.key('version');
     should(openapi.info.version).be.type('string', 'version should be of type string');
-    if (typeof openapi.servers !== 'undefined') {
-        should(openapi.servers).be.an.Object();
-        contextAppend(options, 'servers');
-        checkServers(openapi.servers, options);
-        options.context.pop();
-        contextServers.push(openapi.servers);
-    }
     if (typeof openapi.info.license !== 'undefined') {
         should(openapi.info.license).be.an.Object();
         should(openapi.info.license).not.be.an.Array();
@@ -1117,7 +1085,9 @@ function validateInner(openapi, options, callback) {
             if (scheme.type === 'oauth2') {
                 should(scheme).not.have.property('flow');
                 should(scheme).have.property('flows');
+                contextAppend(options,'flows');
                 for (let f in scheme.flows) {
+                    contextAppend(options,f);
                     let flow = scheme.flows[f];
                     should(['implicit','password','authorizationCode','clientCredentials'].indexOf(f)).be.greaterThan(-1,'Unknown flow type: '+f);
 
@@ -1142,7 +1112,9 @@ function validateInner(openapi, options, callback) {
                     should(flow).have.property('scopes');
                     should(flow.scopes).be.an.Object();
                     should(flow.scopes).not.be.an.Array();
+                    options.context.pop();
                 }
+                options.context.pop();
             }
             else {
                 should(scheme).not.have.property('flows');
@@ -1172,7 +1144,7 @@ function validateInner(openapi, options, callback) {
                 seen.add(obj[key]);
             }
         }
-        if (isRef(obj,key)) {
+        if (isRef(obj,key) && (!refSeen[obj[key]])) {
             options.context.push(state.path);
             should(obj[key]).not.startWith('#/definitions/');
             let refUrl = url.parse(obj[key]);
@@ -1191,8 +1163,8 @@ function validateInner(openapi, options, callback) {
         options.context.push('#/paths/' + jptr.jpescape(p));
         if (!p.startsWith('x-')) {
             should(p).startWith('/');
-            should(p).not.containEql('?');
-            //should(p).not.containEql('#');
+            if (!options.laxurls) should(p).not.containEql('?');
+            if (!options.laxurls) should(p).not.containEql('#');
             let pCount = 0;
             let template = p.replace(/\{(.+?)\}/g, function (match, group1) {
                 return '{'+(pCount++)+'}';
@@ -1216,8 +1188,8 @@ function validateInner(openapi, options, callback) {
         for (let p in openapi["x-ms-paths"]) {
             options.context.push('#/x-ms-paths/' + jptr.jpescape(p));
             should(p).startWith('/');
-            should(p).not.containEql('?');
-            //should(p).not.containEql('#');
+            //if (!options.laxurls) should(p).not.containEql('?');
+            if (!options.laxurls) should(p).not.containEql('#');
             checkPathItem(openapi["x-ms-paths"][p], p, openapi, options);
             options.context.pop();
         }
@@ -1356,10 +1328,6 @@ function validateInner(openapi, options, callback) {
         options.context.pop();
     }
 
-    if (!options.validateSchema || (options.validateSchema === 'last')) {
-        schemaValidate(openapi, options);
-    }
-
     options.valid = !options.expectFailure;
     if (options.lint) options.linter('openapi',openapi,'',options);
 
@@ -1391,19 +1359,8 @@ function validateInner(openapi, options, callback) {
     }));
 }
 
-function schemaValidate(openapi, options) {
-    validateOpenAPI3(openapi);
-    let errors = validateOpenAPI3.errors;
-    if (errors && errors.length) {
-        if (options.prettify) {
-            const errorStr = bae(options.schema, openapi, errors, { indent: 2 });
-            throw (new CLIError(errorStr));
-        }
-        throw (new JSONSchemaError('Failed OpenAPI3 schema validation: ' + JSON.stringify(errors, null, 2)));
-    }
-}
-
 function setupOptions(options,openapi) {
+    refSeen = {};
     options.valid = false;
     options.context = [ '#/' ];
     options.warnings = [];
@@ -1418,10 +1375,8 @@ function setupOptions(options,openapi) {
         options.linterResults = linter.getResults;
     }
     if (!options.cache) options.cache = {};
-    options.schema = openapi3Schema;
-    options.metadata = { lines: -1 };
+    options.metadata = { lines: -1, count: {} };
     if ((options.text) && (typeof options.text === 'string')) options.metadata.lines = options.text.split('\n').length;
-    options.ajv = ajv;
 }
 
 function validate(openapi, options, callback) {
@@ -1466,7 +1421,5 @@ module.exports = {
     validateInner: validateInner,
     validate: validate,
     microValidate: microValidate,
-    optionallyValidate: optionallyValidate,
-    JSONSchemaError: JSONSchemaError,
-    CLIError: CLIError
+    optionallyValidate: optionallyValidate
 }

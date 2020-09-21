@@ -5,6 +5,7 @@ const path = require('path');
 
 const yaml = require('yaml');
 const should = require('should/as-function');
+const { validator } = require('@exodus/schemasafe');
 
 let rules = [];
 let results = [];
@@ -242,13 +243,15 @@ function lint(objectName,object,key,options) {
             }
             if (rule.schema) {
                 matched = true;
-                const validate = options.ajv.compile(rule.schema);
-                const valid = validate(object);
+                if (!rule.$schema) {
+                  rule.$schema = validator(rule.schema, { includeErrors: true, allErrors: true, mode: 'default' });
+                }
+                const valid = rule.$schema(object);
                 if (!valid) {
-                    const pointer = (options.context && options.context.length > 0 ? options.context[options.context.length-1] : null);
-                    for (let error of validate.errors) {
-                        results.push({ pointer, rule, ruleName: rule.name, error, dataPath: pointer, keyword: 'lint', message: error.dataPath + ' ' + error.message, url: rules.url });
-                    }
+                  const pointer = (options.context && options.context.length > 0 ? options.context[options.context.length-1] : null);
+                  for (let error of rule.$schema.errors) {
+                    results.push({ pointer, rule, ruleName: rule.name, error, dataPath: pointer, keyword: 'lint', message: error.instanceLocation, url: rules.url });
+                  }
                 }
             }
             if (!matched && options.verbose) console.warn('Linter rule did not match any known rule-types',rule.name);

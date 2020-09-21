@@ -1,6 +1,6 @@
 {
   "name": "oas-linter",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "Default linter plugin for oas-validator",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,9 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "@exodus/schemasafe": "^1.0.0-rc.2",
     "should": "^13.2.1",
-    "yaml": "^1.8.3"
+    "yaml": "^1.10.0"
   },
   "repository": {
     "type": "git",

@@ -259,3 +259,7 @@ default:
     description: Document should have a max length of 1000 lines
     more: ''
 
+  - name: schema-properties-type
+    object: schema
+    description: "schema objects containing properties should have type: object"
+    more: ''

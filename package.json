@@ -3,17 +3,15 @@
   "devDependencies": {
     "@babel/runtime": "^7.3.1",
     "babel-preset-env": "^1.7.0",
-    "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.2.2",
-    "jsdoc-to-markdown": "^5.0.0",
+    "eslint": "^7.8.1",
+    "jsdoc-to-markdown": "^6.0.1",
     "lerna": "^3.20.2",
-    "mocha": "^7.1.1",
+    "mocha": "^8.0.1",
     "should": "^13.2.1",
-    "standard-version": "^7.0.0",
     "webpack": "^4.42.0",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.0.8",
-    "yaml": "^1.8.3"
+    "yaml": "^1.10.0"
   },
   "name": "oas-kit",
   "description": "This is the mono-repo for swagger2openapi and related projects",
@@ -30,16 +28,9 @@
     "webpack-converter": "npx webpack -p --config webpack.converter.js",
     "webpack-validator": "npx webpack -p --config webpack.validator.js",
     "webpack-reftools": "npx webpack -p --config webpack.reftools.js",
-    "changelog": "standard-version",
     "audits": "npx lerna exec --no-bail npm audit",
-    "outdated": "npx lerna exec --no-bail npm outdated"
-  },
-  "standard-version": {
-    "skip": {
-      "bump": true,
-      "commit": true,
-      "tag": true
-    }
+    "outdated": "npx lerna exec --no-bail npm outdated",
+    "rescue": "npx lerna publish from-package"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "oas-validator",
-  "version": "4.0.3",
+  "version": "5.0.1",
   "description": "Parser/validator for OpenAPI 3.x definitions",
   "main": "index.js",
   "funding": "https://github.com/Mermade/oas-kit?sponsor=1",
@@ -17,16 +17,14 @@
   "author": "Mike Ralphson",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "^5.5.2",
-    "better-ajv-errors": "^0.6.7",
     "call-me-maybe": "^1.0.1",
     "oas-kit-common": "^1.0.8",
-    "oas-linter": "^3.1.2",
-    "oas-resolver": "^2.3.2",
-    "oas-schema-walker": "^1.1.4",
-    "reftools": "^1.1.1",
+    "oas-linter": "^3.2.0",
+    "oas-resolver": "^2.5.0",
+    "oas-schema-walker": "^1.1.5",
+    "reftools": "^1.1.6",
     "should": "^13.2.1",
-    "yaml": "^1.8.3"
+    "yaml": "^1.10.0"
   },
   "repository": {
     "type": "git",
