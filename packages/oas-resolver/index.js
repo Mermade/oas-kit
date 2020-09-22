@@ -23,6 +23,7 @@ function readFileAsync(filename, encoding, options, pointer, def) {
         fs.readFile(filename, encoding, function (err, data) {
             if (err) {
                 if (options.ignoreIOErrors && def) {
+                    if (options.verbose) console.warn('FAILED',pointer);
                     options.externalRefs[pointer].failed = true;
                     resolve(def);
                 }
@@ -90,10 +91,12 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                     let newRef = url.resolve(base,obj[key]).toString();
                     if (options.verbose>1) console.warn(common.colour.yellow+'Rewriting external url ref',obj[key],'as',newRef,common.colour.normal);
                     obj['x-miro'] = obj[key];
-                    if (!options.externalRefs[newRef]) {
-                      options.externalRefs[newRef] = options.externalRefs[obj[key]];
+                    if (options.externalRefs[obj[key]]) {
+                        if (!options.externalRefs[newRef]) {
+                            options.externalRefs[newRef] = options.externalRefs[obj[key]];
+                        }
+                        options.externalRefs[newRef].failed = options.externalRefs[obj[key]].failed;
                     }
-                    options.externalRefs[newRef].failed = options.externalRefs[obj[key]].failed;
                     obj[key] = newRef;
                 }
                 else if (!obj['x-miro']) {
@@ -207,6 +210,7 @@ function resolveExternal(root, pointer, options, callback) {
             .then(function (res) {
                 if (res.status !== 200) {
                   if (options.ignoreIOErrors) {
+                    if (options.verbose) console.warn('FAILED',pointer);
                     options.externalRefs[pointer].failed = true;
                     return '{"$ref":"'+pointer+'"}';
                   }
