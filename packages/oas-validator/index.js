@@ -477,6 +477,11 @@ function checkLink(link, openapi, options) {
     if (typeof link.server !== 'undefined') {
         checkServer(link.server, options);
     }
+    for (let k in link) {
+        if (!k.startsWith('x-')) {
+            should(['operationRef','operationId','parameters','requestBody','description','server'].indexOf(k)).be.greaterThan(-1,'link object cannot have additionalProperty: '+k);
+        }
+    }
     if (options.lint) options.linter('link',link,'link',options);
 }
 
@@ -522,6 +527,11 @@ function checkHeader(header, contextServers, openapi, options) {
     if (!header.schema && !header.content) {
         should(header).have.property('schema', 'Header should have schema or content');
     }
+    for (let k in header) {
+        if (!k.startsWith('x-')) {
+           should(['description','required','deprecated','allowEmptyValue','style','explode','allowReserved','schema','example','examples','content'].indexOf(k)).be.greaterThan(-1,'header object cannot have additionalProperty: '+k);
+        }
+    }
     if (options.lint) options.linter('header',header,'header',options);
 }
 
@@ -563,6 +573,11 @@ function checkResponse(response, key, contextServers, openapi, options) {
             options.context.pop();
         }
         options.context.pop();
+    }
+    for (let k in response) {
+        if (!k.startsWith('x-')) {
+            should(['description','headers','content','links'].indexOf(k)).be.greaterThan(-1,'response object cannot have additionalProperty: '+k);
+        }
     }
     if (options.lint) options.linter('response',response,key,options);
 }
@@ -665,6 +680,11 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     }
     if (!param.schema && !param.content) {
         should(param).have.property('schema', 'Parameter should have schema or content');
+    }
+    for (let k in param) {
+        if (!k.startsWith('x-')) {
+           should(['name','in','description','required','deprecated','allowEmptyValue','style','explode','allowReserved','schema','example','examples','content'].indexOf(k)).be.greaterThan(-1,'parameter object cannot have additionalProperty: '+k);
+        }
     }
     if (options.lint) options.linter('parameter',param,index,options);
     options.context.pop();
