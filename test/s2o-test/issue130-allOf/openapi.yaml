@@ -15,9 +15,15 @@ components:
     a:
       allOf:
       - $ref: '#/components/schemas/b'
-      - description: a
+      description: a
     b:
       type: integer
+    c:
+      allOf:
+      - $ref: '#/components/schemas/b'
+      - properties:
+          name:
+            type: 'string'
   parameters:
     c:
       name: c

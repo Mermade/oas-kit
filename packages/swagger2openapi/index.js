@@ -307,7 +307,11 @@ function fixupRefs(obj, key, state) {
             }
             else if (inSchema && (options.refSiblings === 'allOf')) {
                 delete obj.$ref;
-                state.parent[state.pkey] = { allOf: [ { $ref: tmpRef }, obj ]};
+                if(typeof obj.description === 'string'){
+                    state.parent[state.pkey] = { allOf: [ { $ref: tmpRef } ], description: obj.description };
+                }else{
+                    state.parent[state.pkey] = { allOf: [ { $ref: tmpRef }, obj ]};
+                }
             }
             else { // remove, or not 'preserve' and not in a schema
                 state.parent[state.pkey] = { $ref: tmpRef };

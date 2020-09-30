@@ -22,3 +22,8 @@ definitions:
     description: a
   b:
     type: integer
+  c:
+    $ref: '#/definitions/b'
+    properties:
+      name:
+        type: 'string'
