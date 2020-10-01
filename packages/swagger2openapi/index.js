@@ -307,9 +307,9 @@ function fixupRefs(obj, key, state) {
             }
             else if (inSchema && (options.refSiblings === 'allOf')) {
                 delete obj.$ref;
-                if(typeof obj.description === 'string') {
+                if (typeof obj.description === 'string') {
                     state.parent[state.pkey] = { allOf: [ { $ref: tmpRef } ], description: obj.description };
-                }else{
+                } else {
                     state.parent[state.pkey] = { allOf: [ { $ref: tmpRef }, obj ]};
                 }
             }
