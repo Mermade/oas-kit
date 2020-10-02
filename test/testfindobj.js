@@ -1,3 +1,5 @@
+'use strict';
+
 const findObj = require('../packages/reftools/lib/findObj.js').findObj;
 const should = require('should');
 

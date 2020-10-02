@@ -23,7 +23,7 @@
   "funding": "https://www.linode.com/?r=5734be467cc501b23267cf66d451bc339042ddfa",
   "scripts": {
     "test": "npx mocha",
-    "lint": "npx eslint packages/*/*.js",
+    "lint": "npx eslint packages/*/*.js test/*.js",
     "webpack": "npx webpack -p",
     "webpack-converter": "npx webpack -p --config webpack.converter.js",
     "webpack-validator": "npx webpack -p --config webpack.validator.js",
