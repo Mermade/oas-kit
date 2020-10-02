@@ -64,7 +64,7 @@ function resolveAllFragment(obj, context, src, parentPath, base, options) {
                             if (options.fatal) {
                                 let ex = new Error('Fragment $ref resolution failed '+obj[key]);
                                 if (options.promise) options.promise.reject(ex)
-                                else throw(ex);
+                                else throw ex;
                             }
                         }
                         else {
@@ -178,7 +178,7 @@ function resolveExternal(root, pointer, options, callback) {
                 if (options.fatal) {
                     let ex = new Error('Cached $ref resolution failed '+target+fragment);
                     if (options.promise) options.promise.reject(ex)
-                    else throw(ex);
+                    else throw ex;
                 }
             }
         }
@@ -201,7 +201,7 @@ function resolveExternal(root, pointer, options, callback) {
             })
             .catch(function(ex){
                 if (options.verbose) console.warn(ex);
-                throw(ex);
+                throw ex;
             });
     }
     else if (effectiveProtocol && effectiveProtocol.startsWith('http')) {
@@ -233,7 +233,7 @@ function resolveExternal(root, pointer, options, callback) {
                             if (options.fatal) {
                                 let ex = new Error('Remote $ref resolution failed '+target+fragment);
                                 if (options.promise) options.promise.reject(ex)
-                                else throw(ex);
+                                else throw ex;
                             }
                         }
                     }
@@ -243,7 +243,7 @@ function resolveExternal(root, pointer, options, callback) {
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
                     if (options.promise && options.fatal) options.promise.reject(ex)
-                    else throw(ex);
+                    else throw ex;
                 }
                 callback(data, target, options);
                 return data;
@@ -252,7 +252,7 @@ function resolveExternal(root, pointer, options, callback) {
                 if (options.verbose) console.warn(err);
                 options.cache[target] = {};
                 if (options.promise && options.fatal) options.promise.reject(err)
-                else throw(err);
+                else throw err;
             });
     }
     else {
@@ -273,7 +273,7 @@ function resolveExternal(root, pointer, options, callback) {
                             if (options.fatal) {
                                 let ex = new Error('File $ref resolution failed '+target+fragment);
                                 if (options.promise) options.promise.reject(ex)
-                                else throw(ex);
+                                else throw ex;
                             }
                         }
                     }
@@ -283,7 +283,7 @@ function resolveExternal(root, pointer, options, callback) {
                 catch (ex) {
                     if (options.verbose) console.warn(ex);
                     if (options.promise && options.fatal) options.promise.reject(ex)
-                    else throw(ex);
+                    else throw ex;
                 }
                 callback(data, target, options);
                 return data;
@@ -291,7 +291,7 @@ function resolveExternal(root, pointer, options, callback) {
             .catch(function(err){
                 if (options.verbose) console.warn(err);
                 if (options.promise && options.fatal) options.promise.reject(err)
-                else throw(err);
+                else throw err;
             });
     }
 }
