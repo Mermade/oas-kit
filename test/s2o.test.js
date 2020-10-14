@@ -21,9 +21,9 @@ tests.forEach((test) => {
             const openapi = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'openapi.yaml'),'utf8'),{schema:'core'});
 
             let options = {};
+            options.source = path.join(__dirname, 's2o-test', test, 'swagger.yaml');
             try {
-                options = yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'options.yaml'),'utf8'),{schema:'core'});
-                options.source = path.join(__dirname, 's2o-test', test, 'swagger.yaml');
+                options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 's2o-test', test, 'options.yaml'),'utf8'),{schema:'core'}));
             }
             catch (ex) {}
 

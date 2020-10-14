@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const https = require('https');
 const http2 = require('http2');
 const mime = require('mime-types');
 const yaml = require('yaml');
@@ -26,6 +27,10 @@ const serverOptions = {
 };
 const server = http2.createSecureServer(serverOptions);
 const serverRoot = path.join(__dirname,'http2');
+
+const agent = new https.Agent({
+  rejectUnauthorized: false
+});
 
 function respondToStreamError(err, stream) {
     console.warn(err);
@@ -68,7 +73,7 @@ tests.forEach((test) => {
             const input = yaml.parse(fs.readFileSync(inputSpec,'utf8'),{schema:'core'});
             const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'http2', test, 'output.yaml'),'utf8'),{schema:'core'});
 
-            let options = { resolve: true, preserveMiro: false, source: inputSpec };
+            let options = { resolve: true, preserveMiro: false, source: inputSpec, agent, verbose: true };
             try {
                 options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'http2', test, 'options.yaml'),'utf8'),{schema:'core'}));
             }
