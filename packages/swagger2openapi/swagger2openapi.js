@@ -7,6 +7,7 @@ const fs = require('fs');
 const url = require('url');
 
 const yaml = require('yaml');
+const fetch = require('node-fetch');
 const converter = require('./index.js');
 
 // @ts-ignore
@@ -112,6 +113,7 @@ function processResult(err, options) {
 
 argv.source = argv._[0];
 argv.text = true;
+argv.fetch = fetch;
 let u = url.parse(argv.source);
 if (u.protocol && u.protocol.startsWith('http')) {
     converter.convertUrl(argv.source, argv, processResult);
