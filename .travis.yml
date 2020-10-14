@@ -1,7 +1,8 @@
 language: node_js
 node_js:
   - "node"
-  - "lts/*"
+  #- "lts/*"
+  - "12.13.0"
   - "10"
 before_script:
   - . ./bin/setflags.sh
