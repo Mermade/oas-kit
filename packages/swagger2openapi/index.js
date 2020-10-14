@@ -1489,7 +1489,7 @@ function convertObj(swagger, options, callback) {
                             param.default = param.enum[0];
                         }
                         else {
-                            param.default = '';
+                            param.default = 'none';
                         }
                     }
                     if (!param.name) {
