@@ -751,10 +751,12 @@ function checkPathItem(pathItem, path, openapi, options) {
             should(op).not.have.property('produces');
             should(op).not.have.property('schemes');
             should(op).have.property('responses');
+            contextAppend(options, 'responses');
             should(op.responses).not.be.undefined();
             should(op.responses).be.an.Object();
             should(op.responses).not.be.an.Array();
             should(op.responses).not.be.empty();
+            options.context.pop();
             if (typeof op.summary !== 'undefined') should(op.summary).have.type('string');
             if (typeof op.description !== 'undefined') should(op.description).be.a.String();
             if (typeof op.operationId !== 'undefined') {
