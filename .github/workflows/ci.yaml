@@ -1,0 +1,25 @@
+name: ci
+
+# Author: @MikeRalphson
+# Issue : n/a
+# Desc  : This workflow runs a simple lint and test for a node.js project
+
+# run this on push to any branch and creation of pull-requests
+on: [push, pull_request]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1 # checkout repo content
+    - uses: actions/setup-node@v1 # setup Node.js
+      with:
+        node-version: '14.x'
+    - name: Install deps
+      run: npm i
+    - name: Lerna bootstrap
+      run: npx lerna bootstrap --no-ci
+    - name: Run lint
+      run: npm run lint
+    - name: Run tests
+      run: npm run test
