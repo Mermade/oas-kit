@@ -6,8 +6,10 @@ module.exports = {
     mode: 'production',
     plugins: [
     ],
-    node: {
-        fs: 'empty'
+    resolve: {
+      fallback: {
+        fs: false
+      }
     },
     entry: {
         recurse: './packages/reftools/lib/recurse.js',

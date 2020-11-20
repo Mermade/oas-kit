@@ -24,10 +24,10 @@
   "scripts": {
     "test": "npx mocha",
     "lint": "npx eslint packages/*/*.js test/*.js",
-    "webpack": "npx webpack -p",
-    "webpack-converter": "npx webpack -p --config webpack.converter.js",
-    "webpack-validator": "npx webpack -p --config webpack.validator.js",
-    "webpack-reftools": "npx webpack -p --config webpack.reftools.js",
+    "webpack": "npx webpack",
+    "webpack-converter": "npx webpack --config webpack.converter.js",
+    "webpack-validator": "npx webpack --config webpack.validator.js",
+    "webpack-reftools": "npx webpack --config webpack.reftools.js",
     "audits": "npx lerna exec --no-bail npm audit",
     "outdated": "npx lerna exec --no-bail npm outdated",
     "rescue": "npx lerna publish from-package"

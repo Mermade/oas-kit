@@ -38,8 +38,10 @@ module.exports = {
             }
         }
     },
-    node: {
-        fs: 'empty'
+    resolve: {
+      fallback: {
+        fs: false
+      }
     },
     entry: {
         validatorOnly: './packages/oas-validator/index.js'

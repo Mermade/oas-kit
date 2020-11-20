@@ -38,8 +38,10 @@ module.exports = {
             }
         }
     },
-    node: {
-        fs: 'empty'
+    resolve: {
+      fallback: {
+        fs: false
+      }
     },
     entry: {
         converter: './packages/swagger2openapi/index.js',
