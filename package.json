@@ -1,16 +1,16 @@
 {
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@babel/runtime": "^7.3.1",
+    "@babel/runtime": "^7.12.5",
     "babel-preset-env": "^1.7.0",
     "eslint": "^7.8.1",
     "jsdoc-to-markdown": "^6.0.1",
     "lerna": "^3.20.2",
     "mocha": "^8.0.1",
     "should": "^13.2.1",
-    "webpack": "^4.42.0",
-    "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "^4.0.0",
+    "webpack": "^5.6.0",
+    "webpack-bundle-analyzer": "^4.1.0",
+    "webpack-cli": "^4.2.0",
     "yaml": "^1.10.0"
   },
   "name": "oas-kit",

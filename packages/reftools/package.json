@@ -3,10 +3,7 @@
   "version": "1.1.6",
   "description": "Utility functions to deal with references in objects",
   "main": "lib/recurse.js",
-  "scripts": {
-    "test": "node node_modules/mocha/bin/mocha $nflags",
-    "coverage": "npx nyc mocha"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/Mermade/oas-kit.git"
@@ -36,11 +33,5 @@
     "url": "https://github.com/mermade/oas-kit/issues"
   },
   "homepage": "https://github.com/mermade/oas-kit#readme",
-  "devDependencies": {
-    "istanbul": "^0.4.5",
-    "mocha": "^8.0.1",
-    "nyc": "^15.0.0",
-    "should": "^13.2.1",
-    "yaml": "^1.10.0"
-  }
+  "devDependencies": {}
 }
