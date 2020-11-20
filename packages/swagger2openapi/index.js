@@ -125,6 +125,10 @@ function fixUpSubSchema(schema,parent,options) {
     if ((schema.type === 'array') && (!schema.items)) {
         schema.items = {};
     }
+    if (schema.type === 'file') {
+        schema.type = 'string';
+        schema.format = 'binary';
+    }
     if (typeof schema.required === 'boolean') {
         if (schema.required && schema.name) {
             if (typeof parent.required === 'undefined') {
@@ -689,7 +693,7 @@ function processParameter(param, op, path, method, index, openapi, options) {
             copyExtensions(param, target);
         }
     }
-    else if (param && param.type === 'file') {
+    else if (param && (param.type === 'file')) {
         // convert to requestBody
         if (param.required) result.required = param.required;
         result.content = {};
