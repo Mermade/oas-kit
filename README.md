@@ -21,7 +21,7 @@ This is the mono-repo for the following related projects
 
 ## Supported Node.js versions
 
-Any LTS version.
+Any LTS version. It is **not** recommended to use Node.js 12.17.x,12.18.x or 12.19.x due to an http2 bug.
 
 ## Development
 
