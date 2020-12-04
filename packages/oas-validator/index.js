@@ -723,7 +723,7 @@ function checkPathItem(pathItem, path, openapi, options) {
         if (o === '$ref') {
             should(op).be.ok();
             should(op).have.type('string');
-            should(op.startsWith('#/') && (op.indexOf('x-')<0)).equal(false,'PathItem $refs must be external or to specification extension ('+op+')');
+            should(op.startsWith('#/') && (!op.startsWith('#/paths/')) && (op.indexOf('x-')<0)).equal(false,'PathItem $refs must be external or to specification extension ('+op+')');
             if (options.lint) options.linter('reference',pathItem,'$ref',options);
             if (!options.metadata.count.operation) {
                 options.metadata.count.operation = 0;
