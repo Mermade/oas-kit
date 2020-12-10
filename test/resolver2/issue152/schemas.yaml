@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: Common Message/JSON schemas
+  description: Message schemas / JSON datatypes commonly used in API-docs in a separate reference file
+paths: {}
+components:
+  schemas:
+    xyz:
+      title: XYZ
+      description: this is xyz
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
