@@ -1,0 +1,25 @@
+{
+    "$id": "https://cvent.com/api/common/paging.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Paging",
+    "required": ["_links"],
+    "type": "object",
+    "properties": {
+      "nextToken": {
+        "type": "string",
+        "description": "The pagination token for the next page; if available. You can use this to determine if there is additional data to fetch"
+      },
+      "currentToken": {
+        "type": "string",
+        "description": "The pagination token for the current page"
+      },
+      "limit": {
+        "type": "integer",
+        "description": "The number of records to return on the page not to exceed 200"
+      },
+      "totalCount": {
+        "type": "integer",
+        "description": "The total number of records available"
+      }
+    }
+  }
