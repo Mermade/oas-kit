@@ -4,24 +4,25 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const yaml = require('yaml');
+const jsonSchemaToOpenApiSchema = require('json-schema-to-openapi-schema');
 
 const resolver = require('../packages/oas-resolver');
 
 const tests = fs.readdirSync(path.join(__dirname,'resolver2')).filter(file => {
-    return fs.statSync(path.join(__dirname, 'resolver', file)).isDirectory() && file !== 'include';
+    return fs.statSync(path.join(__dirname, 'resolver2', file)).isDirectory() && file !== 'include';
 });
 
 describe('Resolver tests', () => {
 tests.forEach((test) => {
     describe(test, () => {
         it('should match expected output', (done) => {
-            const inputSpec = path.join(__dirname, 'resolver', test, 'input.yaml');
+            const inputSpec = path.join(__dirname, 'resolver2', test, 'input.yaml');
             const input = yaml.parse(fs.readFileSync(inputSpec,'utf8'),{schema:'core'});
-            const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver', test, 'output.yaml'),'utf8'),{schema:'core'});
+            const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver2', test, 'output.yaml'),'utf8'),{schema:'core'});
 
-            let options = { resolve: true, preserveMiro: false, source: inputSpec };
+            let options = { resolve: true, preserveMiro: false, source: inputSpec, filters: [jsonSchemaToOpenApiSchema], myNewOption: true };
             try {
-                options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver', test, 'options.yaml'),'utf8'),{schema:'core'}));
+                options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver2', test, 'options.yaml'),'utf8'),{schema:'core'}));
             }
             catch (ex) {}
 

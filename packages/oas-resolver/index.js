@@ -304,6 +304,26 @@ function scanExternalRefs(options) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) { // is external
 
+                    if (options.myNewOption) {
+                        // Copied from resolveExternal(), lines ~144-164
+                        // Canonicalize the ref to the absolute path for a file. This way when a schema file
+                        // is referenced using different paths levels from different referrers, it all gets
+                        // resolve to the same definition.
+                        let base = options.source.split('\\').join('/').split('/');
+                        let doc = base.pop(); // drop the actual filename
+                        if (!doc) base.pop(); // in case it ended with a /
+                        base = base.join('/');
+                        let u = url.parse(options.source);
+                        let u2 = url.parse($ref);
+                        let effectiveProtocol = testProtocol(u2.protocol, u.protocol)
+                        if (effectiveProtocol === 'file:') {
+                            $ref = path.resolve(base ? base + '/' : '', $ref);
+                        }
+                        else {
+                            $ref = url.resolve(base ? base + '/' : '', $ref);
+                        }
+                    }
+
                     let $extra = '';
 
                     if (!refs[$ref]) {
@@ -408,15 +428,42 @@ function findExternalRefs(options) {
                                     jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt+refs[ref].extras[ptr], 'x-miro': ref+refs[ref].extras[ptr] }); // resolutionCase:E (new object)
                                 }
                                 else {
+                                    let schemaJPath;
+                                    let isAlreadyComponent 
+                                    if (options.myNewOption) {
+                                        let isTopComponentRE = /^#\/components\/[A-Za-z]+\/[^\/]+$/;
+                                        schemaJPath = ptr;
+                                        isAlreadyComponent = isTopComponentRE.test(ptr);
+                                        if (!isAlreadyComponent) {
+                                            // If we are not resolving the contents of a simple (e.g.) #/components/schemas
+                                            // then inject into a new schemas block.
+                                            let schemaName = path.basename(ref, ".json");
+                                            schemaJPath = "#/components/schemas/" + schemaName;
+                                        }
+                                    }
+
                                     if (refs[ref].resolvedAt) {
                                         if (options.verbose>1) console.warn('Avoiding circular reference');
-                                    }
-                                    else {
+                                    } else if (options.myNewOption) {
+                                        refs[ref].resolvedAt = schemaJPath;
+                                        if (options.verbose>1) console.warn('Creating initial clone of data at', ptr);
+                                    } else {
                                         refs[ref].resolvedAt = ptr;
                                         if (options.verbose>1) console.warn('Creating initial clone of data at', ptr);
                                     }
                                     let cdata = clone(data);
-                                    jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
+
+                                    // THIS IS WHERE the magic happens. This is where we inject an external model in-line.
+                                    // ref: the $ref value. E.g. "./models/test-model.json"
+                                    // options.openapi:  actually the target spec getting resolved
+                                    // ptr:  where in the spec to put something. E.g. "#/components/responses/TestModel/content/application~1json/schema"
+                                    // cdata:  the resolved block of data.
+                                    if (!options.myNewOption || isAlreadyComponent) {
+                                        jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
+                                    } else {
+                                        jptr(options.openapi, schemaJPath, cdata);
+                                        jptr(options.openapi, ptr, { "$ref": schemaJPath });
+                                    }
                                 }
                             }
                             if (options.resolver.actions[localOptions.resolver.depth].length === 0) {
@@ -504,6 +551,7 @@ function setupOptions(options) {
     options.resolver.depth = 0;
     options.resolver.base = options.source;
     options.resolver.actions = [[]];
+    if (!options.myNewOption) options.myNewOption = false;
 }
 
 /** compatibility function for swagger2openapi */

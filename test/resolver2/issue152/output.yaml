@@ -2,9 +2,13 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: API
+  description: A service for testing the resolve script
+  x-cvent-product: platform
 tags:
   - name: test
     description: a test tag
+  - name: TestTag
+    description: another test tag
 paths:
   /foo:
     post:
@@ -14,17 +18,7 @@ paths:
         - test
       responses:
         '201':
-          description: Success post
-          content:
-            application/json:
-              schema:
-                title: XYZ
-                description: this is xyz
-                type: object
-                properties:
-                  id:
-                    description: the local identifier (not necessarily globally unique)
-                    type: string
+          $ref: '#/components/responses/Post201'
   /bar:
     post:
       operationId: postBar
@@ -33,4 +27,103 @@ paths:
         - test
       responses:
         '201':
-          $ref: '#/paths/~1foo/post/responses/201'
+          $ref: '#/components/responses/Post201'
+  /test:
+    get:
+      tags:
+        - TestTag
+      x-cvent-visibility: publicInternal
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestModel'
+      deprecated: false
+  /test-public:
+    get:
+      tags:
+        - TestTag
+      x-cvent-visibility: public
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestPublicModel'
+      deprecated: false
+components:
+  schemas:
+    test-model:
+      title: Id only entity
+      description: A sample model.
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+          example: abc-123
+        paging:
+          $ref: '#/components/schemas/paging'
+    test-public-model:
+      title: Id only entity
+      description: A sample public model.
+      required:
+        - public-id
+      type: object
+      properties:
+        public-id:
+          type: string
+          example: some type
+        paging:
+          $ref: '#/components/schemas/paging'
+    paging:
+      title: Paging
+      required:
+        - _links
+      type: object
+      properties:
+        nextToken:
+          type: string
+          description: The pagination token for the next page; if available. You can use this to determine if there is additional data to fetch
+        currentToken:
+          type: string
+          description: The pagination token for the current page
+        limit:
+          type: integer
+          description: The number of records to return on the page not to exceed 200
+        totalCount:
+          type: integer
+          description: The total number of records available
+    xyz:
+      title: XYZ
+      description: this is xyz
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
+  responses:
+    Post201:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/xyz'
+    TestModel:
+        description: A test model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/test-model'
+    TestPublicModel:
+        description: A public test model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/test-public-model'

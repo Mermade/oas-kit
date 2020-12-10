@@ -2,9 +2,13 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: API
+  description: A service for testing the resolve script
+  x-cvent-product: platform
 tags:
   - name: test
     description: a test tag
+  - name: TestTag
+    description: another test tag
 paths:
   /foo:
     post:
@@ -24,9 +28,49 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/Post201'
+  /test:
+    get:
+      tags:
+        - TestTag
+      x-cvent-visibility: publicInternal
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestModel'
+      deprecated: false
+  /test-public:
+    get:
+      tags:
+        - TestTag
+      x-cvent-visibility: public
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestPublicModel'
+      deprecated: false
 components:
   schemas: {}
   responses:
     Post201:
       $ref: 'responses.yaml#/components/responses/Post201'
+    TestModel:
+      description: A test model
+      content:
+        application/json:
+          schema:
+            $ref: './models/test-model.json'
+    TestPublicModel:
+      description: A public test model
+      content:
+        application/json:
+          schema:
+            $ref: './models/test-public-model.json'
 
