@@ -432,8 +432,9 @@ function findExternalRefs(options) {
                                     let isAlreadyComponent 
                                     if (options.myNewOption) {
                                         let isTopComponentRE = /^#\/components\/[A-Za-z]+\/[^\/]+$/;
+                                        let isDirectRef = /^#\/components\/[A-Za-z]+$/;
                                         schemaJPath = ptr;
-                                        isAlreadyComponent = isTopComponentRE.test(ptr);
+                                        isAlreadyComponent = isTopComponentRE.test(ptr) || isDirectRef.test(ptr);
                                         if (!isAlreadyComponent) {
                                             // If we are not resolving the contents of a simple (e.g.) #/components/schemas
                                             // then inject into a new schemas block.
