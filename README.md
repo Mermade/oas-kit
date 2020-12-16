@@ -29,7 +29,8 @@ Any LTS version. It is **not** recommended to use Node.js 12.17.x,12.18.x or 12.
 * `npm i` in the top level directory
 * `npx lerna bootstrap`
 
-Please try and keep commits related to a single package or piece of functionality. PR in the usual way.
+Please try and keep commits related to a single package or piece of functionality. Please review the
+(CONTRIBUTING.md)[CONTRIBUTING.md] for additional details.
 
 ## Supporting development
 
