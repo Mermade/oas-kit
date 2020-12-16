@@ -58,30 +58,6 @@ paths:
       deprecated: false
 components:
   schemas:
-    test-model:
-      title: Id only entity
-      description: A sample model.
-      required:
-        - id
-      type: object
-      properties:
-        id:
-          type: string
-          example: abc-123
-        paging:
-          $ref: '#/components/schemas/paging'
-    test-public-model:
-      title: Id only entity
-      description: A sample public model.
-      required:
-        - public-id
-      type: object
-      properties:
-        public-id:
-          type: string
-          example: some type
-        paging:
-          $ref: '#/components/schemas/paging'
     paging:
       title: Paging
       required:
@@ -100,30 +76,48 @@ components:
         totalCount:
           type: integer
           description: The total number of records available
-    xyz:
-      title: XYZ
-      description: this is xyz
-      type: object
-      properties:
-        id:
-          description: the local identifier (not necessarily globally unique)
-          type: string
   responses:
     Post201:
       description: Success post
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/xyz'
+            title: XYZ
+            description: this is xyz
+            type: object
+            properties:
+              id:
+                description: the local identifier (not necessarily globally unique)
+                type: string
     TestModel:
         description: A test model
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/test-model'
+              title: Id only entity
+              description: A sample model.
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: abc-123
+                paging:
+                  $ref: '#/components/schemas/paging'
     TestPublicModel:
         description: A public test model
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/test-public-model'
+              title: Id only entity
+              description: A sample public model.
+              required:
+                - public-id
+              type: object
+              properties:
+                public-id:
+                  type: string
+                  example: some type
+                paging:
+                  $ref: '#/components/schemas/paging'

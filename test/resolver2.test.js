@@ -20,7 +20,7 @@ tests.forEach((test) => {
             const input = yaml.parse(fs.readFileSync(inputSpec,'utf8'),{schema:'core'});
             const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver2', test, 'output.yaml'),'utf8'),{schema:'core'});
 
-            let options = { resolve: true, preserveMiro: false, source: inputSpec, filters: [jsonSchemaToOpenApiSchema], myNewOption: true };
+            let options = { resolve: true, preserveMiro: false, source: inputSpec, filters: [jsonSchemaToOpenApiSchema], sharedRefResolveOptions: true };
             try {
                 options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver2', test, 'options.yaml'),'utf8'),{schema:'core'}));
             }

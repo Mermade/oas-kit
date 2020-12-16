@@ -61,6 +61,8 @@ components:
   responses:
     Post201:
       $ref: 'responses.yaml#/components/responses/Post201'
+    Post202:
+      $ref: 'responses.yaml#/components/responses/Post201'
     TestModel:
       description: A test model
       content:
