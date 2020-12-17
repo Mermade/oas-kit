@@ -14,3 +14,11 @@ components:
         id:
           description: the local identifier (not necessarily globally unique)
           type: string
+    abc:
+      title: abc
+      description: this is abc
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string

@@ -62,7 +62,19 @@ components:
     Post201:
       $ref: 'responses.yaml#/components/responses/Post201'
     Post202:
-      $ref: 'responses.yaml#/components/responses/Post201'
+      $ref: 'responses.yaml#/components/responses/Post202'
+    Post203:
+      $ref: 'responses.yaml#/components/responses/Post203'
+    Post204:
+      $ref: 'responses.yaml#/components/responses/Post204'
+    Post205:
+      $ref: 'responses.yaml#/components/responses/Post205'
+    Post206:
+      $ref: 'responses.yaml#/components/responses/Post206'
+    Post207:
+      $ref: 'responses.yaml#/components/responses/Post207'
+    Post208:
+      $ref: 'responses.yaml#/components/responses/Post208'
     TestModel:
       description: A test model
       content:

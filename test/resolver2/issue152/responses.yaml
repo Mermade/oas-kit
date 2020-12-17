@@ -12,3 +12,45 @@ components:
         application/json:
           schema:
             $ref: 'schemas.yaml#/components/schemas/xyz'
+    Post202:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas.yaml#/components/schemas/xyz'
+    Post203:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas2.yaml#/components/schemas/xyz'
+    Post204:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas2.yaml#/components/schemas/xyz'
+    Post205:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas.yaml#/components/schemas/abc'
+    Post206:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas.yaml#/components/schemas/abc'
+    Post207:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas2.yaml#/components/schemas/abc'
+    Post208:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas2.yaml#/components/schemas/abc'

@@ -163,36 +163,21 @@ function getAbsoluteRefPath(source, $ref) {
 }
 
 function resolveToName(ref, refs) {
-    let resolvedAt = [];
-    for (let obj in refs) {
-        if (obj.resolvedAt) resolvedAt.push(obj.resolvedAt);
+    let currentListOfResolved = [];
+    for (let key in refs) {
+        if (refs[key].resolvedAt) currentListOfResolved.push(refs[key].resolvedAt);
     }
 
-    if (ref.includes('#')) {
-        
-        
+    let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
+    if (!currentListOfResolved.includes(potentialSchemaName)) {
+        return potentialSchemaName
     } else {
-        let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
-        if (!resolvedAt.includes(potentialSchemaName)) {
-            
-        }
+        let hash = crypto.createHash('sha1');
+        hash.setEncoding('hex');
+        hash.write(ref);
+        hash.end();
+        return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash.read()}`
     }
-    // change to 'md5' if you want an MD5 hash
-    var hash = crypto.createHash('sha1');
-
-    // change to 'binary' if you want a binary hash.
-    hash.setEncoding('hex');
-
-    // the text that you want to hash
-    hash.write(ref);
-
-    // very important! You cannot read from the stream until you have called end()
-    hash.end();
-
-    // and now you get the resulting hash
-    var sha1sum = hash.read();
-    console.log(sha1sum)
-    return `#/components/schemas/${path.parse(path.basename(ref)).name}`
 }
 
 function resolveExternal(root, pointer, options, callback) {

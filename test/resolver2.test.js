@@ -28,6 +28,7 @@ tests.forEach((test) => {
 
             resolver.resolve(input, options.source, options)
             .then(function(result){
+                console.log(JSON.stringify(result.openapi))
                 assert.deepStrictEqual(result.openapi, output);
                 return done();
             })
