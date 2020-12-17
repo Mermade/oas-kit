@@ -151,13 +151,15 @@ function getAbsoluteRefPath(source, $ref) {
     if (effectiveProtocol === 'file:') {
         return {
             target: path.resolve(base ? base + '/' : '', $ref),
-            effectiveProtocol
+            effectiveProtocol,
+            base
         };
     }
     else {
         return {
             target: url.resolve(base ? base + '/' : '', $ref),
-            effectiveProtocol
+            effectiveProtocol,
+            base
         };
     }
 }
@@ -169,15 +171,14 @@ function resolveToName(ref, refs) {
     }
 
     let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
-    if (!currentListOfResolved.includes(potentialSchemaName)) {
-        return potentialSchemaName
-    } else {
+    if (currentListOfResolved.includes(potentialSchemaName)) {
         let hash = crypto.createHash('sha1');
         hash.setEncoding('hex');
         hash.write(ref);
         hash.end();
         return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash.read()}`
     }
+    return potentialSchemaName
 }
 
 function resolveExternal(root, pointer, options, callback) {
@@ -188,7 +189,7 @@ function resolveExternal(root, pointer, options, callback) {
         pointer = fnComponents[0];
     }
 
-    let { target, effectiveProtocol} = getAbsoluteRefPath(options.source, pointer);
+    let { target, effectiveProtocol, base} = getAbsoluteRefPath(options.source, pointer);
 
     if (options.cache[target]) {
         if (options.verbose) console.warn('CACHED', target, fragment);
