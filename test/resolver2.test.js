@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const yaml = require('yaml');
-const jsonSchemaToOpenApiSchema = require('json-schema-to-openapi-schema');
+const jsonSchemaToOpenApiSchema = require('../packages/oas-resolver/node_modules/json-schema-to-openapi-schema');
 
 const resolver = require('../packages/oas-resolver');
 
@@ -16,7 +16,7 @@ jest.mock('crypto', () => {
     return {
         createHash: jest.fn().mockReturnThis(),
         update: jest.fn().mockReturnThis(),
-        digest: jest.fn(() => '123'),
+        digest: jest.fn(() => '123')
     }
 })
 
