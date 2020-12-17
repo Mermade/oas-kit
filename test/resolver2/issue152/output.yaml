@@ -74,7 +74,7 @@ components:
         id:
           description: the local identifier (not necessarily globally unique)
           type: string
-    xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa:
+    xyz-123:
       title: XYZ
       description: this is xyz
       type: object
@@ -82,7 +82,7 @@ components:
         id:
           description: the local identifier (not necessarily globally unique)
           type: string
-    abc-600bcb1709ace9943774caf7da3b82417c2f3562:
+    abc-123:
       title: abc
       description: this is abc
       type: object
@@ -126,13 +126,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa'
+            $ref: '#/components/schemas/xyz-123'
     Post204:
       description: Success post
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa'
+            $ref: '#/components/schemas/xyz-123'
     Post205:
       description: Success post
       content:
@@ -150,13 +150,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/abc-600bcb1709ace9943774caf7da3b82417c2f3562'
+            $ref: '#/components/schemas/abc-123'
     Post208:
       description: Success post
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/abc-600bcb1709ace9943774caf7da3b82417c2f3562'
+            $ref: '#/components/schemas/abc-123'
     TestModel:
         description: A test model
         content:

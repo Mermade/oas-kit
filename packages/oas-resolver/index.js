@@ -172,11 +172,8 @@ function resolveToName(ref, refs) {
 
     let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
     if (currentListOfResolved.includes(potentialSchemaName)) {
-        let hash = crypto.createHash('sha1');
-        hash.setEncoding('hex');
-        hash.write(ref);
-        hash.end();
-        return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash.read()}`
+        let hash = crypto.createHash('sha1').update(ref).digest('hex');
+        return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash}`
     }
     return potentialSchemaName
 }

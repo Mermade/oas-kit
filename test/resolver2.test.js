@@ -12,6 +12,14 @@ const tests = fs.readdirSync(path.join(__dirname,'resolver2')).filter(file => {
     return fs.statSync(path.join(__dirname, 'resolver2', file)).isDirectory() && file !== 'include';
 });
 
+jest.mock('crypto', () => {
+    return {
+        createHash: jest.fn().mockReturnThis(),
+        update: jest.fn().mockReturnThis(),
+        digest: jest.fn(() => '123'),
+    }
+})
+
 describe('Resolver tests', () => {
 tests.forEach((test) => {
     describe(test, () => {
