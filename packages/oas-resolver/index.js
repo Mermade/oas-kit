@@ -331,7 +331,7 @@ function scanExternalRefs(options) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) { // is external
 
-                    if (options.sharedRefResolveOptions) {
+                    if (options.resolveSharedRefs) {
                         $ref = getAbsoluteRefPath(options.source, $ref).target;
                     }
 
@@ -440,7 +440,7 @@ function findExternalRefs(options) {
                                 }
                                 else {
                                     let schemaJPath;
-                                    if (options.sharedRefResolveOptions) {
+                                    if (options.resolveSharedRefs) {
                                         // In the event a deep ref, if we have already resolved the ref, then just point it to that resolved spot.
                                         if (ref.includes('#')) {
                                             let splitRef = ref.split('#');
@@ -457,12 +457,12 @@ function findExternalRefs(options) {
                                     if (refs[ref].resolvedAt) {
                                         if (options.verbose>1) console.warn('Avoiding circular reference');
                                     } else  {
-                                        refs[ref].resolvedAt = options.sharedRefResolveOptions ? schemaJPath : ptr;
+                                        refs[ref].resolvedAt = options.resolveSharedRefs ? schemaJPath : ptr;
                                         if (options.verbose>1) console.warn('Creating initial clone of data at', ptr);
                                     }
                                     let cdata = clone(data);
 
-                                    if (!options.sharedRefResolveOptions || pointers.length == 1) {
+                                    if (!options.resolveSharedRefs || pointers.length == 1) {
                                         jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
                                     } else {
                                         jptr(options.openapi, schemaJPath, cdata);
@@ -555,7 +555,7 @@ function setupOptions(options) {
     options.resolver.depth = 0;
     options.resolver.base = options.source;
     options.resolver.actions = [[]];
-    if (!options.myNewOption) options.myNewOption = false;
+    if (!options.resolveSharedRefs) options.resolveSharedRefs = false;
 }
 
 /** compatibility function for swagger2openapi */

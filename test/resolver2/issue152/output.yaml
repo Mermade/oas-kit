@@ -58,6 +58,38 @@ paths:
       deprecated: false
 components:
   schemas:
+    xyz:
+      title: XYZ
+      description: this is xyz
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
+    abc:
+      title: abc
+      description: this is abc
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
+    xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa:
+      title: XYZ
+      description: this is xyz
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
+    abc-600bcb1709ace9943774caf7da3b82417c2f3562:
+      title: abc
+      description: this is abc
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
     paging:
       title: Paging
       required:
@@ -82,13 +114,49 @@ components:
       content:
         application/json:
           schema:
-            title: XYZ
-            description: this is xyz
-            type: object
-            properties:
-              id:
-                description: the local identifier (not necessarily globally unique)
-                type: string
+            $ref: '#/components/schemas/xyz'
+    Post202:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/xyz'
+    Post203:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa'
+    Post204:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/xyz-d8fe501b2cbef670c2d10a0a161c430f632cc9aa'
+    Post205:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc'
+    Post206:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc'
+    Post207:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc-600bcb1709ace9943774caf7da3b82417c2f3562'
+    Post208:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc-600bcb1709ace9943774caf7da3b82417c2f3562'
     TestModel:
         description: A test model
         content:
