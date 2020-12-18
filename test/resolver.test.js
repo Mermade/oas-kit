@@ -53,37 +53,3 @@ tests.forEach((test) => {
     });
 });
 });
-
-// const resolveSharedRefsTests = fs.readdirSync(path.join(__dirname,'resolveSharedRefs')).filter(file => {
-//     return fs.statSync(path.join(__dirname, 'resolveSharedRefs', file)).isDirectory() && file !== 'include';
-// });
-
-
-
-
-// describe('Resolver tests, resolveSharedRefs option true', () => {
-// resolveSharedRefsTests.forEach((test) => {
-//     describe(test, () => {
-//         it('should match expected output, resolveSharedRefs option true', (done) => {
-//             const inputSpec = path.join(__dirname, 'resolveSharedRefs', test, 'input.yaml');
-//             const input = yaml.parse(fs.readFileSync(inputSpec,'utf8'),{schema:'core'});
-//             const output = yaml.parse(fs.readFileSync(path.join(__dirname, 'resolveSharedRefs', test, 'output.yaml'),'utf8'),{schema:'core'});
-
-//             let options = { resolve: true, preserveMiro: false, source: inputSpec, filters: [jsonSchemaToOpenApiSchema], resolveSharedRefs: true };
-//             try {
-//                 options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolveSharedRefs', test, 'options.yaml'),'utf8'),{schema:'core'}));
-//             }
-//             catch (ex) {}
-
-//             resolver.resolve(input, options.source, options)
-//             .then(function(result){
-//                 assert.deepStrictEqual(result.openapi, output);
-//                 return done();
-//             })
-//             .catch(function(err){
-//                 return done(err);
-//             });
-//         });
-//     });
-// });
-// });
