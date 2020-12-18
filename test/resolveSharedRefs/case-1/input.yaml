@@ -3,7 +3,6 @@ info:
   version: 1.0.0
   title: API
   description: A service for testing the resolve script
-  x-cvent-product: platform
 tags:
   - name: test
     description: a test tag
@@ -32,7 +31,6 @@ paths:
     get:
       tags:
         - TestTag
-      x-cvent-visibility: publicInternal
       security:
         - bearer: []
       summary: An endpoint for testing
@@ -46,7 +44,6 @@ paths:
     get:
       tags:
         - TestTag
-      x-cvent-visibility: public
       security:
         - bearer: []
       summary: An endpoint for testing

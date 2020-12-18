@@ -164,6 +164,14 @@ function getAbsoluteRefPath(source, $ref) {
     }
 }
 
+/**
+ * This method determines the name of the json key where commons schemas will be resolved to. If there are
+ * name collisions for 2 common schemas, i.e. one is already taken, the second one will append a sha1 hash. This hash
+ * is generated using the ref value, which is the absolute path to that external file.
+ * e.g #/components/schemas/paging, #/components/schemas/paging-1233442342342343
+ * @param {string} ref - The particular ref to resolve.
+ * @param {Object} refs - An object that contains all the refs.
+ */
 function resolveToName(ref, refs) {
     let currentListOfResolved = [];
     for (let key in refs) {
