@@ -1,0 +1,17 @@
+{
+    "$id": "https://hello-world.com/api/platform/test-public-model.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Id only entity",
+    "description": "A sample public model.",
+    "required": ["public-id"],
+    "type": "object",
+    "properties": {
+      "paging": {
+        "$ref": "paging.json"
+      },
+      "public-id": {
+        "type": "string",
+        "example": "some type"
+      }
+    }
+  }

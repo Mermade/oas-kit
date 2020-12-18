@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+  description: A service for testing the resolve script
+tags:
+  - name: test
+    description: a test tag
+  - name: TestTag
+    description: another test tag
+paths:
+  /foo:
+    post:
+      operationId: postFoo
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          $ref: '#/components/responses/Post201'
+  /bar:
+    post:
+      operationId: postBar
+      summary: Super post op
+      tags:
+        - test
+      responses:
+        '201':
+          $ref: '#/components/responses/Post201'
+  /test:
+    get:
+      tags:
+        - TestTag
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestModel'
+      deprecated: false
+  /test-public:
+    get:
+      tags:
+        - TestTag
+      security:
+        - bearer: []
+      summary: An endpoint for testing
+      description: A test description
+      operationId: testEndpoint
+      responses:
+        200:
+          $ref: '#/components/responses/TestPublicModel'
+      deprecated: false
+components:
+  schemas:
+    abc:
+      title: abc
+      description: this is abc
+      type: object
+      properties:
+        id:
+          description: the local identifier (not necessarily globally unique)
+          type: string
+        details:
+          $ref: '#/components/schemas/abc'
+          description: a list of details
+          type: array
+          items: {}
+    paging:
+      title: Paging
+      required:
+        - _links
+      type: object
+      properties:
+        nextToken:
+          type: string
+          description: The pagination token for the next page; if available. You can use this to determine if there is additional data to fetch
+        currentToken:
+          type: string
+          description: The pagination token for the current page
+        limit:
+          type: integer
+          description: The number of records to return on the page not to exceed 200
+        totalCount:
+          type: integer
+          description: The total number of records available
+  responses:
+    Post201:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            title: XYZ
+            description: this is xyz
+            type: object
+            properties:
+              id:
+                description: the local identifier (not necessarily globally unique)
+                type: string
+    Post202:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc'
+    Post203:
+      description: Success post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/abc'
+    TestModel:
+        description: A test model
+        content:
+          application/json:
+            schema:
+              title: Id only entity
+              description: A sample model.
+              required:
+                - id
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: abc-123
+                paging:
+                  $ref: '#/components/schemas/paging'
+    TestPublicModel:
+        description: A public test model
+        content:
+          application/json:
+            schema:
+              title: Id only entity
+              description: A sample public model.
+              required:
+                - public-id
+              type: object
+              properties:
+                public-id:
+                  type: string
+                  example: some type
+                paging:
+                  $ref: '#/components/schemas/paging'

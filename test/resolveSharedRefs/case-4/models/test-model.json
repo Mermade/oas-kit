@@ -1,0 +1,17 @@
+{
+    "$id": "https://hello-world.com/api/platform/test-model.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Id only entity",
+    "description": "A sample model.",
+    "required": ["id"],
+    "type": "object",
+    "properties": {
+      "paging": {
+        "$ref": "paging.json"
+      },
+      "id": {
+        "type": "string",
+        "example": "abc-123"
+      }
+    }
+  }
