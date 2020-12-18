@@ -67,7 +67,6 @@ components:
           $ref: '#/components/schemas/abc'
           description: a list of details
           type: array
-          items: {}
     paging:
       title: Paging
       required:

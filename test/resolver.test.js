@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const yaml = require('yaml');
-const jsonSchemaToOpenApiSchema = require('json-schema-to-openapi-schema');
 const sinon = require('sinon');
 const crypto = require('crypto');
 
@@ -35,9 +34,6 @@ tests.forEach((test) => {
             let options = { resolve: true, preserveMiro: false, source: inputSpec };
             try {
                 options = Object.assign({},options,yaml.parse(fs.readFileSync(path.join(__dirname, 'resolver', test, 'options.yaml'),'utf8'),{schema:'core'}));
-                if (test.includes('resolveSharedRefs')) {
-                    options.filters = [jsonSchemaToOpenApiSchema];
-                }
             }
             catch (ex) {}
 
