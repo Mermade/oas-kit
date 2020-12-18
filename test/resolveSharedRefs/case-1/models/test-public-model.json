@@ -1,5 +1,5 @@
 {
-    "$id": "https://cvent.com/api/platform/test-public-model.json",
+    "$id": "https://hello-world.com/api/platform/test-public-model.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Id only entity",
     "description": "A sample public model.",

@@ -1,5 +1,5 @@
 {
-    "$id": "https://cvent.com/api/common/paging.json",
+    "$id": "https://hello-world.com/api/common/paging.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Paging",
     "required": ["_links"],

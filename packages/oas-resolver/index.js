@@ -167,7 +167,9 @@ function getAbsoluteRefPath(source, $ref) {
 function resolveToName(ref, refs) {
     let currentListOfResolved = [];
     for (let key in refs) {
-        if (refs[key].resolvedAt) currentListOfResolved.push(refs[key].resolvedAt);
+        if (refs[key].resolvedAt) {
+            currentListOfResolved.push(refs[key].resolvedAt);
+        }
     }
 
     let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
