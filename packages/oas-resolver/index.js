@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const crypto = require('crypto');
 
 const fetch = require('node-fetch-h2');
 const yaml = require('yaml');
@@ -139,29 +140,63 @@ function testProtocol(input, backup) {
     return 'file:';
 }
 
-function resolveExternal(root, pointer, options, callback) {
-    var u = url.parse(options.source);
-    var base = options.source.split('\\').join('/').split('/');
+function getAbsoluteRefPath(source, $ref) {
+    let base = source.split('\\').join('/').split('/');
     let doc = base.pop(); // drop the actual filename
     if (!doc) base.pop(); // in case it ended with a /
+    base = base.join('/');
+    let u = url.parse(source);
+    let u2 = url.parse($ref);
+    let effectiveProtocol = testProtocol(u2.protocol, u.protocol)
+    if (effectiveProtocol === 'file:') {
+        return {
+            target: path.resolve(base ? base + '/' : '', $ref),
+            effectiveProtocol,
+            base
+        };
+    }
+    else {
+        return {
+            target: url.resolve(base ? base + '/' : '', $ref),
+            effectiveProtocol,
+            base
+        };
+    }
+}
+
+/**
+ * This method determines the name of the json key where commons schemas will be resolved to. If there are
+ * name collisions for 2 common schemas, i.e. one is already taken, the second one will append a sha1 hash. This hash
+ * is generated using the ref value, which is the absolute path to that external file.
+ * e.g #/components/schemas/paging, #/components/schemas/paging-1233442342342343
+ * @param {string} ref - The particular ref to resolve.
+ * @param {Object} refs - An object that contains all the refs.
+ */
+function resolveToName(ref, refs) {
+    let currentListOfResolved = [];
+    for (let key in refs) {
+        if (refs[key].resolvedAt) {
+            currentListOfResolved.push(refs[key].resolvedAt);
+        }
+    }
+
+    let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
+    if (currentListOfResolved.includes(potentialSchemaName)) {
+        let hash = crypto.createHash('sha1').update(ref).digest('hex');
+        return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash}`
+    }
+    return potentialSchemaName
+}
+
+function resolveExternal(root, pointer, options, callback) {
     let fragment = '';
     let fnComponents = pointer.split('#');
     if (fnComponents.length > 1) {
         fragment = '#' + fnComponents[1];
         pointer = fnComponents[0];
     }
-    base = base.join('/');
 
-    let u2 = url.parse(pointer);
-    let effectiveProtocol = testProtocol(u2.protocol, u.protocol);
-
-    let target;
-    if (effectiveProtocol === 'file:') {
-        target = path.resolve(base ? base + '/' : '', pointer);
-    }
-    else {
-        target = url.resolve(base ? base + '/' : '', pointer);
-    }
+    let { target, effectiveProtocol, base} = getAbsoluteRefPath(options.source, pointer);
 
     if (options.cache[target]) {
         if (options.verbose) console.warn('CACHED', target, fragment);
@@ -304,6 +339,10 @@ function scanExternalRefs(options) {
                 let $ref = obj[key].$ref;
                 if (!$ref.startsWith('#')) { // is external
 
+                    if (options.resolveSharedRefs) {
+                        $ref = getAbsoluteRefPath(options.source, $ref).target;
+                    }
+
                     let $extra = '';
 
                     if (!refs[$ref]) {
@@ -408,15 +447,35 @@ function findExternalRefs(options) {
                                     jptr(options.openapi, ptr, { $ref: refs[ref].resolvedAt+refs[ref].extras[ptr], 'x-miro': ref+refs[ref].extras[ptr] }); // resolutionCase:E (new object)
                                 }
                                 else {
+                                    let schemaJPath;
+                                    if (options.resolveSharedRefs) {
+                                        // In the event a deep ref, if we have already resolved the ref, then just point it to that resolved spot.
+                                        if (ref.includes('#')) {
+                                            let splitRef = ref.split('#');
+                                            if (refs[splitRef[0]] && refs[splitRef[0]].resolvedAt) {
+                                                refs[ref].resolvedAt = refs[splitRef[0]].resolvedAt + splitRef[1];
+                                            }
+                                        }
+                                        schemaJPath = ptr;
+                                        if (pointers.length > 1) {
+                                            schemaJPath = resolveToName(ref, refs);
+                                        }
+                                    }
+
                                     if (refs[ref].resolvedAt) {
                                         if (options.verbose>1) console.warn('Avoiding circular reference');
-                                    }
-                                    else {
-                                        refs[ref].resolvedAt = ptr;
+                                    } else  {
+                                        refs[ref].resolvedAt = options.resolveSharedRefs ? schemaJPath : ptr;
                                         if (options.verbose>1) console.warn('Creating initial clone of data at', ptr);
                                     }
                                     let cdata = clone(data);
-                                    jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
+
+                                    if (!options.resolveSharedRefs || pointers.length == 1) {
+                                        jptr(options.openapi, ptr, cdata); // resolutionCase:F (cloned:yes)
+                                    } else {
+                                        jptr(options.openapi, schemaJPath, cdata);
+                                        jptr(options.openapi, ptr, { "$ref": schemaJPath });
+                                    }
                                 }
                             }
                             if (options.resolver.actions[localOptions.resolver.depth].length === 0) {
@@ -504,6 +563,7 @@ function setupOptions(options) {
     options.resolver.depth = 0;
     options.resolver.base = options.source;
     options.resolver.actions = [[]];
+    if (!options.resolveSharedRefs) options.resolveSharedRefs = false;
 }
 
 /** compatibility function for swagger2openapi */

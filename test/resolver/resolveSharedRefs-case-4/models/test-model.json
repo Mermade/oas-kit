@@ -1,0 +1,15 @@
+{
+    "title": "Id only entity",
+    "description": "A sample model.",
+    "required": ["id"],
+    "type": "object",
+    "properties": {
+      "paging": {
+        "$ref": "paging.json"
+      },
+      "id": {
+        "type": "string",
+        "example": "abc-123"
+      }
+    }
+  }

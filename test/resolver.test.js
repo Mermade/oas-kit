@@ -4,11 +4,23 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 const yaml = require('yaml');
+const sinon = require('sinon');
+const crypto = require('crypto');
 
 const resolver = require('../packages/oas-resolver');
 
 const tests = fs.readdirSync(path.join(__dirname,'resolver')).filter(file => {
     return fs.statSync(path.join(__dirname, 'resolver', file)).isDirectory() && file !== 'include';
+});
+
+sinon.stub(crypto, 'createHash').callsFake(() => {
+    return {
+        update: sinon.stub().callsFake(() => {
+            return {
+                digest: sinon.stub().returns('123')
+            };
+        })
+    };
 });
 
 describe('Resolver tests', () => {
