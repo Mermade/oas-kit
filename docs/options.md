@@ -54,7 +54,7 @@ refSiblings|string|Input|Controls handling of `$ref` which has sibling propertie
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolveInternal|Boolean|Input|Flag to enable resolution of internal `$ref`s. Also disables deduplication of `requestBodies`
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
-resolveSharedRefs|Boolean|Used by the resolver to factor out the same schemas, referenced in more than 1 place into the `#/components/schemas/` section.
+resolveSharedRefs|Boolean|Input|Used by the resolver to factor out the same schemas, referenced in more than 1 place into the `#/components/schemas/` section.
 skip|Boolean|Reserved|Used by tools such as Speccy to skip linter rules
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Input|The source filename or url of the definition, used by the resolver
