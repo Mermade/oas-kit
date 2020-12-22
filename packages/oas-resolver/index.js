@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const crypto = require('crypto');
 
 const fetch = require('node-fetch-h2');
 const yaml = require('yaml');
@@ -174,17 +173,23 @@ function getAbsoluteRefPath(source, $ref) {
  */
 function resolveToName(ref, refs) {
     let currentListOfResolved = [];
+
     for (let key in refs) {
         if (refs[key].resolvedAt) {
             currentListOfResolved.push(refs[key].resolvedAt);
         }
     }
 
-    let potentialSchemaName = `#/components/schemas/${path.parse(path.basename(ref)).name}`;
-    if (currentListOfResolved.includes(potentialSchemaName)) {
-        let hash = crypto.createHash('sha1').update(ref).digest('hex');
-        return `#/components/schemas/${path.parse(path.basename(ref)).name}-${hash}`
+    let schemaName = path.parse(path.basename(ref)).name;
+
+    let potentialSchemaName = `#/components/schemas/${schemaName}`
+    let currentCount = 0;
+
+    // keep trying until we find a free index
+    while(currentListOfResolved.includes(potentialSchemaName)) {
+      potentialSchemaName = `#/components/schemas/${schemaName}-${currentCount++}`;
     }
+
     return potentialSchemaName
 }
 
@@ -475,6 +480,7 @@ function findExternalRefs(options) {
                                     } else {
                                         jptr(options.openapi, schemaJPath, cdata);
                                         jptr(options.openapi, ptr, { "$ref": schemaJPath });
+                                        refs[ref].resolvedAt = schemaJPath;
                                     }
                                 }
                             }

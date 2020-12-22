@@ -71,7 +71,7 @@ components:
         id:
           description: the local identifier (not necessarily globally unique)
           type: string
-    xyz-123:
+    xyz-0:
       title: XYZ
       description: this is xyz
       type: object
@@ -79,7 +79,7 @@ components:
         id:
           description: the local identifier (not necessarily globally unique)
           type: string
-    abc-123:
+    abc-0:
       title: abc
       description: this is abc
       type: object
@@ -123,13 +123,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/xyz-123'
+            $ref: '#/components/schemas/xyz-0'
     Post204:
       description: Success post
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/xyz-123'
+            $ref: '#/components/schemas/xyz-0'
     Post205:
       description: Success post
       content:
@@ -147,13 +147,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/abc-123'
+            $ref: '#/components/schemas/abc-0'
     Post208:
       description: Success post
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/abc-123'
+            $ref: '#/components/schemas/abc-0'
     TestModel:
         description: A test model
         content:
