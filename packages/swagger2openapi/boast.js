@@ -42,6 +42,9 @@ let argv = require('yargs')
     .boolean('dumpMeta')
     .alias('m','dumpMeta')
     .describe('dumpMeta','Dump definition metadata')
+    .boolean('nocert')
+    .alias('n','nocert')
+    .describe('nocert','Do not check server certificates')
     .string('output')
     .alias('o','output')
     .describe('output','outfile file to write to, default STDOUT')
@@ -73,6 +76,9 @@ function main(){
             argv.resolveInternal = true;
         }
         argv.verbose = argv.verbose - argv.quiet;
+        if (argv.nocert) {
+          process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        }
         let options = {};
         let result = false;
         let jsonOutput = {};
