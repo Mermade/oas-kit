@@ -38,6 +38,8 @@ let argv = yargs
     .boolean('laxurls')
     .alias('l', 'laxurls')
     .describe('laxurls', 'lax checking of empty urls')
+    .boolean('laxDefaults')
+    .describe('laxDefaults', 'lax checking of default types')
     .boolean('mediatype')
     .alias('m','mediatype')
     .describe('mediatype','check media-types against RFC pattern')
