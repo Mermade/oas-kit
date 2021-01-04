@@ -828,7 +828,8 @@ function checkPathItem(pathItem, path, openapi, options) {
             }
 
             let contextParameters = Object.assign({},localPathParameters,opParameters);
-            path.replace(/\{(.+?)\}/g, function (match, group1) {
+            let prepath = path.split('?')[0];
+            prepath.replace(/\{(.+?)\}/g, function (match, group1) {
                 if (!contextParameters['path:'+group1]) {
                     if (!group1.startsWith('$')) { // callbacks
                         should.fail(false,true,'Templated parameter '+group1+' not found');
