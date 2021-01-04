@@ -497,8 +497,8 @@ function setupOptions(options) {
         }
     }
 
-    if (!options.externals) options.externals = [];
-    if (!options.externalRefs) options.externalRefs = {};
+    options.externals = [];
+    options.externalRefs = {};
     options.rewriteRefs = true;
     options.resolver = {};
     options.resolver.depth = 0;
