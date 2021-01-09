@@ -21,7 +21,7 @@ This is the mono-repo for the following related projects
 
 ## Supported Node.js versions
 
-Any LTS version. It is **not** recommended to use Node.js 12.17.x,12.18.x or 12.19.x due to an http2 bug.
+Any LTS version. It is **not** recommended to use Node.js 12.17.x,12.18.x or 12.19.x due to an [http2 bug](https://github.com/nodejs/node/issues/28001).
 
 ## Development
 
@@ -30,7 +30,7 @@ Any LTS version. It is **not** recommended to use Node.js 12.17.x,12.18.x or 12.
 * `npx lerna bootstrap`
 
 Please try and keep commits related to a single package or piece of functionality. Please review the
-(CONTRIBUTING.md)[CONTRIBUTING.md] for additional details.
+[CONTRIBUTING.md](CONTRIBUTING.md) for additional details.
 
 ## Supporting development
 
