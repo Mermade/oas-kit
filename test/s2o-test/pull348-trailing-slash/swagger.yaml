@@ -1,0 +1,14 @@
+swagger: 2.0
+info:
+  title: API
+  version: 1.0.0
+basePath: /
+host: example.com
+schemes:
+  - https
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: OK
