@@ -55,7 +55,7 @@ function jptr(obj, prop, newValue) {
             components[i] = (i > 0) ? components[i-1] : ''; // backtrack to indexed property name
         }
 
-        if ((index != -1) || obj.hasOwnProperty(components[i])) {
+        if ((index != -1) || (obj && obj.hasOwnProperty(components[i]))) {
             if (index >= 0) {
                 if (setAndLast) {
                     obj[index] = newValue;
