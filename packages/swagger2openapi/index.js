@@ -1450,7 +1450,8 @@ function convertObj(swagger, options, callback) {
         if (swagger.host) {
             for (let s of (Array.isArray(swagger.schemes) ? swagger.schemes : [''])) {
                 let server = {};
-                server.url = (s ? s+':' : '') + '//' + swagger.host + (swagger.basePath ? swagger.basePath : '');
+                let basePath = (swagger.basePath || '').replace(/\/$/, '') // Trailing slashes generally shouldn't be included
+                server.url = (s ? s+':' : '') + '//' + swagger.host + basePath;
                 extractServerParameters(server);
                 if (!openapi.servers) openapi.servers = [];
                 openapi.servers.push(server);
