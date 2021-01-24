@@ -5,12 +5,24 @@
 'use strict';
 
 const fs = require('fs');
+const http = require('http');
+const https = require('https');
 
 const yaml = require('yaml');
 const fetch = require('node-fetch');
 
 const swagger2openapi = require('./index.js');
 const validator = require('oas-validator');
+
+const httpAgent = new http.Agent({ keepAlive: true });
+const httpsAgent = new https.Agent({ keepAlive: true });
+const bobwAgent = function(_parsedURL) {
+  if (_parsedURL.protocol == 'http:') {
+    return httpAgent;
+  } else {
+    return httpsAgent;
+  }
+};
 
 process.exitCode = 1;
 
@@ -42,6 +54,8 @@ let argv = require('yargs')
     .boolean('dumpMeta')
     .alias('m','dumpMeta')
     .describe('dumpMeta','Dump definition metadata')
+    .boolean('repair')
+    .alias('r','repair')
     .boolean('nocert')
     .alias('n','nocert')
     .describe('nocert','Do not check server certificates')
@@ -71,13 +85,15 @@ function main(){
         argv.laxurls = true;
         argv.laxDefaults = true;
         argv.fetch = fetch;
+        argv.agent = bobwAgent;
         if (argv.all) argv.lintLimit = Number.MAX_SAFE_INTEGER;
         if (argv.internal) {
             argv.resolveInternal = true;
         }
         argv.verbose = argv.verbose - argv.quiet;
         if (argv.nocert) {
-          process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+            httpsAgent.options.rejectUnauthorized = false;
         }
         let options = {};
         let result = false;
