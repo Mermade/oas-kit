@@ -15,6 +15,10 @@ jobs:
     - uses: actions/setup-node@v1 # setup Node.js
       with:
         node-version: '14.x'
+    - name: Audit top-level package-lock.json
+      run: npx package-lock-audit ./package-lock.json
+    - name: Audit package package-lock.json
+      run: find packages -maxdepth 2 -name package-lock.json | xargs npx package-lock-audit
     - name: Install deps
       run: npm i
     - name: Lerna bootstrap
