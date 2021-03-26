@@ -4,7 +4,7 @@
     "@babel/runtime": "^7.12.5",
     "babel-preset-env": "^1.7.0",
     "eslint": "^7.8.1",
-    "jsdoc-to-markdown": "^6.0.1",
+    "jsdoc-to-markdown": "^7.0.1",
     "lerna": "^3.20.2",
     "mocha": "^8.0.1",
     "should": "^13.2.1",
