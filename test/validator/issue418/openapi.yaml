@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: A linting bug
+  version: 1.0.0
+  contact:
+    name: vk342
+    email: vk342@example.com
+    url: https://example.com
+tags:
+  - name: transactions
+    description: Endpoints related to transactions
+paths:
+  /transaction/{transactionId}:
+    parameters:
+    - $ref: '#/components/parameters/transactionIdParam'
+    put:
+      operationId: putTransaction
+      description: Update a transaction...
+      tags:
+        - transactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              #type: object
+              properties:
+                txnId:
+                  type: string
+                  description: Unique transactionID.
+      responses:
+        '201':
+          description: Created
+components:
+  parameters:
+    transactionIdParam:
+      name: transactionId
+      in: path
+      required: true
+      description: An ID for the transaction
+      schema:
+        type: string

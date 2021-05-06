@@ -1,0 +1,2 @@
+lint: true
+expectFailure: true
