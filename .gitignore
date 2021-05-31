@@ -9,3 +9,4 @@ packages/oas-validator/schemas/henry*
 packages/oas-repair/*
 test/oas-repair*
 .project
+docs/bundling.md
