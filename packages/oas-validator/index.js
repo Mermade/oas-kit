@@ -1173,7 +1173,9 @@ function validateInner(openapi, options, callback) {
             let refUrl = url.parse(obj[key]);
             if (!refUrl.protocol && !refUrl.path) {
                 should(obj[key]+'/%24ref').not.be.equal(state.path,'Circular reference');
-                should(jptr.jptr(openapi,obj[key])).not.be.exactly(false, 'Cannot resolve reference: ' + obj[key]);
+                if (obj[key].indexOf('/examples/')<0) {
+                    should(jptr.jptr(openapi,obj[key])).not.be.exactly(false, 'Cannot resolve reference: ' + obj[key]);
+                }
             }
             options.context.pop();
         }
