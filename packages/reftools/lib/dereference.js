@@ -68,7 +68,7 @@ function dereference(o,definitions,options) {
                 }
                 options.cache[$ref] = entry;
                 entry.data = state.parent[state.pkey] = dereference(jptr(entry.source,entry.key),entry.source,options);
-                if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
+                if (options.$ref && (typeof state.parent[state.pkey] === 'object') && (state.parent[state.pkey] !== null)) state.parent[state.pkey][options.$ref] = $ref;
                 entry.resolved = true;
             }
             else {
@@ -77,7 +77,7 @@ function dereference(o,definitions,options) {
                     // we have already seen and resolved this reference
                     logger.warn('Patching %s for %s',$ref,entry.path);
                     state.parent[state.pkey] = entry.data;
-                    if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[state.pkey][options.$ref] = $ref;
+                    if (options.$ref && (typeof state.parent[state.pkey] === 'object') && (state.parent[state.pkey] !== null)) state.parent[state.pkey][options.$ref] = $ref;
                 }
                 else if ($ref === entry.path) {
                     // reference to itself, throw
@@ -90,7 +90,7 @@ function dereference(o,definitions,options) {
                     if (state.parent[state.pkey] === false) {
                         state.parent[state.pkey] = jptr(entry.source,entry.key);
                     }
-                    if ((options.$ref) && (typeof state.parent[state.pkey] === 'object')) state.parent[options.$ref] = $ref;
+                    if (options.$ref && (typeof state.parent[state.pkey] === 'object') && (state.parent[state.pkey] !== null)) state.parent[options.$ref] = $ref;
                 }
             }
         }
