@@ -35,7 +35,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "call-me-maybe": "^1.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.0",
     "node-fetch-h2": "^2.3.0",
     "node-readfiles": "^0.2.0",
     "oas-kit-common": "^1.0.8",
