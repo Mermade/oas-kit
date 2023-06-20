@@ -179,7 +179,7 @@ function fixUpSubSchemaExtensions(schema,parent) {
         delete schema["x-discriminator"];
         for (let entry in schema.discriminator.mapping) {
             let schemaOrRef = schema.discriminator.mapping[entry];
-            if (schemaOrRef.startsWith('#/definitions/')) {
+            if (typeof schemaOrRef === 'string' && schemaOrRef.startsWith('#/definitions/')) {
                 schema.discriminator.mapping[entry] = schemaOrRef.replace('#/definitions/','#/components/schemas/');
             }
         }
