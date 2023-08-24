@@ -1111,7 +1111,8 @@ function main(openapi, options) {
     }
 
     for (let s in openapi.components.schemas) {
-        let sname = common.sanitiseAll(s);
+        // let sname = common.sanitiseAll(s);
+        let sname = s;
         let suffix = '';
         if (s !== sname) {
             while (openapi.components.schemas[sname + suffix]) {
