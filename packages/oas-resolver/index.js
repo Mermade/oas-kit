@@ -466,7 +466,7 @@ function loopReferences(options, res, rej) {
                                 options.openapi = deRef(options.openapi,options.original,{verbose:options.verbose-1});
                                 if (options.verbose>1) console.warn(common.colour.yellow+'Finished internal resolution!',common.colour.normal);
                             }
-                            recurse(options.openapi,{},function(obj,key,state){
+                            recurse(options.openapi,{identityDetection:true},function(obj,key,state){
                                 if (isRef(obj, key)) {
                                     if (!options.preserveMiro) delete obj['x-miro'];
                                 }
