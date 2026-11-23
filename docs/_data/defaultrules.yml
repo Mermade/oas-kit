@@ -219,7 +219,14 @@ default:
     more: >
         Having a license is generally a helpful idea, it lets potential users know how
         they are allowed to leverage your API. Pick one from this [great list](https://opensource.org/licenses),
-        anywhere else, or make your own and link to it.
+        anywhere else, or make your own and link to it. Applies to OpenAPI 3.0.x only.
+
+  - name: "license-url-or-identifier"
+    object: "license"
+    description: "license object should include url or identifier"
+    more: >
+        The OpenAPI 3.1.x equivalent of `license-url`. A license may be identified either by an
+        [SPDX](https://spdx.org/licenses/) `identifier` or by a `url`, but not both.
 
   - name: "server-not-example.com"
     object: "server"
@@ -262,4 +269,19 @@ default:
   - name: schema-properties-type
     object: schema
     description: "schema objects containing properties should have type: object"
-    more: ''
+    more: 'Applies to OpenAPI 3.0.x only.'
+
+  - name: schema-properties-type-31
+    object: schema
+    description: "schema objects containing properties should have a type of (or including) object"
+    more: >
+        The OpenAPI 3.1.x equivalent of `schema-properties-type`, which also accepts type arrays such as
+        `[object, "null"]`. Subschemas of `if`, `then`, `else` and `dependentSchemas` are not checked, as
+        they constrain their parent schema's instance.
+
+  - name: reference-components-regex-31
+    object: reference
+    description: referenced component names should match spec. regex
+    more: >
+        The OpenAPI 3.1.x equivalent of `reference-components-regex`. Only the component name is checked,
+        so references may point inside a component, e.g. to `#/components/schemas/Pet/$defs/Owner`.

@@ -365,7 +365,12 @@ function checkSubSchema31(schema, parent, state) {
         if (prop) state.options.context.pop();
         return;
     }
-    if (state.options.lint) state.options.linter('schema',schema,prop,state.options);
+    if (state.options.lint) {
+        // conditional subschemas constrain their parent's instance, so e.g. needn't repeat its type
+        state.options.inConditionalSchema = /^(if|then|else|dependentSchemas\/)/.test(prop || '');
+        state.options.linter('schema',schema,prop,state.options);
+        state.options.inConditionalSchema = false;
+    }
     should(schema).be.an.Object();
     should(schema).not.be.an.Array();
 

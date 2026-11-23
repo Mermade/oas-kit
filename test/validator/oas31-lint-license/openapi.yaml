@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: license with neither url nor identifier
+  version: 1.0.0
+  contact:
+    name: API team
+    url: https://api.test/contact
+    email: team@api.test
+  license:
+    name: MIT
+tags:
+  - name: pets
+    description: Pet operations
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      summary: List pets
+      tags: [pets]
+      responses:
+        '200':
+          description: Pets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        name:
+          type: string

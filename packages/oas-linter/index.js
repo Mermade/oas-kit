@@ -83,6 +83,9 @@ function lint(objectName,object,key,options) {
             if (rule.skip && options[rule.skip]) {
                 continue;
             }
+            if (rule.only && !options[rule.only]) {
+                continue;
+            }
             if (options.lintSkip && options.lintSkip.indexOf(rule.name)>=0) {
                 continue;
             }

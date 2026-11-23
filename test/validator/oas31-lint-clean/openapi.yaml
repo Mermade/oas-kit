@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Lint-clean 3.1 document
+  version: 1.0.0
+  contact:
+    name: API team
+    url: https://api.test/contact
+    email: team@api.test
+  license:
+    name: MIT
+    identifier: MIT
+tags:
+  - name: pets
+    description: Pet operations
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      summary: List pets
+      tags: [pets]
+      responses:
+        '200':
+          description: Pets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: [object, 'null']
+      properties:
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Pet/$defs/Owner'
+      $defs:
+        Owner:
+          type: object
+          properties:
+            email:
+              type: string
+      if:
+        properties:
+          name:
+            const: Rex
+      then:
+        required: [owner]
+      dependentSchemas:
+        owner:
+          properties:
+            name:
+              minLength: 1
