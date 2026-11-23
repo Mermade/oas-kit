@@ -1,0 +1,91 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
+info:
+  title: OpenAPI 3.1 schema features
+  summary: Exercises JSON Schema 2020-12 keywords
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+paths:
+  /pets/{petId}:
+    get:
+      operationId: getPet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: [integer, string]
+            exclusiveMinimum: 0
+      responses:
+        '200':
+          description: A pet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+                description: $ref siblings are allowed in 3.1
+webhooks:
+  newPet:
+    $ref: '#/components/pathItems/NewPet'
+components:
+  pathItems:
+    NewPet:
+      post:
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#pet'
+        responses:
+          '200':
+            description: Acknowledged
+  schemas:
+    Pet:
+      $anchor: pet
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+          examples: [Rex, Fido]
+        tag:
+          type: [string, 'null']
+          default: null
+        kind:
+          const: dog
+        coordinates:
+          type: array
+          prefixItems:
+            - type: number
+            - type: number
+          items: false
+        legacy: false
+        anything: true
+        owner:
+          $ref: '#/components/schemas/Pet/$defs/Owner'
+      $defs:
+        Owner:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+      dependentRequired:
+        tag: [name]
+      if:
+        properties:
+          kind:
+            const: dog
+      then:
+        required: [tag]
+      else: true
+      patternProperties:
+        '^x-':
+          type: string
+      unevaluatedProperties: false

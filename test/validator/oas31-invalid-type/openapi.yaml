@@ -1,0 +1,9 @@
+openapi: 3.1.0
+info:
+  title: type array entries must be JSON Schema types
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Bad:
+      type: [string, file]

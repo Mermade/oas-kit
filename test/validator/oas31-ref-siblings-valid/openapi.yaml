@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info:
+  title: summary and description are allowed beside $ref
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+          summary: Pet not found
+          description: No pet with that ID
+components:
+  responses:
+    NotFound:
+      description: Not found

@@ -1,6 +1,6 @@
 # OAS-Kit
 
-This is the documentation site for OAS-Kit, a collection of packages which comprise an OpenAPI 2.0 to 3.0.x converter, a resolver, a validator, a schema-walker and a linter.
+This is the documentation site for OAS-Kit, a collection of packages which comprise an OpenAPI 2.0 to 3.0.x converter, a resolver, an OpenAPI 3.0.x and 3.1.x validator, a schema-walker and a linter.
 
 ## Project READMEs
 

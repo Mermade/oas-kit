@@ -1,0 +1,19 @@
+openapi: 3.1.0
+info:
+  title: Webhooks only, no paths
+  version: 1.0.0
+webhooks:
+  orderShipped:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                  format: uuid
+      responses:
+        '204':
+          description: Received

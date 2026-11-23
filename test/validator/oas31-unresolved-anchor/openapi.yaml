@@ -1,0 +1,12 @@
+openapi: 3.1.0
+info:
+  title: anchor refs must resolve
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Bad:
+      type: object
+      properties:
+        child:
+          $ref: '#missing'

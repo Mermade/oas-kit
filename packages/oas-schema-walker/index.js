@@ -11,7 +11,16 @@
 * @return the state object suitable for use in walkSchema
 */
 function getDefaultState() {
-    return { depth: 0, seen: new WeakMap(), top: true, combine: false, allowRefSiblings: false };
+    return { depth: 0, seen: new WeakMap(), top: true, combine: false, allowRefSiblings: false, refSiblings: false };
+}
+
+// subschema-bearing keywords introduced (or generalised) by JSON Schema 2020-12 / OAS 3.1
+const singleSchemaKeywords = ['contains', 'propertyNames', 'if', 'then', 'else',
+    'unevaluatedItems', 'unevaluatedProperties', 'contentSchema'];
+const schemaMapKeywords = ['$defs', 'dependentSchemas'];
+
+function isObject(o) {
+    return (typeof o === 'object') && (o !== null) && !Array.isArray(o);
 }
 
 /**
@@ -26,7 +35,7 @@ function walkSchema(schema, parent, state, callback) {
 
     if (typeof state.depth === 'undefined') state = getDefaultState();
     if ((schema === null) || (typeof schema === 'undefined')) return schema;
-    if (typeof schema.$ref !== 'undefined') {
+    if ((typeof schema.$ref !== 'undefined') && !state.refSiblings) {
         let temp = {$ref:schema.$ref};
         if (state.allowRefSiblings && schema.description) {
             temp.description = schema.description;
@@ -113,6 +122,26 @@ function walkSchema(schema, parent, state, callback) {
     if (schema.not) {
         state.property = 'not';
         walkSchema(schema.not,schema,state,callback);
+    }
+    if (Array.isArray(schema.prefixItems)) {
+        for (let index in schema.prefixItems) {
+            state.property = 'prefixItems/'+index;
+            walkSchema(schema.prefixItems[index],schema,state,callback);
+        }
+    }
+    for (let keyword of singleSchemaKeywords) {
+        if (isObject(schema[keyword])) {
+            state.property = keyword;
+            walkSchema(schema[keyword],schema,state,callback);
+        }
+    }
+    for (let keyword of schemaMapKeywords) {
+        if (isObject(schema[keyword])) {
+            for (let name in schema[keyword]) {
+                state.property = keyword+'/'+name;
+                walkSchema(schema[keyword][name],schema,state,callback);
+            }
+        }
     }
     state.depth--;
     return schema;

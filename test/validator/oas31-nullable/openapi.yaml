@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: nullable is not valid in 3.1
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Bad:
+      type: string
+      nullable: true

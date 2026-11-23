@@ -291,7 +291,281 @@ function checkSubSchema(schema, parent, state) {
     if (prop) state.options.context.pop();
 }
 
+const jsonSchemaTypes = ['null','boolean','object','array','number','string','integer'];
+const stringFormats = ['date-time','date','time','duration','email','idn-email','hostname',
+    'idn-hostname','ipv4','ipv6','uri','uri-reference','iri','iri-reference','uuid',
+    'uri-template','json-pointer','relative-json-pointer','regex','byte','binary','password'];
+
+function isOAS31(openapi) {
+    return !!openapi && (typeof openapi.openapi === 'string') && openapi.openapi.startsWith('3.1.');
+}
+
+function isPlainObject(o) {
+    return (typeof o === 'object') && (o !== null) && !Array.isArray(o);
+}
+
+// a JSON Schema 2020-12 schema is either an object or a boolean
+function shouldBeSchema(value, name) {
+    should(isPlainObject(value) || (typeof value === 'boolean')).be.exactly(true, name + ' must be a schema object or boolean');
+}
+
+function shouldBeNonNegativeInteger(value, name) {
+    should(Number.isInteger(value) && (value >= 0)).be.exactly(true, name + ' must be a non-negative integer');
+}
+
+function shouldBeValidRegex(value, name) {
+    should(value).be.a.String();
+    try {
+        let regex = new RegExp(value);
+    }
+    catch (ex) {
+        should.fail(false,true,name+' does not conform to ECMA-262');
+    }
+}
+
+function jsonTypeOf(value) {
+    if (value === null) return 'null';
+    if (Array.isArray(value)) return 'array';
+    return typeof value;
+}
+
+// '#name' is a plain-name fragment ($anchor), '#/...' is a JSON pointer
+function isAnchorRef(ref) {
+    return (typeof ref === 'string') && ref.startsWith('#') && (ref.length > 1) && !ref.startsWith('#/');
+}
+
+function collectAnchors(openapi) {
+    const anchors = new Map();
+    recurse(openapi, {identityDetection:true}, function (obj, key, state) {
+        if (((key === '$anchor') || (key === '$dynamicAnchor')) && (typeof obj[key] === 'string')) {
+            anchors.set(obj[key], obj);
+        }
+    });
+    return anchors;
+}
+
+// resolves a local schema reference in an OAS 3.1 document, returns false if unresolvable
+// and undefined if the reference cannot be checked locally (e.g. relative to a $id)
+function resolveSchemaRef31(openapi, ref, options) {
+    if (isAnchorRef(ref)) {
+        const target = options.schemaAnchors.get(ref.slice(1));
+        return (typeof target === 'undefined' ? false : target);
+    }
+    if ((ref === '#') || ref.startsWith('#/')) {
+        return resolveInternal(openapi, ref);
+    }
+    return undefined;
+}
+
+// checks a (non-schema) Reference Object, then lints it. OAS 3.1 allows summary and description
+// alongside $ref, but Reference Objects cannot otherwise be extended. In 3.0 siblings are ignored
+function checkReferenceSiblings(ref, options) {
+    if (!options.oas31) return;
+    for (let k in ref) {
+        should(['$ref','summary','description'].indexOf(k)).be.greaterThan(-1,'Reference object cannot have additionalProperty: '+k);
+    }
+    if (typeof ref.summary !== 'undefined') should(ref.summary).have.type('string', 'Reference object summary must be a string');
+    if (typeof ref.description !== 'undefined') should(ref.description).have.type('string', 'Reference object description must be a string');
+}
+
+function checkReference(ref, options) {
+    checkReferenceSiblings(ref, options);
+    if (options.lint) options.linter('reference',ref,'$ref',options);
+}
+
+// Schema object checks for OpenAPI 3.1.x, i.e. JSON Schema draft 2020-12 plus the OAS vocabulary
+function checkSubSchema31(schema, parent, state) {
+    let prop = state.property;
+    if (prop) contextAppend(state.options, prop);
+    if (typeof schema === 'boolean') { // true / false are valid schemas in 2020-12
+        if (prop) state.options.context.pop();
+        return;
+    }
+    if (state.options.lint) {
+        // conditional subschemas constrain their parent's instance, so e.g. needn't repeat its type
+        state.options.inConditionalSchema = /^(if|then|else|dependentSchemas\/)/.test(prop || '');
+        state.options.linter('schema',schema,prop,state.options);
+        state.options.inConditionalSchema = false;
+    }
+    should(schema).be.an.Object();
+    should(schema).not.be.an.Array();
+
+    // unknown keywords are permitted by JSON Schema 2020-12, but these are almost certainly
+    // left over from OpenAPI 3.0 / earlier drafts and would be silently ignored
+    if (typeof schema.nullable !== 'undefined') {
+        should.fail(false,true,'nullable is not supported in OpenAPI 3.1, use a type array including "null"');
+    }
+    if (typeof schema.additionalItems !== 'undefined') {
+        should.fail(false,true,'additionalItems is not supported in OpenAPI 3.1, use prefixItems and items');
+    }
+
+    for (let k of ['$schema','$id','$ref','$dynamicRef','$comment','title','description','format',
+        'contentEncoding','contentMediaType']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(schema[k]).be.type('string', k + ' must be a string');
+        }
+    }
+    for (let k of ['$anchor','$dynamicAnchor']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(schema[k]).be.type('string', k + ' must be a string');
+            should(/^[A-Za-z_][-A-Za-z0-9._]*$/.test(schema[k])).be.exactly(true, k + ' is not a valid anchor name');
+        }
+    }
+    if (typeof schema.$ref !== 'undefined') {
+        // sibling keywords are allowed alongside $ref in 2020-12, and are checked below
+        if (state.options.lint) state.options.linter('reference',{$ref:schema.$ref},'$ref',state.options);
+        if (isAnchorRef(schema.$ref)) {
+            should(state.options.schemaAnchors.has(schema.$ref.slice(1))).be.exactly(true, 'Cannot resolve reference: ' + schema.$ref);
+        }
+    }
+
+    const types = (typeof schema.type === 'undefined' ? [] : [].concat(schema.type));
+    if (Array.isArray(schema.type)) {
+        should(schema.type).not.be.empty();
+        should(common.hasDuplicates(schema.type)).be.exactly(false,'type array items must be unique: '+common.firstDupe(schema.type));
+    }
+    for (let t of types) {
+        should(jsonSchemaTypes.indexOf(t)).be.greaterThan(-1,'Invalid schema type '+JSON.stringify(t)+', must be one of '+jsonSchemaTypes.join(', '));
+    }
+
+    if (typeof schema.enum !== 'undefined') {
+        should(schema.enum).be.an.Array();
+    }
+    if (typeof schema.multipleOf !== 'undefined') {
+        should(schema.multipleOf).be.type('number','multipleOf must be a number');
+        should(schema.multipleOf).be.greaterThan(0);
+    }
+    for (let k of ['maximum','exclusiveMaximum','minimum','exclusiveMinimum']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(schema[k]).be.type('number', k + ' must be a number');
+        }
+    }
+    for (let k of ['maxLength','minLength','maxItems','minItems','maxContains','minContains',
+        'maxProperties','minProperties']) {
+        if (typeof schema[k] !== 'undefined') {
+            shouldBeNonNegativeInteger(schema[k], k);
+        }
+    }
+    if (typeof schema.pattern !== 'undefined') {
+        shouldBeValidRegex(schema.pattern, 'pattern');
+    }
+    for (let k of ['uniqueItems','readOnly','writeOnly','deprecated']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(schema[k]).be.type('boolean', k + ' must be a boolean');
+        }
+    }
+    if (typeof schema.required !== 'undefined') {
+        should(schema.required).be.an.Array();
+        for (let r of schema.required) should(r).be.a.String();
+        should(common.hasDuplicates(schema.required)).be.exactly(false,'required items must be unique: '+common.firstDupe(schema.required));
+    }
+    if (typeof schema.dependentRequired !== 'undefined') {
+        should(isPlainObject(schema.dependentRequired)).be.exactly(true, 'dependentRequired must be an object');
+        for (let p in schema.dependentRequired) {
+            const dep = schema.dependentRequired[p];
+            should(dep).be.an.Array();
+            for (let r of dep) should(r).be.a.String();
+            should(common.hasDuplicates(dep)).be.exactly(false,'dependentRequired items must be unique: '+common.firstDupe(dep));
+        }
+    }
+
+    if (Array.isArray(schema.items)) {
+        should.fail(false,true,'items must be a schema in OpenAPI 3.1, use prefixItems for tuple validation');
+    }
+    for (let k of ['items','contains','additionalProperties','propertyNames','if','then','else',
+        'not','unevaluatedItems','unevaluatedProperties','contentSchema']) {
+        if (typeof schema[k] !== 'undefined') {
+            shouldBeSchema(schema[k], k);
+        }
+    }
+    for (let k of ['prefixItems','allOf','anyOf','oneOf']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(schema[k]).be.an.Array();
+            should(schema[k]).not.be.empty();
+            for (let s of schema[k]) shouldBeSchema(s, k + ' item');
+        }
+    }
+    for (let k of ['properties','patternProperties','dependentSchemas','$defs']) {
+        if (typeof schema[k] !== 'undefined') {
+            should(isPlainObject(schema[k])).be.exactly(true, k + ' must be an object');
+            for (let p in schema[k]) {
+                if (k === 'patternProperties') shouldBeValidRegex(p, 'patternProperty '+p);
+                shouldBeSchema(schema[k][p], k + '/' + p);
+            }
+        }
+    }
+
+    if (typeof schema.examples !== 'undefined') {
+        should(schema.examples).be.an.Array();
+    }
+    // example (deprecated in 3.1) and const can be any type
+
+    if (!state.options.laxDefaults && (typeof schema.default !== 'undefined') && types.length) {
+        let realType = jsonTypeOf(schema.default);
+        let allowed = types.map(function(t) { return (t === 'integer' ? 'number' : t); });
+        should(allowed.indexOf(realType)).be.greaterThan(-1, `default value type ${realType} does not match schema type ${types.join(',')}`);
+    }
+    if ((typeof schema.format === 'string') && types.length) {
+        const typeList = types.join(',');
+        if (stringFormats.indexOf(schema.format) >= 0) {
+            should(types.indexOf('string')).be.greaterThan(-1,`Invalid type ${typeList} for format ${schema.format}`);
+        }
+        if (['int32','int64'].indexOf(schema.format) >= 0) {
+            should(types.some(function(t) { return ['integer','number','string'].indexOf(t) >= 0; })).be.exactly(true,`Invalid type ${typeList} for format ${schema.format}`);
+        }
+        if (['float','double'].indexOf(schema.format) >= 0) {
+            should(types.some(function(t) { return ['number','string'].indexOf(t) >= 0; })).be.exactly(true,`Invalid type ${typeList} for format ${schema.format}`);
+        }
+    }
+
+    if (typeof schema.discriminator !== 'undefined') {
+        should(isPlainObject(schema.discriminator)).be.exactly(true, 'discriminator must be an object');
+        should(schema.discriminator).have.property('propertyName');
+        should(schema.discriminator.propertyName).be.a.String();
+        if (typeof schema.discriminator.mapping !== 'undefined') {
+            should(isPlainObject(schema.discriminator.mapping)).be.exactly(true, 'discriminator.mapping must be an object');
+            for (let m in schema.discriminator.mapping) should(schema.discriminator.mapping[m]).be.a.String();
+        }
+    }
+    if (typeof schema.xml !== 'undefined') {
+        should(isPlainObject(schema.xml)).be.exactly(true, 'xml must be an object');
+    }
+    if (typeof schema.externalDocs !== 'undefined') {
+        should(isPlainObject(schema.externalDocs)).be.exactly(true, 'externalDocs must be an object');
+        should(schema.externalDocs).have.key('url');
+        should.doesNotThrow(function() { validateUrl(schema.externalDocs.url, [state.openapi.servers], 'externalDocs', state.options)}, 'Invalid externalDocs.url');
+        if (state.options.lint) state.options.linter('externalDocs',schema.externalDocs,'externalDocs',state.options);
+    }
+    if (prop) state.options.context.pop();
+}
+
+function walkSchemaWith(schema,parent,prop,openapi,options,checker,refSiblings) {
+    let state = sw.getDefaultState();
+    state.openapi = openapi;
+    state.options = options;
+    state.property = prop;
+    state.refSiblings = refSiblings;
+    sw.walkSchema(schema,parent,state,checker);
+}
+
+function checkSchema31(schema,parent,prop,openapi,options) {
+    if (isPlainObject(schema) && (typeof schema.$ref === 'string') && (!refSeen[schema.$ref])) {
+        const refSchema = resolveSchemaRef31(openapi, schema.$ref, options);
+        should(refSchema).not.be.exactly(false, 'Cannot resolve reference: ' + schema.$ref);
+        if (typeof refSchema !== 'undefined') {
+            refSeen[schema.$ref] = true; // set before descending to guard against recursive $refs
+            checkSchema31(refSchema,parent,prop,openapi,options);
+        }
+    }
+    // $ref siblings are significant in 2020-12, so always check the referencing schema too
+    walkSchemaWith(schema,parent,prop,openapi,options,checkSubSchema31,true);
+    return true;
+}
+
 function checkSchema(schema,parent,prop,openapi,options) {
+    if (options.oas31) {
+        return checkSchema31(schema,parent,prop,openapi,options);
+    }
     if ((typeof schema.$ref === 'string') && (!refSeen[schema.$ref])) {
       // check if the $reffed thing is actually a schema object (and not a response etc)
       // all other properties SHALL be ignored (3.0)
@@ -300,11 +574,7 @@ function checkSchema(schema,parent,prop,openapi,options) {
       refSeen[schema.$ref] = checkSchema(refSchema,parent,prop,openapi,options);
     }
     else {
-      let state = sw.getDefaultState();
-      state.openapi = openapi;
-      state.options = options;
-      state.property = prop;
-      sw.walkSchema(schema,parent,state,checkSubSchema);
+      walkSchemaWith(schema,parent,prop,openapi,options,checkSubSchema,false);
     }
     return true;
 }
@@ -364,7 +634,7 @@ function checkContent(content, contextServers, openapi, options) {
                     checkExample(ex, contextServers, openapi, options);
                 }
                 else {
-                    if (options.lint) options.linter('reference',ex,'$ref',options);
+                    checkReference(ex, options);
                 }
             }
             options.context.pop();
@@ -445,6 +715,7 @@ function checkLink(link, openapi, options) {
     if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(link, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',link,'$ref',options);
@@ -489,6 +760,7 @@ function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(header, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',header,'$ref',options);
@@ -540,6 +812,7 @@ function checkResponse(response, key, contextServers, openapi, options) {
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(response, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',response,'$ref',options);
@@ -587,7 +860,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     contextAppend(options, index);
     if (typeof param.$ref !== 'undefined') {
         should(ref).be.type('string');
-        if (options.lint) options.linter('reference',param,'$ref',options);
+        checkReference(param, options);
         param = resolveInternal(openapi, ref);
         if (refSeen[ref] && (param.in !== 'path')) {
           options.context.pop();
@@ -723,7 +996,9 @@ function checkPathItem(pathItem, path, openapi, options) {
         if (o === '$ref') {
             should(op).be.ok();
             should(op).have.type('string');
-            should(op.startsWith('#/') && (!op.startsWith('#/paths/')) && (op.indexOf('x-')<0)).equal(false,'PathItem $refs must be external or to specification extension ('+op+')');
+            const allowedLocalRef = op.startsWith('#/paths/') || (op.indexOf('x-')>=0) ||
+                (options.oas31 && op.startsWith('#/components/pathItems/'));
+            should(op.startsWith('#/') && !allowedLocalRef).equal(false,'PathItem $refs must be external or to specification extension ('+op+')');
             if (options.lint) options.linter('reference',pathItem,'$ref',options);
             if (!options.metadata.count.operation) {
                 options.metadata.count.operation = 0;
@@ -786,6 +1061,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 should(op.requestBody).not.be.null();
                 should(op.requestBody).be.an.Object();
                 should(op.requestBody).not.be.an.Array();
+                if (typeof op.requestBody.$ref !== 'undefined') checkReferenceSiblings(op.requestBody, options);
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
                 if (typeof op.requestBody.required !== 'undefined') should(op.requestBody.required).have.type('boolean');
                 if (typeof op.requestBody.content !== 'undefined') {
@@ -857,7 +1133,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 for (let c in op.callbacks) {
                     let callback = op.callbacks[c];
                     if (callback && typeof callback.$ref !== 'undefined') {
-                        if (options.lint) options.linter('reference',callback,'$ref',options);
+                        checkReference(callback, options);
                     }
                     else {
                         contextAppend(options, c);
@@ -899,7 +1175,12 @@ function checkSecurity(security,openapi,options) {
             should(sec).not.be.exactly(false,'Could not dereference securityScheme '+i);
             if (sec.type !== 'openIdConnect') {
                 if (sec.type !== 'oauth2') {
-                    should(sr[i]).be.empty();
+                    if (options.oas31) { // 3.1 allows role names for other scheme types
+                        for (let role of sr[i]) should(role).be.a.String();
+                    }
+                    else {
+                        should(sr[i]).be.empty();
+                    }
                 }
                 else if (sr[i].length) {
                     if (!options.allScopes[i]) {
@@ -932,12 +1213,18 @@ function validateInner(openapi, options, callback) {
     should(openapi).not.have.key('swagger');
     should(openapi).have.key('openapi');
     should(openapi.openapi).have.type('string');
-    should.ok(openapi.openapi.startsWith('3.0.'), 'Must be an OpenAPI 3.0.x document');
+    should.ok(openapi.openapi.startsWith('3.0.') || options.oas31, 'Must be an OpenAPI 3.0.x or 3.1.x document');
     should(openapi).not.have.key('host');
     should(openapi).not.have.key('basePath');
     should(openapi).not.have.key('schemes');
-    should(openapi).have.key('paths');
-    should(openapi.paths).be.an.Object();
+    if (options.oas31) {
+        should.ok((typeof openapi.paths !== 'undefined') || (typeof openapi.components !== 'undefined') ||
+            (typeof openapi.webhooks !== 'undefined'), 'OpenAPI 3.1 document must contain at least one of paths, components or webhooks');
+    }
+    else {
+        should(openapi).have.key('paths');
+    }
+    if (typeof openapi.paths !== 'undefined') should(openapi.paths).be.an.Object();
     should(openapi).not.have.key('definitions');
     should(openapi).not.have.key('parameters');
     should(openapi).not.have.key('responses');
@@ -945,10 +1232,17 @@ function validateInner(openapi, options, callback) {
     should(openapi).not.have.key('produces');
     should(openapi).not.have.key('consumes');
 
+    const topLevelKeys = ['openapi','info','servers','security','externalDocs','tags','paths','components'];
+    if (options.oas31) topLevelKeys.push('webhooks','jsonSchemaDialect');
     for (let k in openapi) {
         if (!k.startsWith('x-')) {
-            should(['openapi','info','servers','security','externalDocs','tags','paths','components'].indexOf(k)).be.greaterThan(-1,'OpenAPI object cannot have additionalProperty: '+k);
+            should(topLevelKeys.indexOf(k)).be.greaterThan(-1,'OpenAPI object cannot have additionalProperty: '+k);
         }
+    }
+
+    if (typeof openapi.jsonSchemaDialect !== 'undefined') {
+        should(openapi.jsonSchemaDialect).be.a.String();
+        should.doesNotThrow(function () { return new URL(openapi.jsonSchemaDialect); }, 'jsonSchemaDialect must be an absolute URI');
     }
 
     if (typeof openapi.servers !== 'undefined') {
@@ -967,12 +1261,19 @@ function validateInner(openapi, options, callback) {
     should(openapi.info.title).be.type('string', 'title should be of type string');
     should(openapi.info).have.key('version');
     should(openapi.info.version).be.type('string', 'version should be of type string');
+    if (options.oas31 && (typeof openapi.info.summary !== 'undefined')) {
+        should(openapi.info.summary).be.type('string', 'summary should be of type string');
+    }
     if (typeof openapi.info.license !== 'undefined') {
         should(openapi.info.license).be.an.Object();
         should(openapi.info.license).not.be.an.Array();
         contextAppend(options, 'license');
         should(openapi.info.license).have.key('name');
         should(openapi.info.license.name).have.type('string');
+        if (options.oas31 && (typeof openapi.info.license.identifier !== 'undefined')) {
+            should(openapi.info.license.identifier).have.type('string');
+            should.ok(typeof openapi.info.license.url === 'undefined', 'license identifier and url are mutually exclusive');
+        }
         if (typeof openapi.info.license.url !== 'undefined') {
             should.doesNotThrow(function () { validateUrl(openapi.info.license.url, contextServers, 'license.url', options) },'Invalid license.url');
         }
@@ -1082,7 +1383,9 @@ function validateInner(openapi, options, callback) {
             should(scheme).have.property('type');
             should(scheme.type).have.type('string');
             should(scheme.type).not.be.exactly('basic', 'Security scheme basic should be http with scheme basic');
-            should(scheme.type).equalOneOf('apiKey', 'http', 'oauth2', 'openIdConnect');
+            const schemeTypes = ['apiKey', 'http', 'oauth2', 'openIdConnect'];
+            if (options.oas31) schemeTypes.push('mutualTLS');
+            should(schemeTypes.indexOf(scheme.type)).be.greaterThan(-1, 'Invalid security scheme type '+JSON.stringify(scheme.type)+', must be one of '+schemeTypes.join(', '));
             if (scheme.type === 'http') {
                 should(scheme).have.property('scheme');
                 should(scheme.scheme).have.type('string');
@@ -1173,7 +1476,10 @@ function validateInner(openapi, options, callback) {
             let refUrl = url.parse(obj[key]);
             if (!refUrl.protocol && !refUrl.path) {
                 should(obj[key]+'/%24ref').not.be.equal(state.path,'Circular reference');
-                if (obj[key].indexOf('/examples/')<0) {
+                if (options.oas31 && isAnchorRef(obj[key])) {
+                    should(options.schemaAnchors.has(obj[key].slice(1))).be.exactly(true, 'Cannot resolve reference: ' + obj[key]);
+                }
+                else if (obj[key].indexOf('/examples/')<0) {
                     should(jptr.jptr(openapi,obj[key])).not.be.exactly(false, 'Cannot resolve reference: ' + obj[key]);
                 }
             }
@@ -1181,6 +1487,25 @@ function validateInner(openapi, options, callback) {
         }
     });
     seen = null;
+
+    if (typeof openapi.webhooks !== 'undefined') {
+        should(isPlainObject(openapi.webhooks)).be.exactly(true, 'webhooks must be an object');
+        for (let w in openapi.webhooks) {
+            options.context.push('#/webhooks/' + jptr.jpescape(w));
+            checkPathItem(openapi.webhooks[w], w, openapi, options);
+            options.context.pop();
+        }
+    }
+
+    if (options.oas31 && openapi.components && (typeof openapi.components.pathItems !== 'undefined')) {
+        should(isPlainObject(openapi.components.pathItems)).be.exactly(true, 'components.pathItems must be an object');
+        for (let p in openapi.components.pathItems) {
+            options.context.push('#/components/pathItems/' + jptr.jpescape(p));
+            should(validateComponentName(p)).be.equal(true, 'component name invalid');
+            checkPathItem(openapi.components.pathItems[p], p, openapi, options);
+            options.context.pop();
+        }
+    }
 
     let paths = {};
 
@@ -1304,7 +1629,7 @@ function validateInner(openapi, options, callback) {
                 checkExample(ex, openapi.servers, openapi, options);
             }
             else {
-                if (options.lint) options.linter('reference',ex,'$ref',options);
+                checkReference(ex, options);
             }
         }
         options.context.pop();
@@ -1327,7 +1652,7 @@ function validateInner(openapi, options, callback) {
                 }
             }
             else {
-                if (options.lint) options.linter('reference',cb,'$ref',options);
+                checkReference(cb, options);
             }
             options.context.pop();
         }
@@ -1346,7 +1671,7 @@ function validateInner(openapi, options, callback) {
                 checkLink(link, openapi, options);
             }
             else {
-                if (options.lint) options.linter('reference',link,'$ref',options);
+                checkReference(link, options);
             }
             options.context.pop();
         }
@@ -1394,6 +1719,8 @@ function setupOptions(options,openapi) {
     options.operationIds = [];
     options.allScopes = {};
     options.openapi = openapi;
+    options.oas31 = isOAS31(openapi);
+    options.schemaAnchors = (options.oas31 ? collectAnchors(openapi) : new Map());
     if (options.lint && !options.linter) {
         options.linter = linter.lint;
         linter.loadDefaultRules();
