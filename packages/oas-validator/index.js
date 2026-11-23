@@ -1155,7 +1155,12 @@ function checkSecurity(security,openapi,options) {
             should(sec).not.be.exactly(false,'Could not dereference securityScheme '+i);
             if (sec.type !== 'openIdConnect') {
                 if (sec.type !== 'oauth2') {
-                    should(sr[i]).be.empty();
+                    if (options.oas31) { // 3.1 allows role names for other scheme types
+                        for (let role of sr[i]) should(role).be.a.String();
+                    }
+                    else {
+                        should(sr[i]).be.empty();
+                    }
                 }
                 else if (sr[i].length) {
                     if (!options.allScopes[i]) {
@@ -1358,7 +1363,9 @@ function validateInner(openapi, options, callback) {
             should(scheme).have.property('type');
             should(scheme.type).have.type('string');
             should(scheme.type).not.be.exactly('basic', 'Security scheme basic should be http with scheme basic');
-            should(scheme.type).equalOneOf('apiKey', 'http', 'oauth2', 'openIdConnect');
+            const schemeTypes = ['apiKey', 'http', 'oauth2', 'openIdConnect'];
+            if (options.oas31) schemeTypes.push('mutualTLS');
+            should(schemeTypes.indexOf(scheme.type)).be.greaterThan(-1, 'Invalid security scheme type '+JSON.stringify(scheme.type)+', must be one of '+schemeTypes.join(', '));
             if (scheme.type === 'http') {
                 should(scheme).have.property('scheme');
                 should(scheme.scheme).have.type('string');
