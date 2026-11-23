@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: default must match a type in the type array
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Bad:
+      type: [string, 'null']
+      default: 42
