@@ -25,6 +25,7 @@ handlers|Object|Input|Map of additional [protocol/scheme handlers](handlers.md),
 help|Boolean|Reserved|Command-line flag to display help
 ignoreIOErrors|Boolean|Input|Set to `true` to ignore IO errors when resolving
 indent|String|Input|Command-line flag to control JSON indenting
+inConditionalSchema|Boolean|Internal|Hint to the linter that an OpenAPI 3.1.x schema is a subschema of `if`, `then`, `else` or `dependentSchemas`
 isCallback|Boolean|Input|Hint to the linter that we are within a `callback` object
 laxDefaults|Boolean|Input|Flag to validation step to ignore default/type mismatches
 laxurls|Boolean|Input|Flag to validation step to ignore empty URLs and # ? in paths
@@ -36,6 +37,7 @@ lintSkip|Array|Input|A list of lint rule names which will not be tested
 mediatype|Boolean|Input|Flag to validation step to check media-type strings against RFC pattern
 metadata|Object|Output|Used by the validator, if `options.text` is a string, will have a property `lines` containing the number of lines in the input document. Has a property `count`, an Object keyed by the object-type within the document having values summarising the number of times that object appears in total.
 nopatch|Boolean|Input|Command-line flag by `testRunner` to unset `patch`
+oas31|Boolean|Output|Set by the validator to `true` if the definition is OpenAPI 3.1.x. Linter rules can use it with `skip` or `only`
 openapi|Object|Output|The OpenApi 3.x definition returned from a conversion step
 operationIds|Array[string]|Output|Used by validation to track uniqueness of operationIds
 origin|Boolean\|String|Input|`true` or a URL, to indicate an `x-origin` extension should be added to the converted output
@@ -54,6 +56,7 @@ refSiblings|string|Input|Controls handling of `$ref` which has sibling propertie
 resolve|Boolean|Input|Flag to enable resolution of external `$ref`s
 resolveInternal|Boolean|Input|Flag to enable resolution of internal `$ref`s. Also disables deduplication of `requestBodies`
 resolver|Object|Internal|Used by the resolver to track outstanding resolutions
+schemaAnchors|Map|Internal|Used by the validator to resolve plain-name `$ref`s to `$anchor`s in OpenAPI 3.1.x definitions
 skip|Boolean|Reserved|Used by tools such as Speccy to skip linter rules
 stop|Boolean|Input|Command-line flag used by `testRunner`
 source|String|Input|The source filename or url of the definition, used by the resolver

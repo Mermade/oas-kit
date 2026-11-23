@@ -130,6 +130,7 @@ default:
 
   - name:  "reference-no-other-properties"
     object: "reference"
+    version: "3.0"
     description: "reference objects should only have a $ref property"
     more: |
       You should avoid having other keywords sat next to a `$ref`, as the OpenAPI
@@ -140,6 +141,7 @@ default:
 
   - name:  "reference-no-other-properties-31"
     object: "reference"
+    version: "3.1"
     description: "reference objects should only have $ref, summary and description properties"
     more: |
       The OpenAPI 3.1.x equivalent of `reference-no-other-properties`. OpenAPI 3.1 allows a
@@ -225,6 +227,7 @@ default:
 
   - name: "license-url"
     object: "license"
+    version: "3.0"
     description: "license object should include url"
     more: >
         Having a license is generally a helpful idea, it lets potential users know how
@@ -233,6 +236,7 @@ default:
 
   - name: "license-url-or-identifier"
     object: "license"
+    version: "3.1"
     description: "license object should include url or identifier"
     more: >
         The OpenAPI 3.1.x equivalent of `license-url`. A license may be identified either by an
@@ -278,19 +282,30 @@ default:
 
   - name: schema-properties-type
     object: schema
+    version: "3.0"
     description: "schema objects containing properties should have type: object"
     more: 'Applies to OpenAPI 3.0.x only.'
 
   - name: schema-properties-type-31
     object: schema
+    version: "3.1"
     description: "schema objects containing properties should have a type of (or including) object"
     more: >
         The OpenAPI 3.1.x equivalent of `schema-properties-type`, which also accepts type arrays such as
         `[object, "null"]`. Subschemas of `if`, `then`, `else` and `dependentSchemas` are not checked, as
         they constrain their parent schema's instance.
 
+  - name: reference-components-regex
+    object: reference
+    version: "3.0"
+    description: reference components should all match spec. regex
+    more: >
+        Each segment of a `$ref` to `#/components/` should match the component name regex
+        `^[a-zA-Z0-9\.\-_]+$`.
+
   - name: reference-components-regex-31
     object: reference
+    version: "3.1"
     description: referenced component names should match spec. regex
     more: >
         The OpenAPI 3.1.x equivalent of `reference-components-regex`. Only the component name is checked,

@@ -86,9 +86,9 @@ See [initial documentation](/docs/browser.md).
 
 ## Features
 
-### OpenAPI 3.0.x validation
+### OpenAPI 3.0.x and 3.1.x validation
 
-`oas-validate` can be used as a validator if given one or more existing OpenAPI 3.x definitions. The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/packages/oas-linter/rules.yaml). Contributions of rules and rule actions for the linter are very much appreciated.
+`oas-validate` can be used as a validator if given one or more existing OpenAPI 3.0.x or 3.1.x definitions (conversion still targets 3.0.x). The validator (however it is called) uses [WHATWG](https://whatwg.org/) URL parsing if available (node 7.x and above). The validator can have a linting mode enabled with the `--lint` option. Rules are defined [here](/packages/oas-linter/rules.yaml). Contributions of rules and rule actions for the linter are very much appreciated.
 
 ```text
 oas-validate.js [options] {path-to-docs}...
