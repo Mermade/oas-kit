@@ -136,6 +136,16 @@ default:
       spec instructs tools to ignore any siblings. Due to that, putting things there is
       not only going against the spec, but it's pointless, and potentially confusing
       to people reading the files. It may also trigger errors in some validators.
+      Applies to OpenAPI 3.0.x only.
+
+  - name:  "reference-no-other-properties-31"
+    object: "reference"
+    description: "reference objects should only have $ref, summary and description properties"
+    more: |
+      The OpenAPI 3.1.x equivalent of `reference-no-other-properties`. OpenAPI 3.1 allows a
+      `summary` and `description` alongside `$ref`, overriding those of the referenced component,
+      but no other properties (Reference Objects cannot be extended). Schema `$ref`s are not
+      subject to this rule, as JSON Schema 2020-12 allows any keywords alongside `$ref`.
 
   - name:  "example-value-or-externalValue"
     object: "example"

@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: Reference object siblings
+  version: 1.0.0
+  contact:
+    name: API team
+    url: https://api.test/contact
+    email: team@api.test
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: pets
+    description: Pet operations
+paths:
+  /pets/{petId}:
+    get:
+      operationId: getPet
+      summary: Get a pet
+      tags: [pets]
+      parameters:
+        - $ref: '#/components/parameters/PetId'
+          summary: Pet identifier
+          description: Identifies the pet to fetch
+      responses:
+        '200':
+          description: A pet
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: No pet with that ID
+components:
+  parameters:
+    PetId:
+      name: petId
+      in: path
+      required: true
+      description: The pet identifier
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: Not found

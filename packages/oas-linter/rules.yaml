@@ -38,8 +38,23 @@ rules:
 - name: reference-no-other-properties
   object: reference
   description: reference objects should only have a $ref property
+  skip: oas31
   truthy: $ref
   properties: 1
+- name: reference-no-other-properties-31
+  object: reference
+  description: reference objects should only have $ref, summary and description properties
+  only: oas31
+  truthy: $ref
+  schema:
+    type: object
+    propertyNames:
+      enum: [$ref, summary, description]
+    properties:
+      summary:
+        type: string
+      description:
+        type: string
 - name: pathItem-summary-or-description
   object: pathItem
   disabled: true
