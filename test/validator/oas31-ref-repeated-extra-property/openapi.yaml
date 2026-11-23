@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  title: Second use of a $ref with an extension sibling
+  version: 1.0.0
+paths:
+  /pets/{petId}:
+    parameters:
+      - $ref: '#/components/parameters/PetId'
+
+    get:
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      requestBody:
+        $ref: '#/components/requestBodies/Pet'
+
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+          x-internal: true
+components:
+  parameters:
+    PetId:
+      name: petId
+      in: path
+      required: true
+      schema:
+        type: string
+  requestBodies:
+    Pet:
+      content:
+        application/json:
+          schema:
+            type: object
+  responses:
+    NotFound:
+      description: Not found

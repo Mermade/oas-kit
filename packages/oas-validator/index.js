@@ -357,6 +357,22 @@ function resolveSchemaRef31(openapi, ref, options) {
     return undefined;
 }
 
+// checks a (non-schema) Reference Object, then lints it. OAS 3.1 allows summary and description
+// alongside $ref, but Reference Objects cannot otherwise be extended. In 3.0 siblings are ignored
+function checkReferenceSiblings(ref, options) {
+    if (!options.oas31) return;
+    for (let k in ref) {
+        should(['$ref','summary','description'].indexOf(k)).be.greaterThan(-1,'Reference object cannot have additionalProperty: '+k);
+    }
+    if (typeof ref.summary !== 'undefined') should(ref.summary).have.type('string', 'Reference object summary must be a string');
+    if (typeof ref.description !== 'undefined') should(ref.description).have.type('string', 'Reference object description must be a string');
+}
+
+function checkReference(ref, options) {
+    checkReferenceSiblings(ref, options);
+    if (options.lint) options.linter('reference',ref,'$ref',options);
+}
+
 // Schema object checks for OpenAPI 3.1.x, i.e. JSON Schema draft 2020-12 plus the OAS vocabulary
 function checkSubSchema31(schema, parent, state) {
     let prop = state.property;
@@ -618,7 +634,7 @@ function checkContent(content, contextServers, openapi, options) {
                     checkExample(ex, contextServers, openapi, options);
                 }
                 else {
-                    if (options.lint) options.linter('reference',ex,'$ref',options);
+                    checkReference(ex, options);
                 }
             }
             options.context.pop();
@@ -699,6 +715,7 @@ function checkLink(link, openapi, options) {
     if (typeof link.$ref !== 'undefined') {
         let ref = link.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(link, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',link,'$ref',options);
@@ -743,6 +760,7 @@ function checkHeader(header, contextServers, openapi, options) {
     if (typeof header.$ref !== 'undefined') {
         let ref = header.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(header, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',header,'$ref',options);
@@ -794,6 +812,7 @@ function checkResponse(response, key, contextServers, openapi, options) {
     if (typeof response.$ref !== 'undefined') {
         let ref = response.$ref;
         should(ref).be.type('string');
+        checkReferenceSiblings(response, options); // before the bail-out, as each referencing object differs
         if (refSeen[ref]) return true; // bail out
         refSeen[ref] = true;
         if (options.lint) options.linter('reference',response,'$ref',options);
@@ -841,7 +860,7 @@ function checkParam(param, index, path, contextServers, openapi, options) {
     contextAppend(options, index);
     if (typeof param.$ref !== 'undefined') {
         should(ref).be.type('string');
-        if (options.lint) options.linter('reference',param,'$ref',options);
+        checkReference(param, options);
         param = resolveInternal(openapi, ref);
         if (refSeen[ref] && (param.in !== 'path')) {
           options.context.pop();
@@ -1042,6 +1061,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 should(op.requestBody).not.be.null();
                 should(op.requestBody).be.an.Object();
                 should(op.requestBody).not.be.an.Array();
+                if (typeof op.requestBody.$ref !== 'undefined') checkReferenceSiblings(op.requestBody, options);
                 if (typeof op.requestBody.description !== 'undefined') should(op.requestBody.description).have.type('string');
                 if (typeof op.requestBody.required !== 'undefined') should(op.requestBody.required).have.type('boolean');
                 if (typeof op.requestBody.content !== 'undefined') {
@@ -1113,7 +1133,7 @@ function checkPathItem(pathItem, path, openapi, options) {
                 for (let c in op.callbacks) {
                     let callback = op.callbacks[c];
                     if (callback && typeof callback.$ref !== 'undefined') {
-                        if (options.lint) options.linter('reference',callback,'$ref',options);
+                        checkReference(callback, options);
                     }
                     else {
                         contextAppend(options, c);
@@ -1609,7 +1629,7 @@ function validateInner(openapi, options, callback) {
                 checkExample(ex, openapi.servers, openapi, options);
             }
             else {
-                if (options.lint) options.linter('reference',ex,'$ref',options);
+                checkReference(ex, options);
             }
         }
         options.context.pop();
@@ -1632,7 +1652,7 @@ function validateInner(openapi, options, callback) {
                 }
             }
             else {
-                if (options.lint) options.linter('reference',cb,'$ref',options);
+                checkReference(cb, options);
             }
             options.context.pop();
         }
@@ -1651,7 +1671,7 @@ function validateInner(openapi, options, callback) {
                 checkLink(link, openapi, options);
             }
             else {
-                if (options.lint) options.linter('reference',link,'$ref',options);
+                checkReference(link, options);
             }
             options.context.pop();
         }
